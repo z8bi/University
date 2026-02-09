@@ -94,6 +94,7 @@ void turn_left_coast_inner(float duty_outer);
 void turn_right_coast_inner(float duty_outer);
 void turn_left_skid_reverse_inner(float duty_outer);
 void turn_right_skid_reverse_inner(float duty_outer);
+void move_forward_different(float dut_R, float dut_L);
 
 void motors_release();
 void enter_state(CtrlState st, int duration_ms);
@@ -116,19 +117,23 @@ void motors_release() {
 //======================================================
 //====================TUNABLE===========================
 
-static constexpr float DUTY_FWD = 0.25f;
-static constexpr float DUTY_TURN = 0.75f;
-static constexpr float BRAKE_STRENGTH = 0.40f;
+static constexpr float DUTY_FWD = 0.35f;
+static constexpr float DUTY_TURN = 0.3f;
+static constexpr float BRAKE_STRENGTH = 0.60f;
 
-static constexpr int NUDGE_MS  = 300; //90 degree calibration
+static constexpr int NUDGE_MS  = 250; //90 degree calibration
 static constexpr int TURN90_MS = 1600; // right 90
 static constexpr int TURN90L_MS = 1600; // left 90 (tune separately if needed)
-static constexpr int BRAKE_MS  = 120;
+static constexpr int BRAKE_MS  = 200;
 
-static constexpr float POS_DEADBAND_F = 0.5f; // tune 0.20–0.40
+static constexpr int LOST_CONFIRM_MS = 200;           // how long line must be gone before recovery
+static constexpr int CTRL_PERIOD_MS  = 20;            // your ticker period
+static constexpr int LOST_TICKS = LOST_CONFIRM_MS / CTRL_PERIOD_MS;  // = 10 ticks at 50 Hz
 
-//======================================================
-//======================================================
+static constexpr float DUTY_GRACE = 0.25f;            // gentle forward during grace
+
+static constexpr float POS_DEADBAND_F = 0.4f; // tune 0.20–0.40
+static constexpr float POS_SKID_F = 1.0f;  // far off line → force skid
 
 //=============================================================
 //======================LINE SENSING STATE-MACHINE=============
@@ -208,10 +213,35 @@ void controller_update() {
     Sensors s = read_sensors();
     LineInfo li = interpret(s);
 
-    // Keep last seen direction for SEEK
-    if (!li.lost) {
-        last_pos = (li.pos >= 0.0f) ? +1 : -1;   // store direction only
+    // --- FOUND debouncing: require a couple of consecutive "not lost" samples ---
+    static int found_cnt = 0;
+
+    if (state == CtrlState::SEEK_LEFT || state == CtrlState::SEEK_RIGHT) {
+        if (!li.lost) found_cnt++;
+        else          found_cnt = 0;
+    } else {
+        found_cnt = 0;
     }
+
+    static constexpr int FOUND_TICKS = 2;   // 2*20ms = 40ms
+    bool found_confirmed = (found_cnt >= FOUND_TICKS);
+
+    if (!li.lost) {
+        if (li.pos > 0.2f)      last_pos = +1;
+        else if (li.pos < -0.2f) last_pos = -1;
+    }
+
+    // --- LOST debouncing: only track "lost" while in FOLLOW ---
+    static int lost_cnt = 0;
+
+    if (state == CtrlState::FOLLOW) {
+        if (li.lost) lost_cnt++;
+        else         lost_cnt = 0;
+    } else {
+        lost_cnt = 0; // don't carry "lost" history through turns/braking/seek
+    }
+
+    bool lost_confirmed = (lost_cnt >= LOST_TICKS);
 
     switch (state) {
 
@@ -231,7 +261,7 @@ void controller_update() {
                 move_forward(DUTY_FWD);
                 break;
             }
-            // ambiguous -> fall through to normal following
+
         }
 
         // --- Normal line following ---
@@ -241,43 +271,65 @@ void controller_update() {
         }
 
         if (!li.lost) {
-            if (li.pos < -POS_DEADBAND_F) {
+
+            float abs_pos = fabsf(li.pos);
+
+            // --- HARD override: force skid when far off ---
+            if (abs_pos > POS_SKID_F) {
+                if (li.pos > 0.0f) {
+                    turn_right_skid_reverse_inner(0.65);
+                } else {
+                    turn_left_skid_reverse_inner(0.6);
+                }
+            }
+            // --- Normal FOLLOW behaviour (unchanged) ---
+            else if (li.pos < -POS_DEADBAND_F) {
                 turn_left_coast_inner(DUTY_TURN);
-            } else if (li.pos > POS_DEADBAND_F) {
+            }
+            else if (li.pos > POS_DEADBAND_F) {
                 turn_right_coast_inner(DUTY_TURN);
-            } else {
+            }
+            else {
                 move_forward(DUTY_FWD);
             }
+
             break;
         }
 
-        // --- Lost line completely: brake briefly then seek ---
+        if (li.lost && !lost_confirmed) {
+
+            //gentle bias toward last seen side
+            if (last_pos >= 0) {
+                // line was last seen to the right -> steer right a bit
+                move_forward_different(DUTY_GRACE + 0.05f, DUTY_GRACE - 0.05f);
+            } else {
+                // line was last seen to the left
+                move_forward_different(DUTY_GRACE - 0.05f, DUTY_GRACE + 0.05f);
+            }
+
+            break;
+        }
+
+        // If we are STILL lost after ~200 ms, now do recovery:
         enter_state(CtrlState::BRAKING, BRAKE_MS);
         motors_brake(BRAKE_STRENGTH);
-
-        // decide where to seek after braking finishes
-        // (we'll pick this in BRAKING-> transition below)
         break;
     }
 
     case CtrlState::SEEK_LEFT: {
-        if (!li.lost) {
-            enter_state(CtrlState::BRAKING, BRAKE_MS);
-            motors_brake(BRAKE_STRENGTH);
-            // after brake, we go FOLLOW (see BRAKING)
-        } else {
-            turn_left_skid_reverse_inner(DUTY_TURN);
+        if (found_confirmed) {
+            enter_state(CtrlState::FOLLOW, 0);
+            break;
         }
+        turn_left_skid_reverse_inner(DUTY_TURN);
         break;
     }
-
     case CtrlState::SEEK_RIGHT: {
-        if (!li.lost) {
-            enter_state(CtrlState::BRAKING, BRAKE_MS);
-            motors_brake(BRAKE_STRENGTH);
-        } else {
-            turn_right_skid_reverse_inner(DUTY_TURN);
+        if (found_confirmed) {
+            enter_state(CtrlState::FOLLOW, 0);
+            break;
         }
+        turn_right_skid_reverse_inner(DUTY_TURN);
         break;
     }
 
