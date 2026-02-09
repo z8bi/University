@@ -10,7 +10,6 @@ format:
     revealjs:
         theme: simple   # other themes: beige, blood, dark, dracula, league, moon, night, serif, simple, sky, solarized
         mouse-wheel: true
-        # chalkboard: true
         highlight-style: github
         slide-number: true
         title-slide-style: pandoc
@@ -23,6 +22,7 @@ format:
         toc: true
         toc-depth: 1
         toc-title: Presentation Outline
+        chalkboard: true
         css: simple.css
 ---
 

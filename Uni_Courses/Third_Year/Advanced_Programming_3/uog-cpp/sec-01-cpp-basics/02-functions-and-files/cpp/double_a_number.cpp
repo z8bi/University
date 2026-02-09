@@ -1,8 +1,8 @@
 #include <iostream>
-
+// using namespace std;
 int get_value_from_user()
 {
- 	std::cout << "Enter an integer: ";
+ 	cout << "Enter an integer: ";
 	int input{};
 	std::cin >> input;
 

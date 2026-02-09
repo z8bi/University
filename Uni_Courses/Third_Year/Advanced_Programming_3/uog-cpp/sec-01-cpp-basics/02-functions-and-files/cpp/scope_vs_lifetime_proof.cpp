@@ -5,6 +5,8 @@ void second_function(int* pointer_to_x) {
     // But we can look at the memory address we were given
     std::cout << "Inside second_function:" << std::endl;
     std::cout << "Value at memory address: " << *pointer_to_x << std::endl;
+    std::cout << "Memory address: " << pointer_to_x << std::endl;
+    // std::cout << x;
 }
 
 void first_function() {

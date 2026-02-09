@@ -1,15 +1,17 @@
 ---
 title: "Installation of IDEs"
 subtitle: "**Visual Studio Code** | **Visual Studio** | **Code::Block**"
-author: |
-    Khiem Nguyen 
+author: 
+    Khiem Nguyen
     <br> Lecturer in Multiscale Materials
     <br> <khiem.nguyen@glasgow.ac.uk>
 author-meta: "Lecturer in Multiscale Materials"
 jupyter: false
 format: 
     html:
-        css: simple.css
+        page-layout: full
+        margin-left: 100px
+        margin-right: 100px
 ---
 
 # Installing an Integrated Development Environment (IDE)

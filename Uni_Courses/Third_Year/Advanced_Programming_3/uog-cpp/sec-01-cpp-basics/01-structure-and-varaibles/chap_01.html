@@ -100,6 +100,8 @@
   <link href="chap_01_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="chap_01_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="chap_01_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="chap_01_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="chap_01_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
   <link href="chap_01_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
   <style type="text/css">
     .reveal div.sourceCode {
@@ -613,7 +615,7 @@ Listing&nbsp;15: Use <code>std::newline</code> to enter a new line
 <span id="cb15-3"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
 <span id="cb15-4"><a href=""></a><span class="op">{</span></span>
 <span id="cb15-5"><a href=""></a>    <span class="co">// std::endl will cause the cursor to move to the next line</span></span>
-<span id="cb15-6"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Hi!"</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span>                <span class="co">// try to remove std::endl here</span></span>
+<span id="cb15-6"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Hi!</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span>                <span class="co">// try to remove std::endl here</span></span>
 <span id="cb15-7"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"My name is Alex."</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span>   <span class="co">// try to remove std::endl here</span></span>
 <span id="cb15-8"><a href=""></a></span>
 <span id="cb15-9"><a href=""></a>    <span class="co">// However, it is advisable to use:</span></span>
@@ -669,13 +671,15 @@ Listing&nbsp;17: <code>std::cin</code> is buffered
 <span id="cb17-6"><a href=""></a></span>
 <span id="cb17-7"><a href=""></a>    <span class="dt">int</span> x<span class="op">{};</span></span>
 <span id="cb17-8"><a href=""></a>    <span class="bu">std::</span>cin <span class="op">&gt;&gt;</span> x<span class="op">;</span></span>
-<span id="cb17-9"><a href=""></a></span>
+<span id="cb17-9"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"You entered "</span> <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
 <span id="cb17-10"><a href=""></a>    <span class="dt">int</span> y<span class="op">{};</span></span>
 <span id="cb17-11"><a href=""></a>    <span class="bu">std::</span>cin <span class="op">&gt;&gt;</span> y<span class="op">;</span></span>
-<span id="cb17-12"><a href=""></a></span>
-<span id="cb17-13"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"You entered "</span> <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="st">" and "</span> <span class="op">&lt;&lt;</span> y <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
-<span id="cb17-14"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb17-15"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb17-12"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"You entered "</span> <span class="op">&lt;&lt;</span> y <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb17-13"><a href=""></a></span>
+<span id="cb17-14"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Finallay:"</span><span class="op">;</span></span>
+<span id="cb17-15"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"You entered "</span> <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="st">" and "</span> <span class="op">&lt;&lt;</span> y <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb17-16"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb17-17"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </figure>
 </div>
@@ -791,6 +795,7 @@ Listing&nbsp;19: Uninitialized variables
   <script src="chap_01_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
   <script src="chap_01_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
   <script src="chap_01_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="chap_01_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
   <script src="chap_01_files/libs/revealjs/plugin/quarto-support/support.js"></script>
   
 
@@ -812,7 +817,8 @@ Listing&nbsp;19: Uninitialized variables
 'autoAnimateDuration': 1,
 'autoAnimateUnmatched': true,
 'jumpToSlide': true,
-'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
 'smaller': false,
  
         // Display controls in the bottom right corner
@@ -983,7 +989,7 @@ Listing&nbsp;19: Uninitialized variables
         },
 
         // reveal.js plugins
-        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
 
           RevealMath,
           RevealNotes,

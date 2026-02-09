@@ -8,6 +8,7 @@ author: |
 author-meta: "Lecturer in Multiscale Materials"
 format: 
     revealjs:
+        # self-contained: true
         theme: simple   # other themes: beige, blood, dark, dracula, league, moon, night, serif, simple, sky, solarized
         mouse-wheel: true
         highlight-style: github
@@ -22,6 +23,7 @@ format:
         toc: true
         toc-depth: 1
         toc-title: Presentation Outline
+        chalkboard: true
         css: simple.css
 ---
 

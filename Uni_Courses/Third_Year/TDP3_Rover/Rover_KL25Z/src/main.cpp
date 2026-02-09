@@ -1,13 +1,3 @@
-/*
- * FRDM-KL25Z — Dual Motor Control via L298 (MBED)
- * ------------------------------------------------
- * Explicit GPIO logic with adjustable PWM duty and timing.
- *
- * Motor driver: L298N
- * - Left motor: left_in1, left_in2, left_pwm (PWM)
- * - Right motor: right_in1, right_in2, right_pwm (PWM)
- * PWM frequency: 20 kHz
- */
 
 #include "mbed.h"
 #include <cmath>
@@ -43,12 +33,12 @@ CtrlState after_brake_state = CtrlState::FOLLOW;
 AnalogOut dac(PTE30);
 
 //Light sensors
-AnalogIn left_sensor_2(A0);
-AnalogIn left_sensor_1(A1);
+AnalogIn left_sensor_2(A4);
+AnalogIn left_sensor_1(A3);
 AnalogIn middle_sensor(A2);
-AnalogIn right_sensor_2(A3);
-AnalogIn right_sensor_1(A4);
-DigitalOut sensor_transistor(D0);
+AnalogIn right_sensor_2(A1);
+AnalogIn right_sensor_1(A0);
+DigitalOut sensor_transistor(PTC11);
 
 // Left motor
 DigitalOut left_in2(D7);
@@ -127,15 +117,15 @@ void motors_release() {
 //====================TUNABLE===========================
 
 static constexpr float DUTY_FWD = 0.25f;
-static constexpr float DUTY_TURN = 0.55f;
+static constexpr float DUTY_TURN = 0.75f;
 static constexpr float BRAKE_STRENGTH = 0.40f;
 
-static constexpr int NUDGE_MS  = 500; //90 degree calibration
+static constexpr int NUDGE_MS  = 300; //90 degree calibration
 static constexpr int TURN90_MS = 1600; // right 90
 static constexpr int TURN90L_MS = 1600; // left 90 (tune separately if needed)
 static constexpr int BRAKE_MS  = 120;
 
-static constexpr float POS_DEADBAND_F = 0.25f; // tune 0.20–0.40
+static constexpr float POS_DEADBAND_F = 0.5f; // tune 0.20–0.40
 
 //======================================================
 //======================================================
@@ -556,5 +546,6 @@ int main() {
 
         ThisThread::sleep_for(1ms);
     }
+    
 }
 
