@@ -467,22 +467,24 @@ Listing&nbsp;3: An example of using template function – Filename: <code>use_te
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb12-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
 <span id="cb12-2"><a href=""></a></span>
 <span id="cb12-3"><a href=""></a><span class="co">// a declaration for our function template (we don't need the definition any more)</span></span>
-<span id="cb12-4"><a href=""></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
-<span id="cb12-5"><a href=""></a>T max<span class="op">(</span>T x<span class="op">,</span> T y<span class="op">);</span></span>
-<span id="cb12-6"><a href=""></a></span>
-<span id="cb12-7"><a href=""></a><span class="kw">template</span><span class="op">&lt;&gt;</span></span>
-<span id="cb12-8"><a href=""></a><span class="dt">int</span> max<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span><span class="dt">int</span> x<span class="op">,</span> <span class="dt">int</span> y<span class="op">)</span> <span class="co">// the generated function max&lt;int&gt;(int, int)</span></span>
-<span id="cb12-9"><a href=""></a><span class="op">{</span></span>
-<span id="cb12-10"><a href=""></a>    <span class="cf">return</span> <span class="op">(</span>x <span class="op">&lt;</span> y<span class="op">)</span> <span class="op">?</span> y <span class="op">:</span> x<span class="op">;</span></span>
-<span id="cb12-11"><a href=""></a><span class="op">}</span></span>
-<span id="cb12-12"><a href=""></a></span>
-<span id="cb12-13"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
-<span id="cb12-14"><a href=""></a><span class="op">{</span></span>
-<span id="cb12-15"><a href=""></a>    <span class="co">// instantiates and calls function max&lt;int&gt;(int, int)</span></span>
-<span id="cb12-16"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> max<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span> </span>
-<span id="cb12-17"><a href=""></a></span>
-<span id="cb12-18"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb12-19"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-4"><a href=""></a></span>
+<span id="cb12-5"><a href=""></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb12-6"><a href=""></a>T max<span class="op">(</span>T x<span class="op">,</span> T y<span class="op">);</span></span>
+<span id="cb12-7"><a href=""></a></span>
+<span id="cb12-8"><a href=""></a><span class="kw">template</span><span class="op">&lt;&gt;</span></span>
+<span id="cb12-9"><a href=""></a><span class="dt">int</span> max<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span><span class="dt">int</span> x<span class="op">,</span> <span class="dt">int</span> y<span class="op">)</span> <span class="co">// the generated function max&lt;int&gt;(int, int)</span></span>
+<span id="cb12-10"><a href=""></a><span class="op">{</span></span>
+<span id="cb12-11"><a href=""></a>    <span class="cf">return</span> <span class="op">(</span>x <span class="op">&lt;</span> y<span class="op">)</span> <span class="op">?</span> y <span class="op">:</span> x<span class="op">;</span></span>
+<span id="cb12-12"><a href=""></a><span class="op">}</span></span>
+<span id="cb12-13"><a href=""></a></span>
+<span id="cb12-14"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb12-15"><a href=""></a><span class="op">{</span></span>
+<span id="cb12-16"><a href=""></a>    <span class="co">// instantiates and calls function max&lt;int&gt;(int, int)</span></span>
+<span id="cb12-17"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> max<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span> </span>
+<span id="cb12-18"><a href=""></a></span>
+<span id="cb12-19"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb12-20"><a href=""></a><span class="op">}</span></span>
+<span id="cb12-21"><a href=""></a></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>➥ Let us compile it and run to see.</p>
 </section>
 <section id="function-template-instantiation-3" class="slide level2">

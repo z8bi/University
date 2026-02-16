@@ -1,6 +1,7 @@
 #include <iostream>
 
 // a declaration for our function template (we don't need the definition any more)
+
 template <typename T>
 T max(T x, T y);
 
@@ -17,3 +18,4 @@ int main()
 
     return 0;
 }
+

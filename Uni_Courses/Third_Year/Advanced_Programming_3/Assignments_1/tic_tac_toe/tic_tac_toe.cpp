@@ -3,12 +3,13 @@
 #include <vector>
 #include<cstdlib>
 
-using namespace std;
+using namespace std; //Yay namespace saves time
 
-//==================================
-//=========Main Game Class==========
-//==================================
+//=================================================
+//=========Main Game Class + Helper class==========
+//=================================================
 
+//Enum class to keep track of the game state
 enum Game_States {
     in_progress,
     player_won,
@@ -16,6 +17,7 @@ enum Game_States {
     draw
 };
 
+//Main class
 class Game {
     public:
         //Storing Tic-Tac-Toe board (default empty)
@@ -32,14 +34,17 @@ class Game {
 //=========Helper Functions=========
 //==================================
 
+//All helper function require a game instance to be passed by refference
+
 //Function using nested FOR loops printing the game_state
 void print_board(Game& current_game) {
 
     cout << "\n+" << " - - - " << "+" << endl;
 
-    for(int i {0}; i < 3; i++) {
+    //Iterates the Game instance's internal board array and prints it out with nice vertical spacers
+    for(int i = 0; i < 3; i++) {
         cout << "| ";
-        for(int j {0}; j < 3; j++) {
+        for(int j = 0; j < 3; j++) {
             cout << current_game.board[i][j] << " "; 
         }
         cout << "|" << endl;
@@ -48,19 +53,23 @@ void print_board(Game& current_game) {
     cout << "+" << " - - - " << "+\n" << endl;
 }
 
+//Both player and computer use this function to interact with the Game object
 void make_move(Game& current_game, bool is_player_turn) {
     //Player Plays
     if(is_player_turn) {
+        //While loop ensures a player makes a valid movement -> is exited with break when correct move is made
         while (true) {
             cout << "Please select which tile to mark by typing 1 - 9. (Assume 1 is top left)" << endl;
-            int player_choice {};
+            int player_choice = ' ';
             cin >> player_choice;
 
+            //Useful math which converts the numbers to the corresponding positions 
             int row = (player_choice - 1) / 3;
             int column = (player_choice - 1) % 3;
 
             char chosen_tile = current_game.board[row][column];
-
+            
+            //Logic for valid or invalid move -> uses Game instance's internal board array
             if(chosen_tile == '.') {
                 current_game.board[row][column] = 'O';
                 break;
@@ -79,17 +88,18 @@ void make_move(Game& current_game, bool is_player_turn) {
     //Computer Plays
     else {
         while(true) {
-            //Exit if board full
+            //Exit if board full -> makes sure the CPU doesn't explode if the while loop never exits because the board is full
             if (current_game.number_of_plays >= 9) return;
 
             //Roll the computer choice 1 - 9
             int computer_choice = (rand() % 9) + 1;  // 1..9
 
-            //Locate tile on the board
+            //Locate tile on the board using the same math logic as before
             int row = (computer_choice - 1) / 3;
             int column = (computer_choice - 1) % 3; 
             char chosen_tile = current_game.board[row][column];
-
+            
+            //If the tile isn't empty then if statement isn't passed -> loop repeats
             if(chosen_tile == '.') {
                 current_game.board[row][column] = 'X';
                 break;
@@ -149,10 +159,10 @@ int main() {
     //Initialize Game instance
     Game test_game;
 
-    // Providing a seed value
+    //Providing a seed value to the random library
     srand((unsigned) time(NULL));
 
-    //Keep playing until game is no longer "in progress"
+    //Keep playing until game is no longer "in progress" -> tracker by the enum class inside the Game object
     while(test_game.game_state == in_progress) {
         print_board(test_game);
         
@@ -164,14 +174,16 @@ int main() {
         make_move(test_game, false); 
         check_win(test_game, 'X'); 
 
-        //Check if board full
+        //Check if board full -> draw (how does one lose draw against computer)
         if(test_game.number_of_plays >= 9 && test_game.game_state == in_progress) {
             test_game.game_state = draw;
         }
     }
 
+    //Game is over but show the last board state before win message
     print_board(test_game);
 
+    //Win/Loss/Draw terminal text
     switch(test_game.game_state) {
         case draw: 
             cout <<
