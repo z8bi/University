@@ -82,7 +82,7 @@ DigitalOut LED_G(LED_GREEN);
 DigitalOut LED_B(LED_BLUE);
 
 // Color sensor
-tcs3472::TCS3472 color(I2C_SDA, I2C_SCL, 100000);
+tcs3472::TCS3472 color(PTE0, PTE1, 100000); // SDA=PTE0, SCL=PTE1 (if wired that way)
 
 // Ultrasonic sensors
 UltrasonicSensor us_front(D8,  D9);
@@ -92,6 +92,7 @@ UltrasonicSensor us_right(D10, D11);
 //==================== ISR FLAGS =======================
 //======================================================
 
+Ticker debugTick;
 Ticker controlTick;
 Ticker ultraTick;
 Ticker colorTick;
@@ -99,10 +100,12 @@ Ticker colorTick;
 volatile bool control_due = false;
 volatile bool ultra_due   = false;
 volatile bool color_due   = false;
+volatile bool debug_due = false;
 
 static void control_isr() { control_due = true; }
 static void ultra_isr()   { ultra_due   = true; }
 static void color_isr()   { color_due   = true; }
+static void debug_isr() { debug_due = true; }
 
 //======================================================
 //==================== SHARED DATA =====================
@@ -543,35 +546,40 @@ static void controller_update() {
 //======================================================
 
 int main() {
-    Debug::init(true, true, PTE22 /*BT_TX*/, PTE23 /*BT_RX*/, 9600);
+    sensor_transistor = 1;
+    Debug::init(true, true, PTE22 ,PTE23, 9600);
 
     motors_init(Config::PWM_FREQ_HZ);
-
+    
     // Color init
     const bool tcs_ok = color.init(100.0f, tcs3472::Gain::X16);
     if (!tcs_ok) {
         // Optional: indicate sensor failure; keep running anyway
         Debug::log("TCS3472 init failed");
+        enter_state(CtrlState::STOPPED, 0);
     }
-
-    sensor_transistor = 1;
-
+    else {
+        motors_all_off();
+        enter_state(CtrlState::FOLLOW, 0);
+    }
+    
     colorTick.attach(&color_isr, 100ms);
     controlTick.attach(&control_isr, chrono::milliseconds(Config::CTRL_PERIOD_MS));
     ultraTick.attach(&ultra_isr, chrono::milliseconds(Config::ULTRA_PERIOD_MS));
+    debugTick.attach(&debug_isr, 1s);   // 1 Hz
 
-    motors_all_off();
-    enter_state(CtrlState::FOLLOW, 0);
 
     while (true) {
         bool do_update = false;
         bool do_ultra  = false;
         bool do_color  = false;
+        bool do_debug = false;
 
         core_util_critical_section_enter();
         if (control_due) { control_due = false; do_update = true; }
         if (ultra_due)   { ultra_due   = false; do_ultra  = true; }
         if (color_due)   { color_due   = false; do_color  = true; }
+        if (debug_due)   { debug_due   = false; do_debug  = true; }
         core_util_critical_section_exit();
 
         //================ ULTRASONIC =================
@@ -652,7 +660,10 @@ int main() {
             controller_update();
         }
 
-        Debug::tick();
+        if (do_debug) {
+            Debug::tick();
+        }
         ThisThread::sleep_for(1ms);
     }
+    
 }
