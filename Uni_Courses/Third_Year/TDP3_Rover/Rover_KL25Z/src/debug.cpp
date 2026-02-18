@@ -33,6 +33,7 @@ static const char* state_str(CtrlState st)
         case CtrlState::BRAKING:        return "BRAKING";
         case CtrlState::OBSTACLE_AVOID: return "OBSTACLE_AVOID";
         case CtrlState::STOPPED:        return "STOPPED";
+        case CtrlState::FULLY_STOPPED: return "FULLY_STOPPED";
         default:                        return "UNK";
     }
 }
@@ -180,6 +181,20 @@ void tick()
     if (n < 0) return;
     if (n >= (int)sizeof(buf)) n = sizeof(buf) - 1;
     write_all(buf, n);
+}
+
+bool bt_read_char(char &c)
+{
+    if (!bt_enabled || !bt) return false;
+    if (!bt->readable()) return false;
+
+    char ch;
+    ssize_t n = bt->read(&ch, 1);
+    if (n == 1) {
+        c = ch;
+        return true;
+    }
+    return false;
 }
 
 } // namespace Debug

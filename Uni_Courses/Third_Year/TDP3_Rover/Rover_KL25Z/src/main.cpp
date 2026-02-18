@@ -5,6 +5,7 @@
 #include "ultrasonic_sensor.hpp"
 #include "tcs3472.hpp"
 #include "debug.hpp"
+#include <cctype>
 
 using namespace std::chrono_literals;
 
@@ -14,31 +15,36 @@ using namespace std::chrono_literals;
 
 namespace Config {
 
-static constexpr int FOUND_TICKS = 2;
+static constexpr int FOUND_TICKS = 1;
 
 // Drive tunables
-static constexpr float DUTY_FWD   = 0.40f;
-static constexpr float DUTY_TURN  = 0.72f;
+static constexpr float DUTY_FWD   = 0.35f;
+static constexpr float DUTY_TURN  = 0.74f;
 
 static constexpr float ALIGN_DUTY_TURN     = 0.80f;
 static constexpr float TURN_BRAKE_STRENGTH = 0.90f;
 
 // Gentler turning in FOLLOW
-static constexpr float DUTY_FOLLOW_TURN      = 0.70f;
-static constexpr float FOLLOW_BRAKE_STRENGTH = 0.80f;
+static constexpr float DUTY_FOLLOW_TURN      = 0.60f;
+static constexpr float FOLLOW_BRAKE_STRENGTH = 0.70f;
 
+//SEEK BRAKING
 static constexpr float BRAKE_STRENGTH = 1.0f;
 static constexpr int   BRAKE_MS       = 50;
 
+// FULLY_STOPPED behavior (BT/manual hard stop)
+static constexpr int   FULL_STOP_BRAKE_MS       = 120;  // tune: 60–200ms
+static constexpr float FULL_STOP_BRAKE_STRENGTH = 1.0f; // tune: 0.7–1.0
+
 // Controller timing
 static constexpr int CTRL_PERIOD_MS         = 20;
-static constexpr int FOLLOW_LOST_CONFIRM_MS = 60;
+static constexpr int FOLLOW_LOST_CONFIRM_MS = 40;
 static constexpr int FOLLOW_LOST_TICKS      = FOLLOW_LOST_CONFIRM_MS / CTRL_PERIOD_MS;
 
 static constexpr int ALIGN_LOST_CONFIRM_MS  = 100;
 static constexpr int ALIGN_LOST_TICKS       = ALIGN_LOST_CONFIRM_MS / CTRL_PERIOD_MS;
 
-static constexpr int SEEK_CENTER_LOCK_MS = 250;
+static constexpr int SEEK_CENTER_LOCK_MS = 300;
 
 // Ultrasonic
 static constexpr int   ULTRA_PERIOD_MS  = 80;
@@ -61,6 +67,12 @@ static constexpr int   STOP_BRAKE_MS              = 500;
 
 static constexpr float PWM_FREQ_HZ = 20000.0f;
 
+//=======MANUAL========
+// Manual BT (WASD) control
+static constexpr float BT_DUTY_FWD  = 0.4f;
+static constexpr float BT_DUTY_REV  = 0.3f;
+static constexpr float BT_DUTY_TURN = 0.72f;
+
 } // namespace Config
 
 //======================================================
@@ -72,6 +84,14 @@ CtrlState state = CtrlState::FOLLOW;
 Kernel::Clock::time_point state_until;
 
 static int last_pos = 0;
+char c{}; //bluetooth input
+static bool manual_mode = true;    
+
+DigitalIn bt_state(PTE20); // pick your pin
+
+bool bt_connected() {
+    return bt_state.read() == 1;
+}
 
 // DAC output (unused in this file, but keep if you use it elsewhere)
 AnalogOut dac(PTE30);
@@ -154,9 +174,31 @@ static void leds_for_state(CtrlState st) {
         case CtrlState::BRAKING:        leds_set(false, false, true ); break;
         case CtrlState::OBSTACLE_AVOID: leds_set(false, true,  true ); break;
         case CtrlState::STOPPED:        leds_set(true,  false, true ); break;
+        case CtrlState::FULLY_STOPPED:  leds_set(true, true, true);    break;
         default:                        leds_set(false, false, false); break;
     }
 }
+
+static void leds_for_manual_cmd(char cmd)
+{
+    // cmd is already uppercased in your BT handler
+    switch (cmd) {
+        case 'W': // forward
+            leds_set(false, true,  false); // GREEN
+            break;
+        case 'S': // backward
+            leds_set(true,  false, true ); // MAGENTA (R+B)
+            break;
+        case 'A': // turning
+        case 'D':
+            leds_set(true,  false, false); // RED
+            break;
+        default:
+            // leave as-is
+            break;
+    }
+}
+
 
 static void enter_state(CtrlState st, int duration_ms) {
     core_util_critical_section_enter();
@@ -215,18 +257,29 @@ static void controller_update() {
 
     const LightState ls = sh.light;
 
-    //================ COLOR -> STOPPED (RED) ================
+    //====SKIP STATE MACHINE IF USER IS IN CONTROL OVER BLUETOOTH (MANUAL MODE)====  
+
+    if (manual_mode && state != CtrlState::FULLY_STOPPED) {
+        return;
+    }
+
+    ///================ COLOR -> STOPPED (RED) ================
     static int red_ctrl_cnt = 0;
     if (ls == LightState::RED) red_ctrl_cnt++;
     else                       red_ctrl_cnt = 0;
 
-    if (state != CtrlState::STOPPED && red_ctrl_cnt >= Config::RED_CTRL_CONFIRM_TICKS) {
+    // Don't let traffic-light logic kick in if we're FULLY_STOPPED (BT/manual hold)
+    if (state != CtrlState::FULLY_STOPPED &&
+        state != CtrlState::STOPPED &&
+        red_ctrl_cnt >= Config::RED_CTRL_CONFIRM_TICKS)
+    {
         red_ctrl_cnt = 0;
         enter_state(CtrlState::STOPPED, 0);
         stop_brake_until = Kernel::Clock::now() + chrono::milliseconds(Config::STOP_BRAKE_MS);
         motors_brake(Config::BRAKE_STRENGTH);
         return;
     }
+
 
     //================ ULTRASONIC (front obstacle) ============
     const bool front_fresh = (Kernel::Clock::now() - sh.front_stamp) < 300ms;
@@ -537,6 +590,16 @@ static void controller_update() {
 
         break;
     }
+    case CtrlState::FULLY_STOPPED: {
+        if (!state_time_elapsed()) motors_brake(Config::FULL_STOP_BRAKE_STRENGTH);
+        else                       motors_all_off();
+        break;
+    }
+
+    case CtrlState::MANUAL_BT: {
+        break;
+    }
+
 
     } // switch
 }
@@ -546,29 +609,28 @@ static void controller_update() {
 //======================================================
 
 int main() {
-    sensor_transistor = 1;
-    Debug::init(true, true, PTE22 ,PTE23, 9600);
+    sensor_transistor = 1; //Line sensing transistor on
+
+    Debug::init(true, true, PTE22, PTE23, 9600); //USB + Bluetooth debugging
 
     motors_init(Config::PWM_FREQ_HZ);
     
-    // Color init
+    // Color Sensor init
     const bool tcs_ok = color.init(100.0f, tcs3472::Gain::X16);
     if (!tcs_ok) {
         // Optional: indicate sensor failure; keep running anyway
         Debug::log("TCS3472 init failed");
-        enter_state(CtrlState::STOPPED, 0);
     }
-    else {
-        motors_all_off();
-        enter_state(CtrlState::FOLLOW, 0);
-    }
+
+    enter_state(CtrlState::FULLY_STOPPED, 0);
     
+    //Init ticks and ISRs
     colorTick.attach(&color_isr, 100ms);
     controlTick.attach(&control_isr, chrono::milliseconds(Config::CTRL_PERIOD_MS));
     ultraTick.attach(&ultra_isr, chrono::milliseconds(Config::ULTRA_PERIOD_MS));
     debugTick.attach(&debug_isr, 1s);   // 1 Hz
 
-
+    //Main loop: process ISRs
     while (true) {
         bool do_update = false;
         bool do_ultra  = false;
@@ -663,6 +725,64 @@ int main() {
         if (do_debug) {
             Debug::tick();
         }
+
+        //Do bluetooth stuff
+        //================ BT: enter manual mode on drive keys ================
+        //================ BT: manual control =================
+        if (bt_connected() && Debug::bt_read_char(c)) {
+
+            // ignore CR/LF
+            if (c == '\r' || c == '\n' || c < 32 || c > 126) {
+                // do nothing
+            } else {
+
+                // make lowercase work
+                c = (char)toupper((unsigned char)c);
+
+                // USB-visible ACK (so you can confirm chars are arriving)
+                char buf[32];
+                snprintf(buf, sizeof(buf), "BT RX: %c\r\n", c);
+                Debug::log(buf);
+
+                // If your Debug library has a BT print, you can also echo on BT:
+                // Debug::bt_write(buf);  // <-- uncomment ONLY if this exists
+
+                if (c == 'W' || c == 'A' || c == 'S' || c == 'D') {
+                    manual_mode = true;
+                    Debug::log("BT: MANUAL MODE\r\n");
+
+                    enter_state(CtrlState::MANUAL_BT, 0);
+
+                    leds_for_manual_cmd(c);   // <-- add this
+
+                    if (c == 'W') move_forward(Config::BT_DUTY_FWD);
+                    if (c == 'S') move_backward(Config::BT_DUTY_REV);
+                    if (c == 'A') turn_left_skid_reverse_inner(Config::BT_DUTY_TURN);
+                    if (c == 'D') turn_right_skid_reverse_inner(Config::BT_DUTY_TURN);
+                }
+                else if (c == 'Q') {
+                    // Hard stop
+                    manual_mode = true; // keep manual locked
+                    enter_state(CtrlState::FULLY_STOPPED, Config::FULL_STOP_BRAKE_MS);
+                    motors_brake(Config::FULL_STOP_BRAKE_STRENGTH); // immediate
+                    Debug::log("BT: FULLY_STOPPED\r\n");
+                }
+                else if (c == 'X') {
+                    // Exit manual + re-seek
+                    manual_mode = false;
+                    enter_state((last_pos >= 0) ? CtrlState::SEEK_RIGHT : CtrlState::SEEK_LEFT, 0);
+                    Debug::log("BT: EXIT MANUAL -> SEEK\r\n");
+                }
+                else if (c == 'H') {
+                    Debug::log("BT: WASD=manual, Q=hard stop, X=exit manual+seek\r\n");
+                }
+                else {
+                    Debug::log("BT: unknown cmd\r\n");
+                }
+            }
+        }
+
+
         ThisThread::sleep_for(1ms);
     }
     

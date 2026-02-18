@@ -56,6 +56,8 @@ void update_color(const ColorPacket& p);
 
 //==================== PRINT ====================
 
+bool bt_read_char(char &c);  // non-blocking 1-byte read from BT, returns true if got a byte
+
 // Call at 1 Hz (or whenever). Prints: sensors array, state, distances, light, RGB+C and %.
 void tick();
 
