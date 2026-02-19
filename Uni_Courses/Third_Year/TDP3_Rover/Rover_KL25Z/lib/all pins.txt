@@ -10,7 +10,7 @@ left_sensor_1(A3);
 middle_sensor(A2);
 right_sensor_2(A1);
 right_sensor_1(A0);
-sensor_transistor(PTC11);
+sensor_transistor(PTC11);(or any other gpio too)
 GND
 
 ====COLOR SENSOR CONNECTOR===
