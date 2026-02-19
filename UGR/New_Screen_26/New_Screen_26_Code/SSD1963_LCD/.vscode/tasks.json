@@ -21,6 +21,21 @@
       ],
       "dependsOn": "Build (Debug)",
       "problemMatcher": []
+    },
+    {
+      "label": "Flash (USB DFU via CubeProgrammer)",
+      "type": "shell",
+      "command": "STM32_Programmer_CLI",
+      "args": [
+        "-c", "port=USB1",
+        "-w", "${workspaceFolder}/build/Debug/SSD1963_LCD.bin",
+        "0x08000000",
+        "-v",
+        "-rst"
+      ],
+      "dependsOn": "Build (Debug)",
+      "problemMatcher": []
     }
+
   ]
 }

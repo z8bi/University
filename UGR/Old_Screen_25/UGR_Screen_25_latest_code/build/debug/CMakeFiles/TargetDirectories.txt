@@ -1,0 +1,3 @@
+C:/Users/emaba/STM32CubeIDE/Proper/UGR_Screen_25/build/debug/CMakeFiles/UGR_Screen_25.dir
+C:/Users/emaba/STM32CubeIDE/Proper/UGR_Screen_25/build/debug/CMakeFiles/edit_cache.dir
+C:/Users/emaba/STM32CubeIDE/Proper/UGR_Screen_25/build/debug/CMakeFiles/rebuild_cache.dir

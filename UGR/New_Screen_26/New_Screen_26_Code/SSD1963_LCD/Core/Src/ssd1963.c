@@ -93,6 +93,90 @@ void SSD1963_Fill(uint16_t rgb565)
     }
 }
 
+// -----------------------------
+// Tiny "gfx" helpers (RGB565)
+// -----------------------------
+
+void SSD1963_DrawPixel(uint16_t x, uint16_t y, uint16_t rgb565)
+{
+    if (x >= SSD_HOR_RESOLUTION || y >= SSD_VER_RESOLUTION) return;
+    SSD1963_SetWindow(x, y, x, y);
+    *(__IO uint16_t*)LCD_DATA_ADDR = rgb565;
+}
+
+void SSD1963_DrawHLine(uint16_t x, uint16_t y, uint16_t w, uint16_t rgb565)
+{
+    if (y >= SSD_VER_RESOLUTION || x >= SSD_HOR_RESOLUTION) return;
+    if (x + w > SSD_HOR_RESOLUTION) w = (uint16_t)(SSD_HOR_RESOLUTION - x);
+    if (w == 0) return;
+    SSD1963_SetWindow(x, y, (uint16_t)(x + w - 1), y);
+    for (uint32_t i = 0; i < w; i++) *(__IO uint16_t*)LCD_DATA_ADDR = rgb565;
+}
+
+void SSD1963_DrawVLine(uint16_t x, uint16_t y, uint16_t h, uint16_t rgb565)
+{
+    if (x >= SSD_HOR_RESOLUTION || y >= SSD_VER_RESOLUTION) return;
+    if (y + h > SSD_VER_RESOLUTION) h = (uint16_t)(SSD_VER_RESOLUTION - y);
+    if (h == 0) return;
+    SSD1963_SetWindow(x, y, x, (uint16_t)(y + h - 1));
+    for (uint32_t i = 0; i < h; i++) *(__IO uint16_t*)LCD_DATA_ADDR = rgb565;
+}
+
+void SSD1963_FillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t rgb565)
+{
+    if (x >= SSD_HOR_RESOLUTION || y >= SSD_VER_RESOLUTION) return;
+    if (x + w > SSD_HOR_RESOLUTION) w = (uint16_t)(SSD_HOR_RESOLUTION - x);
+    if (y + h > SSD_VER_RESOLUTION) h = (uint16_t)(SSD_VER_RESOLUTION - y);
+    if (w == 0 || h == 0) return;
+
+    SSD1963_SetWindow(x, y, (uint16_t)(x + w - 1), (uint16_t)(y + h - 1));
+    const uint32_t pixels = (uint32_t)w * (uint32_t)h;
+    for (uint32_t i = 0; i < pixels; i++) *(__IO uint16_t*)LCD_DATA_ADDR = rgb565;
+}
+
+void SSD1963_WritePixels(const uint16_t *px, uint32_t count)
+{
+    volatile uint16_t *dst = (volatile uint16_t*)LCD_DATA_ADDR;
+    for (uint32_t i = 0; i < count; i++) {
+        *dst = px[i];
+    }
+}
+
+void SSD1963_TestColorBars(void)
+{
+    // 8 vertical bars (classic)
+    const uint16_t colors[8] = {
+        RGB565(255,255,255), // white
+        RGB565(255,255,0),   // yellow
+        RGB565(0,255,255),   // cyan
+        RGB565(0,255,0),     // green
+        RGB565(255,0,255),   // magenta
+        RGB565(255,0,0),     // red
+        RGB565(0,0,255),     // blue
+        RGB565(0,0,0)        // black
+    };
+
+    const uint16_t bar_w = (uint16_t)(SSD_HOR_RESOLUTION / 8);
+    for (uint16_t i = 0; i < 8; i++) {
+        const uint16_t x = (uint16_t)(i * bar_w);
+        const uint16_t w = (i == 7) ? (uint16_t)(SSD_HOR_RESOLUTION - x) : bar_w;
+        SSD1963_FillRect(x, 0, w, SSD_VER_RESOLUTION, colors[i]);
+    }
+}
+
+void SSD1963_TestCheckerboard(uint16_t tile)
+{
+    if (tile == 0) tile = 16;
+    for (uint16_t y = 0; y < SSD_VER_RESOLUTION; y += tile) {
+        for (uint16_t x = 0; x < SSD_HOR_RESOLUTION; x += tile) {
+            const uint16_t w = (x + tile > SSD_HOR_RESOLUTION) ? (uint16_t)(SSD_HOR_RESOLUTION - x) : tile;
+            const uint16_t h = (y + tile > SSD_VER_RESOLUTION) ? (uint16_t)(SSD_VER_RESOLUTION - y) : tile;
+            const uint16_t c = (((x / tile) ^ (y / tile)) & 1) ? RGB565(30,30,30) : RGB565(220,220,220);
+            SSD1963_FillRect(x, y, w, h, c);
+        }
+    }
+}
+
 static void ssd_set_madctl_landscape(void)
 {
     // Vendor example maps "USE_HORIZONTAL=1" to MADCTL value 0x00 (with their setup).

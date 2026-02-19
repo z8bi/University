@@ -1,0 +1,3 @@
+/Users/danielborkovec/University/UGR/Old_Screen_25/UGR_Screen_25_latest_code/build/release/CMakeFiles/UGR_Screen_25.dir
+/Users/danielborkovec/University/UGR/Old_Screen_25/UGR_Screen_25_latest_code/build/release/CMakeFiles/edit_cache.dir
+/Users/danielborkovec/University/UGR/Old_Screen_25/UGR_Screen_25_latest_code/build/release/CMakeFiles/rebuild_cache.dir

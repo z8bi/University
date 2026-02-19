@@ -1,0 +1,9 @@
+../Core/Src/LCD_2inch4.c:56:6:LCD_2IN4_Reset	0	static
+../Core/Src/LCD_2inch4.c:96:6:LCD_2IN4_WriteData_Byte	0	static
+../Core/Src/LCD_2inch4.c:114:6:LCD_2IN4_Init	40	static
+../Core/Src/LCD_2inch4.c:222:6:LCD_2IN4_SetWindow	56	static
+../Core/Src/LCD_2inch4.c:246:6:LCD_2IN4_SetCursor	48	static
+../Core/Src/LCD_2inch4.c:268:6:LCD_2IN4_Clear	80	static
+../Core/Src/LCD_2inch4.c:290:6:LCD_2IN4_ClearWindow	88	static
+../Core/Src/LCD_2inch4.c:306:6:LCD_2IN4_Display	32	static
+../Core/Src/LCD_2inch4.c:326:6:LCD_2IN4_DrawPaint	8	static

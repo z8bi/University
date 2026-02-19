@@ -74,3 +74,11 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Inc
 )
+
+add_custom_command(TARGET SSD1963_LCD POST_BUILD
+  COMMAND ${CMAKE_OBJCOPY} -O binary
+          $<TARGET_FILE:SSD1963_LCD>
+          ${CMAKE_BINARY_DIR}/SSD1963_LCD.bin
+  COMMENT "Generating .bin"
+)
+

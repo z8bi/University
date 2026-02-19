@@ -1,0 +1,27 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build",
+      "type": "cmake",
+      "command": "build",
+      "problemMatcher": "$gcc",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Flash and Reset STM32",
+      "type": "shell",
+      "command": "\"C:\\Program Files\\STMicroelectronics\\STM32Cube\\STM32CubeProgrammer\\bin\\STM32_Programmer_CLI.exe\"",
+      "args": [
+        "-c", "port=SWD",
+        "-w", "build/debug/UGR_Screen_25.elf",
+        "-rst"
+      ],
+      "problemMatcher": [],
+      "group": "build"
+    }
+  ]
+}

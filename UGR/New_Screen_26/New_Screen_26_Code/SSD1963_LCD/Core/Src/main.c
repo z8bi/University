@@ -25,6 +25,11 @@
 #include "usb_otg.h"
 #include "gpio.h"
 #include "fmc.h"
+#include "dashboard.h"
+#include "gfx.h"
+
+//Logos
+#include "logos/ugr_logo.h"
 
 #include "ssd1963.h"
 
@@ -114,18 +119,39 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   __enable_irq();
+
+  //draw_UGR_logo();
+
   while (1)
   {
     /* USER CODE END WHILE */
-    SSD1963_Fill(RGB565(255, 0, 0));   // solid red
-    HAL_Delay(500);
-    SSD1963_Fill(RGB565(0, 255, 0));   // solid green
-    HAL_Delay(500);
-    SSD1963_Fill(RGB565(0, 0, 255));   // solid blue
-    HAL_Delay(500);
+    // 1) Solid fills (quick sanity)
+    SSD1963_Fill(RGB565(255, 0, 0));     // red
+    HAL_Delay(250);
+    SSD1963_Fill(RGB565(0, 255, 0));     // green
+    HAL_Delay(250);
+    SSD1963_Fill(RGB565(0, 0, 255));     // blue
+    HAL_Delay(250);
     SSD1963_Fill(RGB565(255, 255, 255)); // white
-    HAL_Delay(500);
+    HAL_Delay(250);
+
+    // 2) Color bars (checks RGB order & gradients)
+    SSD1963_TestColorBars();
+    HAL_Delay(800);
+
+    // 3) Checkerboard (checks address windowing / tearing)
+    SSD1963_TestCheckerboard(24);
+    HAL_Delay(800);
+
+    // 4) Moving rect (checks X/Y direction)
+    SSD1963_Fill(RGB565(0,0,0));
+    for (uint16_t x = 0; x < 800; x += 20) {
+      SSD1963_Fill(RGB565(0,0,0));
+      SSD1963_FillRect(x, 200, 80, 80, RGB565(255, 120, 0));
+      HAL_Delay(20);
+    }
     /* USER CODE BEGIN 3 */
+    //
   }
   /* USER CODE END 3 */
 }

@@ -174,7 +174,7 @@ build SSD1963_LCD.elf: C_EXECUTABLE_LINKER__SSD1963_LCD_Debug cmake/stm32cubemx/
   LINK_FLAGS = -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard  -T "/Users/danielborkovec/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/STM32F767XX_FLASH.ld" --specs=nano.specs -Wl,-Map=SSD1963_LCD.map -Wl,--gc-sections -Wl,--print-memory-usage
   LINK_LIBRARIES = -lm
   OBJECT_DIR = CMakeFiles/SSD1963_LCD.dir
-  POST_BUILD = :
+  POST_BUILD = cd /Users/danielborkovec/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/build/Debug && arm-none-eabi-objcopy -O binary /Users/danielborkovec/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/build/Debug/SSD1963_LCD.elf /Users/danielborkovec/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/build/Debug/SSD1963_LCD.bin
   PRE_LINK = :
   TARGET_FILE = SSD1963_LCD.elf
   TARGET_PDB = SSD1963_LCD.elf.dbg

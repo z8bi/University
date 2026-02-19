@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"/Users/danielborkovec/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/build/Release/cmake_install.cmake",
+		"/Users/danielborkovec/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/build/Release/cmake/stm32cubemx/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
