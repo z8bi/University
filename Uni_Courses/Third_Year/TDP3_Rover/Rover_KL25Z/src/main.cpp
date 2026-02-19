@@ -5,7 +5,8 @@
 #include "ultrasonic_sensor.hpp"
 #include "tcs3472.hpp"
 #include "debug.hpp"
-#include <cctype>
+#include "audio.hpp"
+#include "sounds.hpp"
 
 using namespace std::chrono_literals;
 
@@ -15,11 +16,18 @@ using namespace std::chrono_literals;
 
 namespace Config {
 
+// Sensor reading timings
+static constexpr int CTRL_PERIOD_MS = 20;
+static constexpr int DEBUG_PERIOD_MS = 1000;
+static constexpr int COLOR_PERIOD_MS = 100;
+static constexpr int ULTRA_PERIOD_MS  = 80;
+
+// # of ticks of confirmed "found line" before SEEK->ALIGN
 static constexpr int FOUND_TICKS = 1;
 
 // Drive tunables
 static constexpr float DUTY_FWD   = 0.35f;
-static constexpr float DUTY_TURN  = 0.74f;
+static constexpr float DUTY_TURN  = 0.72f;
 
 static constexpr float ALIGN_DUTY_TURN     = 0.80f;
 static constexpr float TURN_BRAKE_STRENGTH = 0.90f;
@@ -36,18 +44,17 @@ static constexpr int   BRAKE_MS       = 50;
 static constexpr int   FULL_STOP_BRAKE_MS       = 120;  // tune: 60–200ms
 static constexpr float FULL_STOP_BRAKE_STRENGTH = 1.0f; // tune: 0.7–1.0
 
-// Controller timing
-static constexpr int CTRL_PERIOD_MS         = 20;
+//Align and Follow parameters
 static constexpr int FOLLOW_LOST_CONFIRM_MS = 40;
 static constexpr int FOLLOW_LOST_TICKS      = FOLLOW_LOST_CONFIRM_MS / CTRL_PERIOD_MS;
 
 static constexpr int ALIGN_LOST_CONFIRM_MS  = 100;
 static constexpr int ALIGN_LOST_TICKS       = ALIGN_LOST_CONFIRM_MS / CTRL_PERIOD_MS;
 
-static constexpr int SEEK_CENTER_LOCK_MS = 300;
+//How long does SEEK look for the center of the line
+static constexpr int SEEK_CENTER_LOCK_MS = 400;
 
 // Ultrasonic
-static constexpr int   ULTRA_PERIOD_MS  = 80;
 static constexpr float FRONT_MAX_CM     = 200.0f;
 static constexpr float RIGHT_MAX_CM     = 80.0f;
 static constexpr int   ULTRA_STAGGER_MS = 8;
@@ -59,12 +66,13 @@ static constexpr int   OB_CONFIRM_CTRL_TICKS = 2;
 // Traffic light confirm at controller level
 static constexpr int RED_CTRL_CONFIRM_TICKS = 2;
 
-// STOPPED behavior
+// STOPPED behavior for red light: how long to reverse before trying to find red again
 static constexpr float DUTY_REV_FIND_RED          = 0.25f;
 static constexpr int   LOST_RED_TICKS_BEFORE_REV  = 5;  // 5*20ms = 100ms
 static constexpr int   RED_REACQUIRE_TICKS        = 2;
 static constexpr int   STOP_BRAKE_MS              = 500;
 
+//Main PWM frequency (for motors)
 static constexpr float PWM_FREQ_HZ = 20000.0f;
 
 //=======MANUAL========
@@ -79,22 +87,29 @@ static constexpr float BT_DUTY_TURN = 0.72f;
 //================== GLOBAL HW OBJECTS =================
 //======================================================
 
-// State machine
+// State machine timers
 CtrlState state = CtrlState::FOLLOW;
 Kernel::Clock::time_point state_until;
+static Kernel::Clock::time_point stop_brake_until{};
 
 static int last_pos = 0;
 char c{}; //bluetooth input
 static bool manual_mode = true;    
 
-DigitalIn bt_state(PTE20); // pick your pin
-
-bool bt_connected() {
-    return bt_state.read() == 1;
-}
+//=========================================
+//================== PINS =================
+//=========================================
 
 // DAC output (unused in this file, but keep if you use it elsewhere)
-AnalogOut dac(PTE30);
+AudioPlayer audio(PTE30);
+
+//Motors
+AnalogIn left_sensor_2(A4);
+AnalogIn left_sensor_1(A3);
+AnalogIn middle_sensor(A2);
+AnalogIn right_sensor_2(A1);
+AnalogIn right_sensor_1(A0);
+DigitalOut sensor_transistor(PTC11);
 
 // RGB LEDs (KL25Z are active-low)
 DigitalOut LED_R(LED_RED);
@@ -107,6 +122,12 @@ tcs3472::TCS3472 color(PTE0, PTE1, 100000); // SDA=PTE0, SCL=PTE1 (if wired that
 // Ultrasonic sensors
 UltrasonicSensor us_front(D8,  D9);
 UltrasonicSensor us_right(D10, D11);
+
+//Bluetooth state
+DigitalIn bt_state(PTE20);
+static constexpr PinName BT_TX = PTE22;  // KL25Z TX -> BT RX
+static constexpr PinName BT_RX = PTE23;  // KL25Z RX -> BT TX
+static constexpr int     BT_BAUD = 9600;
 
 //======================================================
 //==================== ISR FLAGS =======================
@@ -131,6 +152,8 @@ static void debug_isr() { debug_due = true; }
 //==================== SHARED DATA =====================
 //======================================================
 
+// Shared data used by DEBUG for printing to USB and BT
+
 struct Shared {
     // Color
     tcs3472::RGBC rgbc{};
@@ -153,6 +176,10 @@ static Shared g_shared;
 //==================== HELPERS =========================
 //======================================================
 
+bool bt_connected() {
+    return bt_state.read() == 1;
+}
+
 static inline void leds_set(bool r, bool g, bool b) {
     LED_R = !r;
     LED_G = !g;
@@ -163,6 +190,16 @@ static inline void leds_set(bool r, bool g, bool b) {
 static inline bool debounce(bool cond, int& counter, int threshold) {
     counter = cond ? (counter + 1) : 0;
     return counter >= threshold;
+}
+
+//helper to read shared data with critical section protection
+static inline Shared shared_snapshot()
+{
+    Shared sh;
+    core_util_critical_section_enter();
+    sh = g_shared;
+    core_util_critical_section_exit();
+    return sh;
 }
 
 static void leds_for_state(CtrlState st) {
@@ -194,11 +231,9 @@ static void leds_for_manual_cmd(char cmd)
             leds_set(true,  false, false); // RED
             break;
         default:
-            // leave as-is
             break;
     }
 }
-
 
 static void enter_state(CtrlState st, int duration_ms) {
     core_util_critical_section_enter();
@@ -215,6 +250,7 @@ static inline bool state_time_elapsed() {
 }
 
 static LightState classify_light(const tcs3472::RGBC& v) {
+    //IF LIGHT IS TOO DIM THEN CHANGE V.C LOWER
     if (!v.valid || v.c < 5000) return LightState::NONE;
 
     const int rP = (int)((100U * v.r) / v.c);
@@ -239,47 +275,45 @@ static inline bool should_ping_right(CtrlState st) {
 //================== CONTROLLER UPDATE =================
 //======================================================
 
-static Kernel::Clock::time_point stop_brake_until{};
-
 static void controller_update() {
     Sensors s = read_sensors();
     LineInfo li = interpret(s);
 
     static CtrlState prev_state = CtrlState::FOLLOW;
 
+    //Updates position of the line
     Debug::update_line(Debug::make_line(s, li, true));
 
     // ---- snapshot shared data (one critical section) ----
-    Shared sh;
-    core_util_critical_section_enter();
-    sh = g_shared;
-    core_util_critical_section_exit();
-
+    const Shared sh = shared_snapshot();
     const LightState ls = sh.light;
+
 
     //====SKIP STATE MACHINE IF USER IS IN CONTROL OVER BLUETOOTH (MANUAL MODE)====  
 
-    if (manual_mode && state != CtrlState::FULLY_STOPPED) {
-        return;
-    }
+    if (manual_mode && state != CtrlState::FULLY_STOPPED) return;
 
-    ///================ COLOR -> STOPPED (RED) ================
+
+    //================================================
+    //======= DEBOUNCE AND SMOOTHING SECTION =========
+    //================================================
+
+
+    //================ COLOR -> STOPPED (RED) ================
     static int red_ctrl_cnt = 0;
-    if (ls == LightState::RED) red_ctrl_cnt++;
-    else                       red_ctrl_cnt = 0;
+    const bool red_confirmed = debounce(ls == LightState::RED, red_ctrl_cnt, Config::RED_CTRL_CONFIRM_TICKS);
 
     // Don't let traffic-light logic kick in if we're FULLY_STOPPED (BT/manual hold)
     if (state != CtrlState::FULLY_STOPPED &&
         state != CtrlState::STOPPED &&
-        red_ctrl_cnt >= Config::RED_CTRL_CONFIRM_TICKS)
+        red_confirmed)
     {
-        red_ctrl_cnt = 0;
+        red_ctrl_cnt = 0; // optional: keep it explicit
         enter_state(CtrlState::STOPPED, 0);
         stop_brake_until = Kernel::Clock::now() + chrono::milliseconds(Config::STOP_BRAKE_MS);
         motors_brake(Config::BRAKE_STRENGTH);
         return;
     }
-
 
     //================ ULTRASONIC (front obstacle) ============
     const bool front_fresh = (Kernel::Clock::now() - sh.front_stamp) < 300ms;
@@ -287,16 +321,10 @@ static void controller_update() {
         sh.front_ok && front_fresh && sh.front_cm > 0.0f && sh.front_cm < Config::OB_FRONT_TRIG_CM;
 
     static int ob_cnt = 0;
-    if (state == CtrlState::FOLLOW || state == CtrlState::ALIGN) {
-        if (front_hit) ob_cnt++;
-        else           ob_cnt = 0;
-    } else {
-        ob_cnt = 0;
-    }
+    const bool ob_gate = (state == CtrlState::FOLLOW || state == CtrlState::ALIGN);
+    const bool obstacle_confirmed = debounce(ob_gate && front_hit, ob_cnt, Config::OB_CONFIRM_CTRL_TICKS);
 
-    const bool obstacle_confirmed = (ob_cnt >= Config::OB_CONFIRM_CTRL_TICKS);
-
-    if ((state == CtrlState::FOLLOW || state == CtrlState::ALIGN) && obstacle_confirmed) {
+    if (ob_gate && obstacle_confirmed) {
         enter_state(CtrlState::OBSTACLE_AVOID, 0);
         motors_brake(Config::BRAKE_STRENGTH);
         return;
@@ -304,37 +332,28 @@ static void controller_update() {
 
     //=========================== line debouncing ===========================
 
+    // SEEK: confirm we've found the line again (not lost)
     static int found_cnt = 0;
-    if (state == CtrlState::SEEK_LEFT || state == CtrlState::SEEK_RIGHT) {
-        if (!li.lost) found_cnt++;
-        else          found_cnt = 0;
-    } else {
-        found_cnt = 0;
-    }
-    const bool found_confirmed = (found_cnt >= Config::FOUND_TICKS);
+    const bool in_seek = (state == CtrlState::SEEK_LEFT || state == CtrlState::SEEK_RIGHT);
+    const bool found_confirmed = debounce(in_seek && !li.lost, found_cnt, Config::FOUND_TICKS);
 
+    //Keep track of where the line was for diretion of next SEEK
     if (!li.lost) {
         if (li.pos > 0.2f)       last_pos = +1;
         else if (li.pos < -0.2f) last_pos = -1;
     }
 
+    //follow lost confirmation: confirm we've lost the line in FOLLOW before we switch to ALIGN
     static int lost_cnt = 0;
-    if (state == CtrlState::FOLLOW) {
-        if (li.lost) lost_cnt++;
-        else         lost_cnt = 0;
-    } else {
-        lost_cnt = 0;
-    }
-    const bool follow_lost_confirmed = (lost_cnt >= Config::FOLLOW_LOST_TICKS);
+    const bool follow_lost_confirmed = debounce(state == CtrlState::FOLLOW && li.lost,
+                                            lost_cnt,
+                                            Config::FOLLOW_LOST_TICKS);
 
+    // ALIGN lost confirmation: confirm we've lost the line in ALIGN before we brake and switch to SEEK                                       
     static int align_lost_cnt = 0;
-    if (state == CtrlState::ALIGN) {
-        if (li.lost) align_lost_cnt++;
-        else         align_lost_cnt = 0;
-    } else {
-        align_lost_cnt = 0;
-    }
-    const bool align_lost_confirmed = (align_lost_cnt >= Config::ALIGN_LOST_TICKS);
+    const bool align_lost_confirmed = debounce(state == CtrlState::ALIGN && li.lost,
+                                           align_lost_cnt,
+                                           Config::ALIGN_LOST_TICKS);
 
     // SEEK center-lock
     static bool seek_lock_active = false;
@@ -611,24 +630,30 @@ static void controller_update() {
 int main() {
     sensor_transistor = 1; //Line sensing transistor on
 
-    Debug::init(true, true, PTE22, PTE23, 9600); //USB + Bluetooth debugging
+    //USB + Bluetooth debugging
+    Debug::init(true, true, BT_TX, BT_RX, BT_BAUD);
 
+    //Motors PWM start
     motors_init(Config::PWM_FREQ_HZ);
-    
+
+    //Audio init (for buzzer)
+    audio.init(); 
+    audio.play_u8_mono(mario_style, mario_style_len, mario_style_rate);
+
     // Color Sensor init
     const bool tcs_ok = color.init(100.0f, tcs3472::Gain::X16);
     if (!tcs_ok) {
-        // Optional: indicate sensor failure; keep running anyway
         Debug::log("TCS3472 init failed");
     }
 
+    //Start in fully sopped
     enter_state(CtrlState::FULLY_STOPPED, 0);
     
     //Init ticks and ISRs
-    colorTick.attach(&color_isr, 100ms);
+    colorTick.attach(&color_isr, chrono::milliseconds(Config::COLOR_PERIOD_MS));
     controlTick.attach(&control_isr, chrono::milliseconds(Config::CTRL_PERIOD_MS));
     ultraTick.attach(&ultra_isr, chrono::milliseconds(Config::ULTRA_PERIOD_MS));
-    debugTick.attach(&debug_isr, 1s);   // 1 Hz
+    debugTick.attach(&debug_isr, chrono::milliseconds(Config::DEBUG_PERIOD_MS));  
 
     //Main loop: process ISRs
     while (true) {
@@ -675,12 +700,11 @@ int main() {
                 g_shared.right_stamp = Kernel::Clock::now();
                 core_util_critical_section_exit();
             }
+            
+            //Add new data to debug snapshot
+            const Shared sh = shared_snapshot();
 
-            Shared sh;
-            core_util_critical_section_enter();
-            sh = g_shared;
-            core_util_critical_section_exit();
-
+            //Update debug snapshot with ultrasonic data
             Debug::update_ultra(Debug::make_ultra(sh.front_cm, sh.front_ok, sh.right_cm, sh.right_ok));
         }
 
@@ -709,11 +733,9 @@ int main() {
             }
 
             // Debug snapshot
-            Shared sh;
-            core_util_critical_section_enter();
-            sh = g_shared;
-            core_util_critical_section_exit();
+            const Shared sh = shared_snapshot();
 
+            // Update debug snapshot with color data
             Debug::update_color(Debug::make_color(sh.rgbc, sh.rgbc_valid, sh.light));
         }
 
@@ -722,13 +744,12 @@ int main() {
             controller_update();
         }
 
+
+        //================ DEBUG / BLUETOOTH =================
         if (do_debug) {
             Debug::tick();
         }
 
-        //Do bluetooth stuff
-        //================ BT: enter manual mode on drive keys ================
-        //================ BT: manual control =================
         if (bt_connected() && Debug::bt_read_char(c)) {
 
             // ignore CR/LF
@@ -782,7 +803,7 @@ int main() {
             }
         }
 
-
+        //Ensure the utilization isn't 100 percent so we don't fry the poor thing
         ThisThread::sleep_for(1ms);
     }
     

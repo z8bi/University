@@ -2,12 +2,12 @@
 #include <cmath>
 
 // --- DEFINE the pin objects exactly once here ---
-AnalogIn left_sensor_2(A4);
-AnalogIn left_sensor_1(A3);
-AnalogIn middle_sensor(A2);
-AnalogIn right_sensor_2(A1);
-AnalogIn right_sensor_1(A0);
-DigitalOut sensor_transistor(PTC11);
+extern AnalogIn left_sensor_2;
+extern AnalogIn left_sensor_1;
+extern AnalogIn middle_sensor;
+extern AnalogIn right_sensor_2;
+extern AnalogIn right_sensor_1;
+extern DigitalOut sensor_transistor;
 
 static constexpr float TH_ON  = 0.60f;
 static constexpr float TH_OFF = 0.50f;
@@ -57,32 +57,3 @@ LineInfo interpret(const Sensors& s) {
 
     return li;
 }
-
-
-LostHint classify_lost_hint(const Sensors& s) {
-    // Adjacent pair "evidence" (sum and max)
-    auto pair_score = [&](int i, int j) {
-        float sum = s.a[i] + s.a[j];
-        float mx  = (s.a[i] > s.a[j]) ? s.a[i] : s.a[j];
-        // require both "somewhat high", not just one spike
-        if (sum > GAP_SUM_TH && mx > GAP_MAX_TH) return sum;
-        return 0.0f;
-    };
-
-    float sc01 = pair_score(0,1);
-    float sc12 = pair_score(1,2);
-    float sc23 = pair_score(2,3);
-    float sc34 = pair_score(3,4);
-
-    // pick strongest adjacent evidence
-    float best = 0.0f;
-    LostHint hint = LostHint::TRUE_LOST;
-
-    if (sc01 > best) { best = sc01; hint = LostHint::GAP_L2_L1; }
-    if (sc12 > best) { best = sc12; hint = LostHint::GAP_L1_M;  }
-    if (sc23 > best) { best = sc23; hint = LostHint::GAP_M_R1;  }
-    if (sc34 > best) { best = sc34; hint = LostHint::GAP_R1_R2; }
-
-    return hint;
-}
-

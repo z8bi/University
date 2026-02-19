@@ -33,7 +33,8 @@ static const char* state_str(CtrlState st)
         case CtrlState::BRAKING:        return "BRAKING";
         case CtrlState::OBSTACLE_AVOID: return "OBSTACLE_AVOID";
         case CtrlState::STOPPED:        return "STOPPED";
-        case CtrlState::FULLY_STOPPED: return "FULLY_STOPPED";
+        case CtrlState::FULLY_STOPPED:  return "FULLY_STOPPED";
+        case CtrlState::MANUAL_BT:      return "MANUAL_BT";
         default:                        return "UNK";
     }
 }
@@ -152,12 +153,6 @@ void tick()
     cp = color_latest;
     core_util_critical_section_exit();
 
-    int s0 = lp.s.on[0] ? 1 : 0;
-    int s1 = lp.s.on[1] ? 1 : 0;
-    int s2 = lp.s.on[2] ? 1 : 0;
-    int s3 = lp.s.on[3] ? 1 : 0;
-    int s4 = lp.s.on[4] ? 1 : 0;
-
     // Fixed-point ultrasonic (avoid %f)
     int front_dcm = (int)(up.front_cm * 10.0f);
     int right_dcm = (int)(up.right_cm * 10.0f);
@@ -165,18 +160,13 @@ void tick()
     char buf[260];
 
     int n = snprintf(buf, sizeof(buf),
-        "SENS:[%d %d %d %d %d] | "
-        "STATE:%s | "
-        "FRONT:%d.%dcm(%d) RIGHT:%d.%dcm(%d) | "
-        "LIGHT:%s | "
-        "RGB:C R=%u G=%u B=%u C=%u\r\n",
-        s0, s1, s2, s3, s4,
-        state_str(st),
-        front_dcm/10, abs(front_dcm%10), up.front_valid ? 1 : 0,
-        right_dcm/10, abs(right_dcm%10), up.right_valid ? 1 : 0,
-        light_str(cp.light),
-        cp.rgbc.r, cp.rgbc.g, cp.rgbc.b, cp.rgbc.c
+    "%s | Front:%d.%d(%d) Right:%d.%d(%d) | %s\r\n",
+    state_str(st),
+    front_dcm/10, abs(front_dcm%10), up.front_valid,
+    right_dcm/10, abs(right_dcm%10), up.right_valid,
+    light_str(cp.light)
     );
+
 
     if (n < 0) return;
     if (n >= (int)sizeof(buf)) n = sizeof(buf) - 1;
