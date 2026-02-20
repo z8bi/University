@@ -18,7 +18,7 @@ namespace Config {
 
 // Sensor reading timings
 static constexpr int CTRL_PERIOD_MS = 20;
-static constexpr int DEBUG_PERIOD_MS = 1000;
+static constexpr int DEBUG_PERIOD_MS = 250;
 static constexpr int COLOR_PERIOD_MS = 100;
 static constexpr int ULTRA_PERIOD_MS  = 80;
 
@@ -26,8 +26,8 @@ static constexpr int ULTRA_PERIOD_MS  = 80;
 static constexpr int FOUND_TICKS = 1;
 
 // Drive tunables
-static constexpr float DUTY_FWD   = 0.35f;
-static constexpr float DUTY_TURN  = 0.72f;
+static constexpr float DUTY_FWD   = 0.45f;
+static constexpr float DUTY_TURN  = 0.73f;
 
 static constexpr float ALIGN_DUTY_TURN     = 0.80f;
 static constexpr float TURN_BRAKE_STRENGTH = 0.90f;
@@ -45,14 +45,14 @@ static constexpr int   FULL_STOP_BRAKE_MS       = 120;  // tune: 60–200ms
 static constexpr float FULL_STOP_BRAKE_STRENGTH = 1.0f; // tune: 0.7–1.0
 
 //Align and Follow parameters
-static constexpr int FOLLOW_LOST_CONFIRM_MS = 40;
+static constexpr int FOLLOW_LOST_CONFIRM_MS = 60;
 static constexpr int FOLLOW_LOST_TICKS      = FOLLOW_LOST_CONFIRM_MS / CTRL_PERIOD_MS;
 
-static constexpr int ALIGN_LOST_CONFIRM_MS  = 100;
+static constexpr int ALIGN_LOST_CONFIRM_MS  = 80;
 static constexpr int ALIGN_LOST_TICKS       = ALIGN_LOST_CONFIRM_MS / CTRL_PERIOD_MS;
 
 //How long does SEEK look for the center of the line
-static constexpr int SEEK_CENTER_LOCK_MS = 400;
+static constexpr int SEEK_CENTER_LOCK_MS = 200;
 
 // Ultrasonic
 static constexpr float FRONT_MAX_CM     = 200.0f;
@@ -77,9 +77,9 @@ static constexpr float PWM_FREQ_HZ = 20000.0f;
 
 //=======MANUAL========
 // Manual BT (WASD) control
-static constexpr float BT_DUTY_FWD  = 0.4f;
-static constexpr float BT_DUTY_REV  = 0.3f;
-static constexpr float BT_DUTY_TURN = 0.72f;
+static constexpr float BT_DUTY_FWD  = 0.5f;
+static constexpr float BT_DUTY_REV  = 0.4f;
+static constexpr float BT_DUTY_TURN = 0.75f;
 
 } // namespace Config
 
@@ -93,8 +93,8 @@ Kernel::Clock::time_point state_until;
 static Kernel::Clock::time_point stop_brake_until{};
 
 static int last_pos = 0;
-char c{}; //bluetooth input
-static bool manual_mode = true;    
+char c{}; //bluetooth input 
+static bool manual_mode = false;    
 
 //=========================================
 //================== PINS =================
@@ -124,10 +124,10 @@ UltrasonicSensor us_front(D8,  D9);
 UltrasonicSensor us_right(D10, D11);
 
 //Bluetooth state
-DigitalIn bt_state(PTE20);
+DigitalIn bt_state(PTE21);
 static constexpr PinName BT_TX = PTE22;  // KL25Z TX -> BT RX
 static constexpr PinName BT_RX = PTE23;  // KL25Z RX -> BT TX
-static constexpr int     BT_BAUD = 9600;
+static constexpr int     BT_BAUD = 115200;
 
 //======================================================
 //==================== ISR FLAGS =======================
@@ -288,16 +288,13 @@ static void controller_update() {
     const Shared sh = shared_snapshot();
     const LightState ls = sh.light;
 
-
     //====SKIP STATE MACHINE IF USER IS IN CONTROL OVER BLUETOOTH (MANUAL MODE)====  
 
     if (manual_mode && state != CtrlState::FULLY_STOPPED) return;
 
-
     //================================================
     //======= DEBOUNCE AND SMOOTHING SECTION =========
     //================================================
-
 
     //================ COLOR -> STOPPED (RED) ================
     static int red_ctrl_cnt = 0;
@@ -632,13 +629,15 @@ int main() {
 
     //USB + Bluetooth debugging
     Debug::init(true, true, BT_TX, BT_RX, BT_BAUD);
+    manual_mode = false;
 
     //Motors PWM start
     motors_init(Config::PWM_FREQ_HZ);
 
     //Audio init (for buzzer)
-    audio.init(); 
-    audio.play_u8_mono(mario_style, mario_style_len, mario_style_rate);
+
+    //audio.init(); 
+    //audio.play_u8_mono(mario_style, mario_style_len, mario_style_rate);
 
     // Color Sensor init
     const bool tcs_ok = color.init(100.0f, tcs3472::Gain::X16);
@@ -647,7 +646,7 @@ int main() {
     }
 
     //Start in fully sopped
-    enter_state(CtrlState::FULLY_STOPPED, 0);
+    enter_state(CtrlState::FOLLOW, 0);
     
     //Init ticks and ISRs
     colorTick.attach(&color_isr, chrono::milliseconds(Config::COLOR_PERIOD_MS));
@@ -668,6 +667,11 @@ int main() {
         if (color_due)   { color_due   = false; do_color  = true; }
         if (debug_due)   { debug_due   = false; do_debug  = true; }
         core_util_critical_section_exit();
+
+        //================ CONTROL =================
+        if (do_update) {
+            controller_update();
+        }
 
         //================ ULTRASONIC =================
         if (do_ultra) {
@@ -707,10 +711,11 @@ int main() {
             //Update debug snapshot with ultrasonic data
             Debug::update_ultra(Debug::make_ultra(sh.front_cm, sh.front_ok, sh.right_cm, sh.right_ok));
         }
-
+        
+        
         //================ COLOR =================
-        if (do_color) {
-            auto v = color.read_raw(true, 120);
+        if (do_color && tcs_ok) {
+            auto v = color.read_raw(true, 10);
 
             static LightState cand = LightState::NONE;
             static int cand_cnt = 0;
@@ -738,13 +743,7 @@ int main() {
             // Update debug snapshot with color data
             Debug::update_color(Debug::make_color(sh.rgbc, sh.rgbc_valid, sh.light));
         }
-
-        //================ CONTROL =================
-        if (do_update) {
-            controller_update();
-        }
-
-
+        
         //================ DEBUG / BLUETOOTH =================
         if (do_debug) {
             Debug::tick();
@@ -763,14 +762,11 @@ int main() {
                 // USB-visible ACK (so you can confirm chars are arriving)
                 char buf[32];
                 snprintf(buf, sizeof(buf), "BT RX: %c\r\n", c);
-                Debug::log(buf);
-
-                // If your Debug library has a BT print, you can also echo on BT:
-                // Debug::bt_write(buf);  // <-- uncomment ONLY if this exists
+                //Debug::log(buf);
 
                 if (c == 'W' || c == 'A' || c == 'S' || c == 'D') {
                     manual_mode = true;
-                    Debug::log("BT: MANUAL MODE\r\n");
+                    //Debug::log("BT: MANUAL MODE\r\n");
 
                     enter_state(CtrlState::MANUAL_BT, 0);
 

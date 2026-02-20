@@ -25,16 +25,16 @@
 #include "usb_otg.h"
 #include "gpio.h"
 #include "fmc.h"
-#include "dashboard.h"
-#include "gfx.h"
-
-//Logos
-#include "logos/ugr_logo.h"
-
-#include "ssd1963.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <string.h>
+#include "dashboard.h"
+#include "gfx.h"
+#include "ssd1963.h"
+
+//Logos
+#include "logos/ugr_logo.h"
 
 /* USER CODE END Includes */
 
@@ -56,6 +56,13 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+
+// Simple loopback test state
+static volatile uint8_t  can2_rx_flag = 0;
+static volatile uint16_t can2_rx_u16  = 0;
+
+static CAN_RxHeaderTypeDef can2_rx_hdr;
+static uint8_t             can2_rx_data[8];
 
 /* USER CODE END PV */
 
@@ -110,21 +117,59 @@ int main(void)
   MX_TIM12_Init();
   MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
+
+  __enable_irq();
+
   // Start backlight PWM (your external brightness control on PB15)
   HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_2);
   __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, __HAL_TIM_GET_AUTORELOAD(&htim12) / 2); // 50%
   SSD1963_Init();
+
+
+  //CAN TEST
+  CAN2_SetLoopbackAndStart();
+
+  //================== UGR LOGO TEST ==================
+  //draw_UGR_logo();
+
   /* USER CODE END 2 */
+
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  __enable_irq();
-
-  //draw_UGR_logo();
 
   while (1)
   {
     /* USER CODE END WHILE */
+
+    //================== CAN TEST ==================
+    /*
+    uint8_t ok = CAN2_LoopbackSendU16(123, 50);
+
+    if (ok) SSD1963_Fill(RGB565(0, 200, 0));   // green = CAN loopback OK
+    else    SSD1963_Fill(RGB565(200, 0, 0));   // red = fail / timeout
+    HAL_Delay(1000);
+
+    //================== DASHBOARD TEST WITH CAN ==================
+    
+    
+    static Dashboard d = {0};   // persistent state for dash_update
+
+    if (can2_rx_flag) {
+        uint16_t v;
+
+        __disable_irq();
+        v = can2_rx_u16;
+        can2_rx_flag = 0;
+        __enable_irq();
+
+        d.cell_temperature  = (int)(v / 1000);   // 0..65  (upper part)
+        d.water_temperature = (int)(v % 1000);   // 0..999 (lower part)
+
+        dash_update(&d);
+    }
+    */
+
     // 1) Solid fills (quick sanity)
     SSD1963_Fill(RGB565(255, 0, 0));     // red
     HAL_Delay(250);
@@ -205,6 +250,90 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+void CAN2_SetLoopbackAndStart(void)
+{
+  // Switch to internal loopback and re-init CAN
+  hcan2.Init.Mode = CAN_MODE_LOOPBACK;
+  if (HAL_CAN_Init(&hcan2) != HAL_OK) {
+    Error_Handler();
+  }
+
+  // Accept-all filter -> FIFO0
+  // Filter banks are shared; 14 is commonly safe if nothing else uses filters.
+  CAN_FilterTypeDef f;
+  memset(&f, 0, sizeof(f));
+
+  f.FilterActivation     = ENABLE;
+  f.FilterMode           = CAN_FILTERMODE_IDMASK;
+  f.FilterScale          = CAN_FILTERSCALE_32BIT;
+  f.FilterIdHigh         = 0x0000;
+  f.FilterIdLow          = 0x0000;
+  f.FilterMaskIdHigh     = 0x0000;
+  f.FilterMaskIdLow      = 0x0000;
+  f.FilterFIFOAssignment = CAN_RX_FIFO0;
+
+  f.FilterBank           = 14;
+  f.SlaveStartFilterBank = 14;
+
+  if (HAL_CAN_ConfigFilter(&hcan2, &f) != HAL_OK) {
+    Error_Handler();
+  }
+
+  if (HAL_CAN_Start(&hcan2) != HAL_OK) {
+    Error_Handler();
+  }
+
+  // Enable RX FIFO0 interrupt callback
+  if (HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
+    Error_Handler();
+  }
+}
+
+uint8_t CAN2_LoopbackSendU16(uint16_t value, uint32_t timeout_ms)
+{
+  CAN_TxHeaderTypeDef txh;
+  memset(&txh, 0, sizeof(txh));
+
+  uint32_t mailbox;
+  uint8_t data[2];
+
+  data[0] = (uint8_t)(value & 0xFF);
+  data[1] = (uint8_t)((value >> 8) & 0xFF);
+
+  // reset rx state
+  can2_rx_flag = 0;
+  can2_rx_u16  = 0;
+
+  txh.IDE = CAN_ID_STD;
+  txh.StdId = 0x123;
+  txh.RTR = CAN_RTR_DATA;
+  txh.DLC = 2;
+  txh.TransmitGlobalTime = DISABLE;
+
+  if (HAL_CAN_AddTxMessage(&hcan2, &txh, data, &mailbox) != HAL_OK) {
+    return 0;
+  }
+
+  uint32_t t0 = HAL_GetTick();
+  while (!can2_rx_flag) {
+    if ((HAL_GetTick() - t0) > timeout_ms) return 0;
+  }
+
+  return (can2_rx_u16 == value) ? 1 : 0;
+}
+
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
+{
+  if (hcan->Instance != CAN2) return;
+
+  if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &can2_rx_hdr, can2_rx_data) == HAL_OK) {
+    if (can2_rx_hdr.DLC >= 2) {
+      can2_rx_u16 = (uint16_t)can2_rx_data[0] | ((uint16_t)can2_rx_data[1] << 8);
+    }
+    can2_rx_flag = 1;
+  }
+}
 
 /* USER CODE END 4 */
 

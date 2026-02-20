@@ -104,6 +104,10 @@ void init(bool enable_usb, bool enable_bt, PinName bt_tx, PinName bt_rx, int bt_
 void log(const char* msg)
 {
     if (!msg) return;
+
+    // Don't do serial writes in ISR context (BufferedSerial uses mutexes)
+    if (core_util_is_isr_active()) return;
+
     write_all(msg, (int)strlen(msg));
 }
 
@@ -140,7 +144,9 @@ void update_color(const ColorPacket& p)
 //==================== PRINT ====================
 
 void tick()
-{
+{   
+    if (core_util_is_isr_active()) return;
+
     CtrlState st;
     LinePacket lp;
     UltraPacket up;
