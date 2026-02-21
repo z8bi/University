@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <vector>
 #include<cstdlib>
 
 using namespace std; //Yay namespace saves time
