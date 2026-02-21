@@ -1,88 +1,114 @@
 #pragma once
 #include "mbed.h"
 
-// Simple 8-bit unsigned PCM player using DAC + Ticker.
-// ISR-safe: the ISR never calls detach/stop or anything that may lock.
-// Call service() periodically from thread context (e.g., main loop).
+#if defined(TARGET_KL25Z)
+  #include "MKL25Z4.h"
+#endif
 
 class AudioPlayer {
 public:
-    explicit AudioPlayer(PinName dac_pin) : _dac(dac_pin) {}
+    explicit AudioPlayer(PinName dac_pin) : _dac_pin(dac_pin) {}
 
     void init() {
-        stop();
-        _dac.write_u16(0x8000); // mid-scale
+#if defined(TARGET_KL25Z)
+        SIM->SCGC6 |= SIM_SCGC6_DAC0_MASK;
+
+        DAC0->C0 = 0;
+        DAC0->C1 = 0;
+        DAC0->C2 = 0;
+
+        // Enable DAC, VDDA reference
+        DAC0->C0 = DAC_C0_DACEN_MASK | DAC_C0_DACRFS_MASK;
+
+        write_dac12(2048);
+#else
+        _ao = new AnalogOut(_dac_pin);
+        _ao->write_u16(0x8000);
+#endif
+        // reset internal state (no detach needed yet)
+        core_util_critical_section_enter();
+        _playing = false;
+        _data = nullptr;
+        _len = 0;
+        _idx = 0;
+        core_util_critical_section_exit();
     }
 
-    // Start playing a buffer (non-blocking)
     void play_u8_mono(const uint8_t* data, uint32_t len, uint32_t sample_rate_hz = 8000) {
         if (!data || len == 0 || sample_rate_hz == 0) return;
 
-        // Stop any current playback (thread context)
         stop();
 
         core_util_critical_section_enter();
         _data = data;
         _len  = len;
         _idx  = 0;
-        _done = false;
         _playing = true;
         core_util_critical_section_exit();
 
-        const float dt = 1.0f / (float)sample_rate_hz;
-        _tick.attach(callback(this, &AudioPlayer::isr), dt);
+        const uint32_t period_us = 1000000UL / sample_rate_hz;
+        _tick.attach_us(callback(this, &AudioPlayer::isr), period_us);
     }
 
-    // Must be called from thread context (main loop).
-    // Finishes a stop requested by the ISR (end of buffer).
-    void service() {
-        if (_done) {
-            stop();
-        }
-    }
-
-    // Thread-context stop (safe to call from main)
     void stop() {
         _tick.detach();
 
         core_util_critical_section_enter();
         _playing = false;
-        _done = false;
         _data = nullptr;
         _len = 0;
         _idx = 0;
         core_util_critical_section_exit();
 
-        _dac.write_u16(0x8000); // mid-scale
+#if defined(TARGET_KL25Z)
+        write_dac12(2048);
+#else
+        if (_ao) _ao->write_u16(0x8000);
+#endif
     }
 
     bool is_playing() const { return _playing; }
 
 private:
-    void isr() {
-        // ISR must be tiny + lock-free
+    inline void isr() {
         if (!_playing || !_data) return;
 
         const uint32_t i = _idx;
         if (i >= _len) {
-            // DO NOT call stop() or detach() here.
+            // stop producing samples; detach in thread if you want,
+            // but leaving ticker running is OK since this returns fast.
             _playing = false;
-            _done = true;
             return;
         }
 
-        const uint16_t v = ((uint16_t)_data[i]) << 8; // 0..65280
-        _dac.write_u16(v);
+#if defined(TARGET_KL25Z)
+        const uint16_t v12 = ((uint16_t)_data[i]) << 4;
+        write_dac12(v12);
+#else
+        const uint16_t v16 = ((uint16_t)_data[i]) << 8;
+        if (_ao) _ao->write_u16(v16);
+#endif
 
         _idx = i + 1;
     }
 
-    AnalogOut _dac;
+#if defined(TARGET_KL25Z)
+    static inline void write_dac12(uint16_t v) {
+        v &= 0x0FFF;
+        DAC0->DAT[0].DATL = (uint8_t)(v & 0xFF);
+        DAC0->DAT[0].DATH = (uint8_t)((v >> 8) & 0x0F);
+    }
+#endif
+
+    PinName _dac_pin;
     Ticker _tick;
 
     volatile bool _playing{false};
-    volatile bool _done{false};                // set by ISR when finished
     const uint8_t* volatile _data{nullptr};
     volatile uint32_t _len{0};
     volatile uint32_t _idx{0};
+
+#if !defined(TARGET_KL25Z)
+    AnalogOut* _ao{nullptr};
+#endif
 };

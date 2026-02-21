@@ -33,8 +33,8 @@ static constexpr float ALIGN_DUTY_TURN     = 0.80f;
 static constexpr float TURN_BRAKE_STRENGTH = 0.90f;
 
 // Gentler turning in FOLLOW
-static constexpr float DUTY_FOLLOW_TURN      = 0.60f;
-static constexpr float FOLLOW_BRAKE_STRENGTH = 0.70f;
+static constexpr float DUTY_FOLLOW_TURN      = 0.65f;
+static constexpr float FOLLOW_BRAKE_STRENGTH = 0.75f;
 
 //SEEK BRAKING
 static constexpr float BRAKE_STRENGTH = 1.0f;
@@ -45,7 +45,7 @@ static constexpr int   FULL_STOP_BRAKE_MS       = 120;  // tune: 60–200ms
 static constexpr float FULL_STOP_BRAKE_STRENGTH = 1.0f; // tune: 0.7–1.0
 
 //Align and Follow parameters
-static constexpr int FOLLOW_LOST_CONFIRM_MS = 60;
+static constexpr int FOLLOW_LOST_CONFIRM_MS = 80;
 static constexpr int FOLLOW_LOST_TICKS      = FOLLOW_LOST_CONFIRM_MS / CTRL_PERIOD_MS;
 
 static constexpr int ALIGN_LOST_CONFIRM_MS  = 80;
@@ -636,8 +636,8 @@ int main() {
 
     //Audio init (for buzzer)
 
-    //audio.init(); 
-    //audio.play_u8_mono(mario_style, mario_style_len, mario_style_rate);
+    audio.init(); 
+    audio.play_u8_mono(mario_style, mario_style_len, mario_style_rate);
 
     // Color Sensor init
     const bool tcs_ok = color.init(100.0f, tcs3472::Gain::X16);
@@ -715,7 +715,7 @@ int main() {
         
         //================ COLOR =================
         if (do_color && tcs_ok) {
-            auto v = color.read_raw(true, 10);
+            auto v = color.read_raw(true, 5);
 
             static LightState cand = LightState::NONE;
             static int cand_cnt = 0;
@@ -798,8 +798,6 @@ int main() {
                 }
             }
         }
-
-        //Ensure the utilization isn't 100 percent so we don't fry the poor thing
         ThisThread::sleep_for(1ms);
     }
     
