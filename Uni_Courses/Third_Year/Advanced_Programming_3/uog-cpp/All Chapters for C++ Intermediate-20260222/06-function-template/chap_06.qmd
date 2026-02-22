@@ -1,0 +1,623 @@
+---
+title: "Function template"
+# subtitle: "Control Flow"
+author: |
+    Khiem Nguyen 
+    <br>Lecturer in Multiscale Materials
+    <br><khiem.nguyen@glasgow.ac.uk>
+author-meta: "Lecturer in Multiscale Materials"
+format: 
+    revealjs:
+        theme: simple   # other themes: beige, blood, dark, dracula, league, moon, night, serif, simple, sky, solarized
+        mouse-wheel: true
+        highlight-style: github
+        slide-number: true
+        title-slide-style: pandoc
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: false          # <-- remove white background in code blocks
+        # code-block-border-left: false # optional: remove left border
+        # highlight-style: monokai      # good for dark images
+        toc: true
+        toc-depth: 1
+        toc-title: Presentation Outline
+        chalkboard: true
+        css: simple.css
+---
+
+# Introduction to template
+
+## We saw the use template in the lab assignments
+
+We saw the use of template already: 
+
+- `std::vector<double>`
+- `std::vector<int>`
+
+Other examples of template classes:
+
+- `std::list<std::string>`
+- `std::map<str::string, map>`
+
+Other examples of template functions:
+
+- `std::max(1, 2)   // input arguments: int and int; compiler understands`
+- `std::max<double>(10, 42.24) // to treat both as doubles`
+
+😌 I hope it's pretty natural to understand what these data types mean.
+
+## Rationale for template
+
+- Let us consider a function to find the maximum of two numbers:
+```{.cpp}
+int max(int x, int y)
+{ 
+    return (x < y) ? y : x; // Note: we use < instead of > because std::max uses <
+}
+```
+- So what happens later when you want to find the max of two double values? The solution is to create a new overloaded version of `max`
+```{.cpp}
+double max(double x, double y)
+{
+    return (x < y) ? y: x;
+}
+```
+
+:::{.fragment}
+Now, the problem arises here. What about many different data types: `int`, `double`, `long`, `long double` and so on?
+:::
+:::{.fragment}
+Fortunately, C++ supports another feature that was designed specifically to solve this kind of problem: C++ templates
+:::
+
+## Intro to C++ template
+
+Before explaining the template, let us consider the following code snippet:
+
+```{.cpp}
+T max(T x, T y) // won't compile because we haven't defined T
+{
+    return (x < y) ? y : x;
+}
+```
+- We wish that `T` can be any data type so that the comparison `x < y` makes sense.
+- How nice it is if this piece of code can compile and give us what we expected.
+
+## Intro to C++ template
+
+**Template** 
+
+::: {.incremental}
+- To simplify the process of creating functions/classes that are able to work with different data types.
+- To create a _single template_ instead of a bunch of mostly-identical functions/classes.
+- To Provide a _placeholder type_ representing some type that is not known at the time the template is defined.
+- To generate as many overloaded functions/classes as needed
+:::
+
+In the rest of this chapter, we explore how to create **function templates**.
+
+# Function templates
+
+## Terminologies: About function templates
+
+::: {.incremental}
+- A **function template** is a function-like definition that is used to generate one or more overloaded functions, each with a different set of actual types.
+- The initial function template that is used to generate other functions is called the **primary template**.
+- The functions generated from the primary template are called **instantiated functions**.
+- When we create a _primary function template_, we use placeholder types, technically called **type template parameters**, informally called **template types**.
+:::
+
+## Creating a function template
+
+Recall out `max()` function
+```{.cpp}
+int max(int x, int y)
+{
+    return (x < y) ? y : x;
+}
+```
+
+Our wishful piece code
+```{.cpp}
+T max(T x, T y)     // won't compile because we haven't defined T
+{
+    return (x < y) ? y : x;
+}
+```
+
+We need
+
+- to tell the compiler that this is a template, and that `T` is a _type template parameter_. 
+- to use a **template parameter declaration**.
+
+## Use template parameter declaration
+
+Each function template/class template needs its own **template parameter declaration**.
+
+```{.cpp}
+// this is the template parameter declaration 
+// defining T as a type template parameter
+template <typename T> 
+T max(T x, T y)     // this is the function template definition for max<T>
+{
+    return (x < y) ? y : x;
+}
+```
+
+**Summary**  
+
+- Start with the keyword `template`.
+- Use keyword `typename` (preferred) or `class`, followed by the name of the type template parameter (e.g. `T`).
+
+
+# Naming convention of template parameters
+
+## Naming template parameters
+
+**Naming convention**
+
+- Use a single capital letter (starting with T) when the template parameter is used in a trivial or obvious way.
+- No need to give T a complex name, because it’s obviously just a placeholder type.
+
+```{.cpp #lst-template-function-conventional-naming lst-cap="Use template naming convention"}
+template <typename T>
+T max(T x, T y)
+{
+    return (x < y) ? y : x;
+}
+```
+
+```{.cpp #lst-template-function-nonconventional-naming lst-cap="Use whatever name you like"}
+template <typename Bullshit>
+Bullshit max(Bullshit x, Bullshit y)
+{
+    return (x < y) ? y : x;
+}
+```
+
+## Naming template parameters
+
+For non-obvious usage o specific requirements, there are two common naming conventions:
+
+- Starting with a capital letter (e.g. `Allocator`). _The standard library uses this naming convention_.
+- Prefixed with a `T`, then starting with a capital letter (e.g. `TAllocator`).
+
+> **Best practice to use**
+>
+> Use a single capital letter starting with `T` (e.g., `T`, `U`, `V`, etc.) to name type template parameters that used in trivial or obvious ways.
+
+
+# Function template instantiation
+
+We learn how function templates are used.
+
+## Using a function template
+
+**About function template**
+
+- Function templates are not actually functions. 
+- Their code is not compiled or executed directly.
+- Function templates are used to generate functions that are compiled and executed.
+
+**Use function template**
+
+- Make a function call with the syntax
+  
+    ```{.cpp}
+    // actual_type is some actual type, like int or double
+    max<actual_type>(arg1, arg2); 
+    ```
+- The type in angled brackets is called **template argument**.
+
+## Using a function template
+
+::: {#lst-use-template-function lst-cap="An example of using template function &ndash; Filename: `use_template_function.cpp`"}
+```{.cpp}
+{{< include ./cpp/use_template_function.cpp >}}
+```
+:::
+- When the compiler encounters `max<int>(1, 2)`, it determines that a function definition for `max<int>(int, int)` does not already exist.
+- The compiler will implicitly use `max<T>` function template to create one.
+
+## Function template instantiation
+
+### Terminologies
+
+::: {.incremental}
+- The process of creating functions (with specific types) from function templates (with template types) is called **function template instantiation**.
+- When a function is instantiated due to a function call, it’s called **implicit instantiation**.
+- A function that is instantiated from a template is technically called a **specialization**, but in common language is often called a **function instance**.
+- The template from which a **specialization** is produced is called a **primary template**.
+- _Function instances are normal functions in all regards._
+:::
+
+::: {.fragment}
+> **Remember**
+>
+> Function template is not a function. It helps to create functions.
+:::
+
+## Function template instantiation
+
+&#10149; **Process for instantiating a function**  
+
+The compiler essentially clones the primary template and replaces the template type (`T`) with the actual type we have specified.
+
+- When we call `max<int>(1, 2)`, the function specialization that gets instantiated looks like
+
+```{.cpp}
+template<> // ignore this for now
+int max<int>(int x, int y) // the generated function max<int>(int, int)
+{
+    return (x < y) ? y : x;
+}
+``` 
+
+## Function template instantiation: More
+&#10149; What the compiler actually compiles after all the instantiation are done:
+
+```{.cpp}
+{{< include ./cpp/instantiation_look_breakdown.cpp >}}
+```
+&#10149; Let us compile it and run to see.
+
+## Function template instantiation
+
+- A function template is only instantiated the first time a function call is made.
+- Further calls to the function are routed to the already instantiated function.
+-  if no function call is made to a function template, the function template won't be instantiated.
+
+```{.cpp}
+{{< include ./cpp/instantiation_look_more.cpp >}}
+```
+
+## Function template instantiation: More
+Let us breakdown the above `cpp` example
+
+```{.cpp}
+{{< include ./cpp/instantiation_look_more_breakdown.cpp >}}
+```
+
+# Template argument deduction
+
+## Template argument deduction: Explanation
+
+&#10149; In most cases, the actual types we want to use for instantiation will match the type of our function parameters.
+```{.cpp}
+std::cout << max<int>(1, 2) << '\n'; // specifying we want to call max<int>
+```
+
+&#10149; Instead of making a function call like
+```{.cpp}
+std::cout << max<int>(1, 2) << '\n';
+```
+we can do one of these:
+
+```{.cpp}
+std::cout << max<>(1, 2) << '\n';
+```
+or 
+```{.cpp}
+std::cout << max(1, 2) << '\n';
+```
+
+&#10149; Further explanation on this soon!
+
+## Template argument deduction: Explanation
+
+**Quick summary**
+
+- In cases where the type of the arguments match the actual type we want, we do not need to specify the actual type.
+- instead, we can use template argument deduction to have the compiler deduce the actual type that should be used from the argument types in the function call.
+
+## Template argument deduction: Explanation
+
+Let us consider again:
+
+- `max<>(1, 2)`
+- `max(1, 2)`
+
+Difference between two cases: How the compiler resolves the function call from a set of overloaded functions.
+
+- In the top case (empty angled brackets), the compiler will only consider `max<int>` _template function overloads_.
+- In the bottom case (no angled brackets), the compiler will consider both `max<int>` _template function overloads_ **and** `max` _non-template function overloads_.
+- When the bottom case results in both a template function and a non-template function that are equally viable, [the non-template function will be preferred]{style="color:red"}.
+
+> **Key insight**
+> 
+> The normal function call syntax will prefer a non-template function over an equally viable function instantiated from a template.
+
+
+## Template argument deduction: Explanation
+
+```{.cpp}
+{{< include ./cpp/template_argument_deduction_more.cpp >}}
+```
+- Note hwo the syntax in the bottom case looks identical to a normal function call.
+- _In most cases_, this normal function call syntax is the one we use to call functions instantiated from a function template.
+
+## Favor normal function call over function template call
+
+**Best practice**
+
+Favor the normal function call syntax when making calls to a function instantiated from a function template (unless you need the function template version to be preferred over a matching non-template function).
+
+## Favor normal function call over function template call
+
+:::{#lst-favor-normal-function lst-cap="Favor normal function call over function template call. Filename=`favor_normal_func_over_func_template_call.cpp`"}
+```{.cpp}
+{{< include ./cpp/favor_normal_func_over_func_template_call.cpp >}}
+```
+:::
+
+&#10149; Let us compile and see the output.
+
+# Further on function templates
+
+## Function templates with non-template parameters
+
+*It's not a surprising*: We can create [function templates that have both template parameters and non-template parameters]{style="color:blue"}
+
+:::{#lst-func-template-with-non-template-para lst-cap="Function template with non-template parameters Filename=`func_template_with_non_template_parameters.cpp`"}
+```{.cpp}
+{{< include ./cpp/func_template_with_non_template_parameters.cpp >}}
+```
+:::
+
+## Instantiated functions may not always compile
+
+&#10149; Look at this example
+
+:::{#lst-instantiated-not-compile lst-cap="An instantiated function that does not compile. Filename=`instantiated_func_not_compile.cpp`"}
+```{.cpp}
+{{< include ./cpp/instantiated_func_not_compile.cpp >}}
+```
+:::
+
+## Instantiated functions may not always make sense semantically
+
+&#10149; Look at this example
+
+:::{#lst-not-make-sense-semantically lst-cap="Instantiated function that does not make sense sematically Filename=`not_make_sense_semantically.cpp`"}
+```{.cpp}
+{{< include ./cpp/not_make_sense_semantically.cpp >}}
+```
+:::
+
+# Function templates with multiple template types
+
+## Rationale
+
+&#10149; Let us look at the example:
+```{.cpp}
+#include <iostream>
+
+template <typename T>
+T max(T x, T y) {
+    return (x < y) ? y : x;
+}
+int main()
+{
+    std::cout << max(2, 3.5) << '\n';  // compile error
+
+    return 0;
+}
+```
+
+&#10149; The compiler will issue a bunch of (probably crazy looking) error messages.
+
+**Question** Can somebody explain why?
+
+## Rationale
+
+We can fix the above issue as
+```{.cpp}
+#include <iostream>
+
+template <typename T>
+T max(T x, T y)
+{
+    return (x < y) ? y : x;
+}
+
+int main()
+{
+    // we've explicitly specified type double, so the compiler won't use template argument deduction
+    std::cout << max<double>(2, 3.5) << '\n';
+
+    return 0;
+}
+```
+
+&#10140; It would be even nicer if we didn’t even have to think about the types when making a function call to max at all.
+
+# Function templates with multiple template type parameters
+
+## Function templates with multiple template type parameters
+- **Root or problem**: 
+  - defined the single template type (`T`) for our function template
+  - specified that both parameters must of the same type
+- Rewrite our function template in such a way that our parameters can resolve to different types.
+
+```{.cpp}
+{{< include ./cpp/two_template_type_parameters.cpp >}}
+```
+
+&#10140; The compiler can instatiate `max<int, double>(int, double)` for executing `max(2, 3.5)`.
+
+## Function templates with multiple template type parameters
+```{.cpp}
+{{< include ./cpp/two_template_type_parameters.cpp >}}
+```
+&#10149; Let us run the snippet and see the outcome.
+
+:::{ .fragment}
+**Question**&nbsp; Why do you see you you saw?
+:::
+
+:::{ .fragment}
+**Question**&nbsp; How do we resolve the above issue?
+:::
+
+## Function templates with multiple template type parameters
+&#10140; We let the compiler deduce what the return type should be by using `auto`
+
+::: {#lst-two-template-parameters-return-auto lst-cap="Let the compiler deduce the return type using `auto`. Filename=`two_template_type_parameters_auto.cpp`"}
+```{ .cpp}
+{{< include ./cpp/two_template_type_parameters_auto.cpp >}}
+```
+:::
+
+&#10149; Let us compile and run the code.
+
+## Using `std::common_type_t`
+
+- `std::common_type_t` is a metafunction used to determine the **single type of which all passed types can be implicitly converted**
+- Need `#include <type_traits>`
+
+**Basic Examples**
+
+Type passed     | Resulting `std::commont_type_t` | Reason
+:----------------|:--------------------|:-----------------------------------------------
+`int` and `double` | `double` | `int` promotes to `double` without losing precision
+`int` and `long` | `long` | Standard integer promotion rules 
+`Derived1` and `Derived2` | `Base` | If both inherit from the same base, the base is the common type
+
+## Using `std::common_type_t`
+::: {#lst-two-template-parameters-return-auto lst-cap="An example of using `std::common_type_t`. Filename=`using_commont_type_t.cpp`"}
+```{ .cpp}
+{{< include ./cpp/using_common_type_t.cpp >}}
+```
+:::
+
+- It is fine to use `auto` with the help of recent compilers.
+
+# An introduction to `auto` keyword
+
+## Keyword `auto`
+
+::: {.incremental}
+- The `auto` keyword is one of the most transformative features of modern C++.^[Well, I started to learn C++ when C++ was not modern.]
+- At its core, `auto` tells the compiler to **deduce** the type of a variable from its initializer.
+- Instead of manually typing out ocmplex type names, the compiler looks at what is on the right side of the `=` sign and figures it out for you at compile time.
+- This does not make C++ "dynamically typed" like Python.
+- The type is still fixed once the compiler determines it, ensuring your code remains fast and type-safe.
+:::
+
+::: {.fragment}
+**Examples**
+```{.cpp}
+auto age = 25;              // int
+auto price = 42.99;         // double
+auto greeting = "Hello";    // const char*
+std::string name = "Khiem Nguyen";
+auto my_name = name;        // std::string
+```
+:::
+
+## Keyword `auto`
+
+&#10149; One nuance involves **type modifiers** like `const` and references (`&`). By default, `auto` drops these.
+
+For examples:
+
+- If we have a `const int`, plain `auto` will just deduce an `int`
+- If we want to keep the const-ness or make it a reference, we have to be explicit.
+
+```{.cpp}
+const int constant_val = 10;
+auto x = constant_val;       // x is just an 'int' (a copy)
+const auto y = constant_val; // y is 'const int'
+auto& z = constant_val;      // z is 'const int&' (a reference)
+```
+
+::: {.fragment}
+> **Remark**
+>
+> Don't worry: _We will learn reference soon in the next chapter_.
+:::
+
+## Abbreviated function 
+
+- The `auto` keyword became a cornerstone of modern programming in 2011 with the release of C++11.
+
+> C++20 introduces a new use of the `auto` keyword: When the `auto` keyword is used as a parameter type in a normal function, the compiler will automatically convert the function into a function template with each `auto` parameter becoming an independent template type parameter.
+
+**Example**
+
+```{.cpp}
+auto max(auto x, auto y)
+{
+    return (x < y) ? y : x;
+}
+```
+
+is shorthand in C++20 for the following
+```{.cpp}
+template <typename T, typename U>
+auto max(T x, U y)
+{
+    return (x < y) ? y : x;
+}
+```
+
+## Function templates may be overloaded
+
+- Function templates can also be overloaded.
+- Such overloads can have a different number of template types and/or a different number or type of function parameters.
+
+## Function templates may be overloaded
+
+::: {#lst-function-templates-overloaded lst-cap="Function templates can be overloaded. Filename=`function_templates_overloaded.cpp`"}
+```{ .cpp}
+{{< include ./cpp/function_templates_overloaded.cpp >}}
+```
+:::
+
+# Keyword `constexpr`
+We shall learn *non-type template parameters* subsequently. Before that, we make a detour to learn `constexpr`.
+
+## `constexpr`: Concept
+
+::: {.my-box}
+`constexpr` is a _powerful_ keyword that [tells the compiler a value or function can be evaluated at compile-time]{style="color:navy"}
+:::
+
+&#10149;&nbsp; **Meaning:**&nbsp; The computer does the work while it's building the program, rather than while we are actually running the program.
+
+Two common usages:
+
+- `constexpr` variables
+  
+    ```{.cpp}
+    constexpr int max_users = 100; // The compiler knows this is 100 forever.
+    int limit = 50; 
+    // constexpr int dynamic_limit = limit; // Error! 'limit' could change at runtime.
+    ```
+- `constexpr` functions
+  
+    ```{.cpp}
+    constexpr int square(int x) {
+        return x * x;
+    }
+
+    constexpr int result = square(10); // 'result' becomes 100 at compile-time.
+    ```
+
+
+
+
+# Non-type template parameters
+
+While type template parameters are the most common type of template parameter used, there is another kind of template parameter worth knowing: [**non-type template parameter**]{style="color:red"}
+
+
+
+
+## Non-type template parameters
+
+A [**non-type template parameter**]{style="color:red"} is a template parameter with a fixed type that serves as a placeholder for a `constexpr value` passed in as a template argument.
+
+**Recall**&nbsp; `constexpr` is a keyword introduced in C++11 that tells the compiler a value or function can be evaluated at compile-time.
+

@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="chap_07_files/libs/clipboard/clipboard.min.js"></script>
+<script src="chap_07_files/libs/quarto-html/tabby.min.js"></script>
+<script src="chap_07_files/libs/quarto-html/popper.min.js"></script>
+<script src="chap_07_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="chap_07_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="chap_07_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="chap_07_files/libs/quarto-html/quarto-syntax-highlighting-065a5179aebd64318d7ea99d77b64a9e.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
+
+  <meta name="author" content="Lecturer in Multiscale Materials">
+  <title>References &amp; Pointers</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="chap_07_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="chap_07_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #24292e;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #24292e; } /* Normal */
+    code span.al { color: #ff5555; font-weight: bold; } /* Alert */
+    code span.an { color: #6a737d; } /* Annotation */
+    code span.at { color: #d73a49; } /* Attribute */
+    code span.bn { color: #005cc5; } /* BaseN */
+    code span.bu { color: #d73a49; } /* BuiltIn */
+    code span.cf { color: #d73a49; } /* ControlFlow */
+    code span.ch { color: #032f62; } /* Char */
+    code span.cn { color: #005cc5; } /* Constant */
+    code span.co { color: #6a737d; } /* Comment */
+    code span.cv { color: #6a737d; } /* CommentVar */
+    code span.do { color: #6a737d; } /* Documentation */
+    code span.dt { color: #d73a49; } /* DataType */
+    code span.dv { color: #005cc5; } /* DecVal */
+    code span.er { color: #ff5555; text-decoration: underline; } /* Error */
+    code span.ex { color: #d73a49; font-weight: bold; } /* Extension */
+    code span.fl { color: #005cc5; } /* Float */
+    code span.fu { color: #6f42c1; } /* Function */
+    code span.im { color: #032f62; } /* Import */
+    code span.in { color: #6a737d; } /* Information */
+    code span.kw { color: #d73a49; } /* Keyword */
+    code span.op { color: #24292e; } /* Operator */
+    code span.ot { color: #6f42c1; } /* Other */
+    code span.pp { color: #d73a49; } /* Preprocessor */
+    code span.re { color: #6a737d; } /* RegionMarker */
+    code span.sc { color: #005cc5; } /* SpecialChar */
+    code span.ss { color: #032f62; } /* SpecialString */
+    code span.st { color: #032f62; } /* String */
+    code span.va { color: #e36209; } /* Variable */
+    code span.vs { color: #032f62; } /* VerbatimString */
+    code span.wa { color: #ff5555; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="chap_07_files/libs/revealjs/dist/theme/quarto-cd0dc4f2d43adb95807902f0fa75376a.css">
+  <link rel="stylesheet" href="simple.css">
+  <link href="chap_07_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="chap_07_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="chap_07_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="chap_07_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="chap_07_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="chap_07_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="center">
+  <h1 class="title">References &amp; Pointers</h1>
+  <p class="author"></p><p>Khiem Nguyen <br>Lecturer in Multiscale Materials <br><a href="mailto:khiem.nguyen@glasgow.ac.uk" class="email">khiem.nguyen@glasgow.ac.uk</a></p><p></p>
+</section><section id="TOC">
+<nav role="doc-toc"> 
+<h2 id="toc-title">Presentation Outline</h2>
+<ul>
+<li><a href="#/introduction-to-compound-data-types" id="/toc-introduction-to-compound-data-types">Introduction to compound data types</a></li>
+<li><a href="#/value-categories-lvalues-and-rvalues" id="/toc-value-categories-lvalues-and-rvalues">Value categories (lvalues and rvalues)</a></li>
+<li><a href="#/regarding-lvalue-and-rvalue-expressions" id="/toc-regarding-lvalue-and-rvalue-expressions">Regarding lvalue and rvalue expressions</a></li>
+<li><a href="#/lvalue-references" id="/toc-lvalue-references">lvalue references</a></li>
+<li><a href="#/lvalue-reference" id="/toc-lvalue-reference">lvalue reference</a></li>
+<li><a href="#/lvalue-reference-variables" id="/toc-lvalue-reference-variables">lvalue reference variables</a></li>
+<li><a href="#/modifying-values-through-a-non-const-lvalue-reference" id="/toc-modifying-values-through-a-non-const-lvalue-reference">Modifying values through a non-const lvalue reference</a></li>
+<li><a href="#/pass-by-lvalue-reference" id="/toc-pass-by-lvalue-reference">Pass by lvalue reference</a></li>
+<li><a href="#/pass-by-const-lvalue-reference" id="/toc-pass-by-const-lvalue-reference">Pass by const lvalue reference</a></li>
+</ul>
+</nav>
+</section>
+<section>
+<section id="introduction-to-compound-data-types" class="title-slide slide level1 center">
+<h1>Introduction to compound data types</h1>
+
+</section>
+<section id="quick-intro" class="slide level2">
+<h2>Quick intro</h2>
+<p>➥ Let us write a program doing maths with fractions:</p>
+<div id="lst-function-program" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-function-program-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;1: A program for doing maths in fractions. Filename=<code>fraction_program.cpp</code>
+</figcaption>
+<div aria-describedby="lst-function-program-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb1-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb1-2"><a href=""></a></span>
+<span id="cb1-3"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb1-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb1-5"><a href=""></a>    <span class="co">// Our first fraction</span></span>
+<span id="cb1-6"><a href=""></a>    <span class="dt">int</span> num1 <span class="op">{};</span></span>
+<span id="cb1-7"><a href=""></a>    <span class="dt">int</span> den1 <span class="op">{};</span></span>
+<span id="cb1-8"><a href=""></a>    <span class="co">// Our second fraction</span></span>
+<span id="cb1-9"><a href=""></a>    <span class="dt">int</span> num2 <span class="op">{};</span></span>
+<span id="cb1-10"><a href=""></a>    <span class="dt">int</span> den2 <span class="op">{};</span></span>
+<span id="cb1-11"><a href=""></a>    <span class="co">// Used to eat (remove) the slash between the numerator and denominator</span></span>
+<span id="cb1-12"><a href=""></a>    <span class="dt">char</span> ignore <span class="op">{};</span></span>
+<span id="cb1-13"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Enter a fraction: "</span><span class="op">;</span></span>
+<span id="cb1-14"><a href=""></a>    <span class="bu">std::</span>cin <span class="op">&gt;&gt;</span> num1 <span class="op">&gt;&gt;</span> ignore <span class="op">&gt;&gt;</span> den1<span class="op">;</span></span>
+<span id="cb1-15"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Enter a fraction: "</span><span class="op">;</span></span>
+<span id="cb1-16"><a href=""></a>    <span class="bu">std::</span>cin <span class="op">&gt;&gt;</span> num2 <span class="op">&gt;&gt;</span> ignore <span class="op">&gt;&gt;</span> den2<span class="op">;</span></span>
+<span id="cb1-17"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"The two fractions multiplied: "</span></span>
+<span id="cb1-18"><a href=""></a>        <span class="op">&lt;&lt;</span> num1 <span class="op">*</span> num2 <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> den1 <span class="op">*</span> den2 <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb1-19"><a href=""></a></span>
+<span id="cb1-20"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb1-21"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+<p>➥ Of course, we want to have a data type representing the concept of Fraction.</p>
+</section>
+<section id="quick-intro-1" class="slide level2">
+<h2>Quick intro</h2>
+<p>➥ Now imagine that we are writing a program that needs to keep a list of employee IDs.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb2-1"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb2-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb2-3"><a href=""></a>    <span class="dt">int</span> id1 <span class="op">{</span> <span class="dv">42</span> <span class="op">};</span></span>
+<span id="cb2-4"><a href=""></a>    <span class="dt">int</span> id2 <span class="op">{</span> <span class="dv">24</span> <span class="op">};</span></span>
+<span id="cb2-5"><a href=""></a>    <span class="dt">int</span> id3 <span class="op">{</span> <span class="dv">162</span> <span class="op">};</span></span>
+<span id="cb2-6"><a href=""></a>    </span>
+<span id="cb2-7"><a href=""></a>    <span class="dt">double</span> salary1 <span class="op">{</span> <span class="fl">42123.3</span> <span class="op">};</span></span>
+<span id="cb2-8"><a href=""></a>    <span class="dt">double</span> salary2 <span class="op">{</span> <span class="fl">43784.5</span> <span class="op">};</span></span>
+<span id="cb2-9"><a href=""></a>    <span class="dt">double</span> salary3 <span class="op">{</span> <span class="fl">39469.2</span> <span class="op">};</span></span>
+<span id="cb2-10"><a href=""></a></span>
+<span id="cb2-11"><a href=""></a>    <span class="co">// Names, roles, job titles and blah blah</span></span>
+<span id="cb2-12"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>➥ What if we had <span class="math inline">\(100\)</span> employes? Clearly, this naive approach simply does not scale.</p>
+</section>
+<section id="quick-intro-compound-data-types" class="slide level2">
+<h2>Quick intro: Compound data types</h2>
+<p>Fortunately, C++ supports <strong>compound data types</strong> (sometimes called <strong>composite data types</strong>).</p>
+<ul>
+<li><strong>Compound data types</strong> are types that are defined in terms of other existing data types.</li>
+<li><strong>Compound data types</strong> have additional properties &amp; behaviros that make the useful for certain types of problems.</li>
+</ul>
+</section>
+<section id="compound-data-types" class="slide level2">
+<h2>Compound data types</h2>
+<p>C++ supports the following compound types.</p>
+<div class="fragment">
+<h3 id="fundamental-compound-types-built-in">Fundamental Compound Types (built-in)</h3>
+<ul>
+<li>Functions (we already learned)</li>
+<li>C-style arrays</li>
+<li>Pointers</li>
+<li>References</li>
+</ul>
+</div>
+<div class="fragment">
+<h3 id="user-defined-compound-types">User-defined Compound Types</h3>
+<ul>
+<li>Structs (using keyword <code>struct</code>)</li>
+<li>Classes (using keyword <code>class</code>)</li>
+<li>Enumerations (using keyword <code>num</code> or <code>enum class</code>)</li>
+<li>Unions (using <code>union</code>)</li>
+</ul>
+</div>
+</section>
+<section id="compound-data-types-1" class="slide level2">
+<h2>Compound data types</h2>
+<p>We shall learn most of them (not all of them due to time constraints).</p>
+<ul>
+<li>I aim at cover the following topics in the live lectures
+<ul>
+<li>references</li>
+<li>pointers</li>
+<li>C-style arrays</li>
+<li>structs</li>
+<li>classes</li>
+<li>enumerations.</li>
+</ul></li>
+<li>You will see that structs and classes are very similar, and studying one carefully is enough.</li>
+</ul>
+</section>
+<section id="function-is-a-compound-data-type" class="slide level2">
+<h2>Function is a compound data type</h2>
+<p>In fact, we’ve been using one compound type regularly: <strong>Functions</strong>.</p>
+<p>➥ Consider this function</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb3-1"><a href=""></a><span class="dt">void</span> do_something<span class="op">(</span><span class="dt">int</span> x<span class="op">,</span> <span class="dt">double</span> y<span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The type of this function is</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb4-1"><a href=""></a><span class="dt">void</span><span class="op">(</span><span class="dt">int</span><span class="op">,</span> <span class="dt">double</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section></section>
+<section>
+<section id="value-categories-lvalues-and-rvalues" class="title-slide slide level1 center">
+<h1>Value categories (lvalues and rvalues)</h1>
+<p>Before we discuss lvalue references, we take a detour to learn <strong>lvalue</strong>.</p>
+</section>
+<section id="expression" class="slide level2">
+<h2>Expression</h2>
+<ul>
+<li><strong>Recall</strong>: An <strong>expression</strong> is <em>a combination of literals, variables, operators and function calls that can be executed to produce a singular value</em>.</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb5-1"><a href=""></a></span>
+<span id="cb5-2"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb5-3"><a href=""></a><span class="dt">double</span> multiply<span class="op">(</span><span class="dt">double</span> x<span class="op">,</span> <span class="dt">double</span> y<span class="op">)</span> <span class="op">{</span> <span class="cf">return</span> x <span class="op">*</span> y<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb5-4"><a href=""></a><span class="dt">double</span> add<span class="op">(</span><span class="dt">double</span> x<span class="op">,</span> <span class="dt">double</span> y<span class="op">)</span> <span class="op">{</span> <span class="cf">return</span> x <span class="op">+</span> y<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb5-5"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb5-6"><a href=""></a><span class="op">{</span></span>
+<span id="cb5-7"><a href=""></a>    <span class="co">// The expression add(2 + multiply(3, 4), 3) evaluates to the value 15.</span></span>
+<span id="cb5-8"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> add<span class="op">(</span><span class="dv">2</span> <span class="op">+</span> multiply<span class="op">(</span><span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">),</span> <span class="dv">3</span><span class="op">)</span> <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span> </span>
+<span id="cb5-9"><a href=""></a></span>
+<span id="cb5-10"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb5-11"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<h3 id="properties-of-an-expression">Properties of an expression</h3>
+<ul>
+<li>To help determine how expressions should evaluate and where they can be used, all expressions in C++ has two properties:
+<ul>
+<li>a <span style="color:red"><strong>type</strong></span> category</li>
+<li>a <span style="color:red"><strong>value</strong></span> gategory</li>
+</ul></li>
+</ul>
+</section>
+<section id="the-type-of-an-expression" class="slide level2">
+<h2>The type of an expression</h2>
+<p>The type of an expression is equivalent to the type of the value, object, or function that results from the evaluated expression.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb6-1"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb6-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb6-3"><a href=""></a>    <span class="kw">auto</span> v1 <span class="op">{</span> <span class="dv">12</span> <span class="op">/</span> <span class="dv">4</span> <span class="op">};</span> <span class="co">// int / int =&gt; int</span></span>
+<span id="cb6-4"><a href=""></a>    <span class="kw">auto</span> v2 <span class="op">{</span> <span class="fl">12.0</span> <span class="op">/</span> <span class="dv">4</span> <span class="op">};</span> <span class="co">// double / int =&gt; double</span></span>
+<span id="cb6-5"><a href=""></a></span>
+<span id="cb6-6"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-7"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="the-type-of-an-expression-1" class="slide level2">
+<h2>The type of an expression</h2>
+<p>The compiler can use the type of an expression to determine whether an expression is valid in a given context.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb7-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb7-2"><a href=""></a></span>
+<span id="cb7-3"><a href=""></a><span class="dt">void</span> print<span class="op">(</span><span class="dt">int</span> x<span class="op">)</span></span>
+<span id="cb7-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb7-5"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb7-6"><a href=""></a><span class="op">}</span></span>
+<span id="cb7-7"><a href=""></a></span>
+<span id="cb7-8"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb7-9"><a href=""></a><span class="op">{</span></span>
+<span id="cb7-10"><a href=""></a>    print<span class="op">(</span><span class="st">"foo"</span><span class="op">);</span> <span class="co">// error: print() was expecting an int argument, we tried to pass in a string literal</span></span>
+<span id="cb7-11"><a href=""></a></span>
+<span id="cb7-12"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb7-13"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="the-value-category-of-an-expression" class="slide level2">
+<h2>The value category of an expression</h2>
+<p>➥ Consider the following program</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb8-1"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb8-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb8-3"><a href=""></a>    <span class="dt">int</span> x <span class="op">{};</span></span>
+<span id="cb8-4"><a href=""></a>    x <span class="op">=</span> <span class="dv">5</span><span class="op">;</span>      <span class="co">// valid: we can assign 5 to x</span></span>
+<span id="cb8-5"><a href=""></a>    <span class="dv">5</span> <span class="op">=</span> x<span class="op">;</span>      <span class="co">// error: cannot assign value of x to literal value 5</span></span>
+<span id="cb8-6"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb8-7"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>One of these assigments is valid (<code>x = 5</code>) and the other is not (assigning <code>x</code> to <code>5</code>, what the hell?)</li>
+<li>As a human with common sense, we can clearly see <code>5 = x</code> does not make sense.</li>
+</ul>
+<p><strong>Question</strong>&nbsp; But how does the compiler know which expression can legally appear on either side of an assignment statement?</p>
+<div class="fragment">
+<p><strong>Answer</strong>&nbsp; The answer lies in the second property of expressions: <span style="color:red">value category</span></p>
+</div>
+</section>
+<section id="the-value-category-of-an-expression-1" class="slide level2">
+<h2>The value category of an expression</h2>
+<ul>
+<li class="fragment">Prior to C++11, there were only two possible value categories: <strong>lvalue</strong> and <strong>rvalue</strong></li>
+<li class="fragment">In C++11, three additional value categories, <strong>glvalue</strong>, <strong>prvalue</strong> and <strong>xvalue</strong> were added to support new feature called <strong>move semantics</strong></li>
+<li class="fragment">We shall focus on <em>lvalue</em> and <em>rvalue</em> first.</li>
+</ul>
+</section></section>
+<section>
+<section id="regarding-lvalue-and-rvalue-expressions" class="title-slide slide level1 center">
+<h1>Regarding lvalue and rvalue expressions</h1>
+
+</section>
+<section id="lvalue-expression" class="slide level2">
+<h2>lvalue expression</h2>
+<ul>
+<li class="fragment">An <strong>lvalue</strong> is an an expression that evaluates to an identifiable object or function (or bit-field).</li>
+<li class="fragment">Unfortunately, the term “identity” is used by the C++ standard, but is not well-defined.</li>
+<li class="fragment">An entity (such as an object or function) that has an identity can be differentiated from other similar entities (typically by comparing the addresses of the entity)</li>
+<li class="fragment">Entities with identities can be accessed via an identifier, reference, or pointer, and typically have a lifetime longer than a single expression or statement.</li>
+</ul>
+<div class="fragment">
+<blockquote>
+<p>Loosely speaking, we can think of identifier as the name of a variable, a function because we can identify them by name.</p>
+</blockquote>
+</div>
+<div class="fragment">
+<p>➥ Look at this example</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb9-1"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb9-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb9-3"><a href=""></a>    <span class="dt">int</span> x <span class="op">{</span> <span class="dv">5</span> <span class="op">};</span></span>
+<span id="cb9-4"><a href=""></a>    <span class="dt">int</span> y <span class="op">{</span> x <span class="op">};</span>        <span class="co">// x is an lvalue expression</span></span>
+<span id="cb9-5"><a href=""></a></span>
+<span id="cb9-6"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb9-7"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="rvalue-expression" class="slide level2">
+<h2>rvalue expression</h2>
+<ul>
+<li class="fragment">An <strong>rvalue</strong> is an expression that is not an <strong>lvalue</strong>.</li>
+<li class="fragment">rvalue expressions evaluate to a value.</li>
+<li class="fragment">Commonly seen rvalues include
+<ul>
+<li class="fragment">literals (except C-style string literals – which are lvalues)</li>
+<li class="fragment">return value of functions</li>
+<li class="fragment">return value of operators that return by value</li>
+</ul></li>
+</ul>
+<div class="fragment">
+<blockquote>
+<p><strong>rvalues</strong> are not identifiable (meaning they have to be used immediately), and only exist within the scope of the expression in which they are used.</p>
+</blockquote>
+</div>
+</section>
+<section id="rvalue-expression-example" class="slide level2">
+<h2>rvalue expression: Example</h2>
+<div id="lst-rvalue-example" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-rvalue-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;2: rvalue expression example. Filenmae=<code>rvalue_expression.example.cpp</code>
+</figcaption>
+<div aria-describedby="lst-rvalue-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb10-1"><a href=""></a><span class="dt">int</span> return5<span class="op">()</span></span>
+<span id="cb10-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb10-3"><a href=""></a>    <span class="cf">return</span> <span class="dv">5</span><span class="op">;</span></span>
+<span id="cb10-4"><a href=""></a><span class="op">}</span></span>
+<span id="cb10-5"><a href=""></a></span>
+<span id="cb10-6"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb10-7"><a href=""></a><span class="op">{</span></span>
+<span id="cb10-8"><a href=""></a>    <span class="dt">int</span> x<span class="op">{</span> <span class="dv">5</span> <span class="op">};</span>             <span class="co">// 5 is an rvalue expression</span></span>
+<span id="cb10-9"><a href=""></a>    <span class="at">const</span> <span class="dt">double</span> d<span class="op">{</span> <span class="fl">1.2</span> <span class="op">};</span>  <span class="co">// 1.2 is an rvalue expression</span></span>
+<span id="cb10-10"><a href=""></a></span>
+<span id="cb10-11"><a href=""></a>    <span class="dt">int</span> y <span class="op">{</span> x <span class="op">};</span>            <span class="co">// x is a modifiable lvalue expression</span></span>
+<span id="cb10-12"><a href=""></a>    <span class="at">const</span> <span class="dt">double</span> e <span class="op">{</span> d <span class="op">};</span>   <span class="co">// d is a non-modifiable lvalue expression</span></span>
+<span id="cb10-13"><a href=""></a>    <span class="dt">int</span> z <span class="op">{</span> return5<span class="op">()</span> <span class="op">};</span>    <span class="co">// return5() is an rvalue expression (since the result is returned by value)</span></span>
+<span id="cb10-14"><a href=""></a></span>
+<span id="cb10-15"><a href=""></a>    <span class="dt">int</span> w <span class="op">{</span> x <span class="op">+</span> <span class="dv">1</span> <span class="op">};</span>                <span class="co">// x + 1 is an rvalue expression</span></span>
+<span id="cb10-16"><a href=""></a>    <span class="dt">int</span> q <span class="op">{</span> <span class="kw">static_cast</span><span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;(</span>d<span class="op">)</span> <span class="op">};</span>  <span class="co">// the result of static casting d to an int is an rvalue expression</span></span>
+<span id="cb10-17"><a href=""></a></span>
+<span id="cb10-18"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb10-19"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+<ul>
+<li><code>return5()</code>, <code>x + 1</code> and <code>static_cast&lt;int&gt;(d)</code> are rvalues because these expressions produce temporary values that are not identifiable objects.</li>
+</ul>
+</section>
+<section id="lvalue-expressions-versus-rvalue-expressions" class="slide level2">
+<h2>lvalue expressions versus rvalue expressions</h2>
+<p>It is hard to remember/understand lvalue expressions versus rvalue expressions. But we can summarize</p>
+<blockquote>
+<p><strong>Key insight</strong></p>
+<p><span style="color:red"><strong>lvalue</strong></span> expressions evaluate to an <span style="color:red"><strong>identifiable object</strong></span> <span style="color:blue"><strong>rvalue</strong></span> expressions evalute to a <span style="color:blue"><strong>value</strong></span>.</p>
+</blockquote>
+</section>
+<section id="value-categories-and-operators" class="slide level2">
+<h2>Value categories and operators</h2>
+<p>Unless otherwise specified, <span style="color:red"><strong>operators expect their operands to be rvalues</strong></span>.</p>
+<div id="lst-rvalue-example" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-rvalue-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;3: rvalue expression example. Filenmae=<code>value_categories_in_operators.cpp</code>
+</figcaption>
+<div aria-describedby="lst-rvalue-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb11-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb11-2"><a href=""></a></span>
+<span id="cb11-3"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb11-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb11-5"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="dv">1</span> <span class="op">+</span> <span class="dv">2</span><span class="op">;</span> <span class="co">// 1 and 2 are rvalues, operator+ returns an rvalue</span></span>
+<span id="cb11-6"><a href=""></a></span>
+<span id="cb11-7"><a href=""></a>    <span class="co">// But what about this -- did we learn that x and y should be lvalues?:</span></span>
+<span id="cb11-8"><a href=""></a>    <span class="dt">double</span> x <span class="op">{</span> <span class="fl">24.1</span> <span class="op">};</span></span>
+<span id="cb11-9"><a href=""></a>    <span class="dt">double</span> y <span class="op">{</span> <span class="fl">42.2</span> <span class="op">};</span></span>
+<span id="cb11-10"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> x <span class="op">+</span> y<span class="op">;</span>     <span class="co">// x and y are rvalues in the expression x + y.</span></span>
+<span id="cb11-11"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb11-12"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="come-back-to-the-original-question-x-5-vs-5-x" class="slide level2">
+<h2>Come back to the original question: <code>x = 5</code> vs <code>5 = x</code></h2>
+<p>We can answer the question about why <code>x = 5</code> is valid but <code>5 = x</code> is not valid:</p>
+<p>➥ <strong>An assignment operation requires its left operand to be a modifiable lvalue expression.</strong></p>
+<p>➥ The assignment <code>5 = x</code> fails because the left operand expression <code>5</code> is an rvalue, not a modifiable lvalue.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb12-1"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb12-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb12-3"><a href=""></a>    <span class="dt">int</span> x<span class="op">{};</span></span>
+<span id="cb12-4"><a href=""></a></span>
+<span id="cb12-5"><a href=""></a>    <span class="co">// Assignment requires the left operand to be a modifiable </span></span>
+<span id="cb12-6"><a href=""></a>    <span class="co">// lvalue expression and the right operand to be an rvalue </span></span>
+<span id="cb12-7"><a href=""></a>    <span class="co">// expression</span></span>
+<span id="cb12-8"><a href=""></a>    x <span class="op">=</span> <span class="dv">5</span><span class="op">;</span>  <span class="co">// valid: x is a modifiable lvalue expression </span></span>
+<span id="cb12-9"><a href=""></a>            <span class="co">// and 5 is an rvalue expression</span></span>
+<span id="cb12-10"><a href=""></a></span>
+<span id="cb12-11"><a href=""></a>    <span class="dv">5</span> <span class="op">=</span> x<span class="op">;</span>  <span class="co">// error: 5 is an rvalue expression and x </span></span>
+<span id="cb12-12"><a href=""></a>            <span class="co">// is a modifiable lvalue expression</span></span>
+<span id="cb12-13"><a href=""></a></span>
+<span id="cb12-14"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb12-15"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="you-might-ask-how-about-y-x" class="slide level2">
+<h2>You might ask: How about <code>y = x</code></h2>
+<p>You might ask now: How about <code>y = x</code>?</p>
+<p>➥&nbsp; It is a legitimate question. Look at this</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb13-1"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb13-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb13-3"><a href=""></a>    <span class="dt">int</span> x<span class="op">{</span> <span class="dv">1</span> <span class="op">};</span></span>
+<span id="cb13-4"><a href=""></a>    <span class="dt">int</span> y<span class="op">{</span> <span class="dv">2</span> <span class="op">};</span></span>
+<span id="cb13-5"><a href=""></a></span>
+<span id="cb13-6"><a href=""></a>    x <span class="op">=</span> y<span class="op">;</span> <span class="co">// y is not an rvalue, but this is legal</span></span>
+<span id="cb13-7"><a href=""></a></span>
+<span id="cb13-8"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb13-9"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="fragment">
+<p><strong>Question</strong>&nbsp; What is your opinion about this?</p>
+</div>
+</section>
+<section id="lvalue-to-rvalue-conversion" class="slide level2">
+<h2>lvalue-to-rvalue conversion</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb14-1"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb14-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb14-3"><a href=""></a>    <span class="dt">int</span> x<span class="op">{</span> <span class="dv">1</span> <span class="op">};</span></span>
+<span id="cb14-4"><a href=""></a>    <span class="dt">int</span> y<span class="op">{</span> <span class="dv">2</span> <span class="op">};</span></span>
+<span id="cb14-5"><a href=""></a></span>
+<span id="cb14-6"><a href=""></a>    x <span class="op">=</span> y<span class="op">;</span> <span class="co">// y is not an rvalue, but this is legal</span></span>
+<span id="cb14-7"><a href=""></a></span>
+<span id="cb14-8"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb14-9"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="fragment">
+<p>➜ The lvalue expression <code>y</code> undergoes an lvalue-to-rvalue conversion, which evaluates <code>y</code> to produce an rvalue (value <code>2</code>).</p>
+</div>
+<div class="fragment">
+<ul>
+<li>In cases where an rvalue is expected but an lvalue is provided, the lvalue will undergo an <span style="color:red"><strong>lvalue-to-rvalue conversion</strong></span>.</li>
+<li>This basically means the <em>lvalue</em> is evaluted to produce its value, which is an <em>rvalue</em>.</li>
+</ul>
+</div>
+<div class="fragment">
+<blockquote>
+<p><strong>Key insight</strong></p>
+<p>An lvalue will implicitly convert to an rvalue. <span style="color:magenta">This means an lvalue can be used anywhere an rvalue is expected.</span>. <span style="color:blue">An rvalue, on the other hand, will not implicitly convert to an lvalue.</span></p>
+</blockquote>
+</div>
+</section>
+<section id="lvalue-to-rvalue-conversion-1" class="slide level2">
+<h2>lvalue-to-rvalue conversion</h2>
+<p>➥ Consider this example</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb15-1"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb15-2"><a href=""></a><span class="op">{</span> </span>
+<span id="cb15-3"><a href=""></a>    <span class="dt">int</span> x <span class="op">{</span> <span class="dv">42</span> <span class="op">};</span></span>
+<span id="cb15-4"><a href=""></a></span>
+<span id="cb15-5"><a href=""></a>    x <span class="op">=</span> x <span class="op">+</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb15-6"><a href=""></a></span>
+<span id="cb15-7"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb15-8"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>The variable <code>x</code> is being used in two different contexts.</li>
+<li>On the left side of assignment operator (<code>=</code>), <code>x</code> is an lvalue expression that evaluates to the variable <code>x</code>.</li>
+<li>On the right side of the assignment operator (<code>=</code>), <code>x</code> undergoes an lvalue-to-rvalue conversion.</li>
+<li>Then, <code>x</code> is evaluated to value <code>42</code> so that it can be used as the left operand of <code>operator+</code>.</li>
+<li><code>operator+</code> returns the <em>rvalue</em> expression <code>43</code>.</li>
+</ul>
+</section>
+<section id="how-to-differentiate-lvalues-and-rvalues" class="slide level2">
+<h2>How to differentiate lvalues and rvalues</h2>
+<ul>
+<li><strong>lvalue expressions</strong> are those that evaluate to functions or identifiable objects (including variables) that <span style="color:red"><strong>persist beyond the end of the expression</strong></span>.</li>
+<li><strong>rvalue expressions</strong> are those that evaluate to values, including literals and temporary objects that <span style="color:blue"><strong>do not persist beyond the end of the expression</strong></span>.</li>
+</ul>
+</section>
+<section id="a-program-telling-what-kind-of-expression-something-is" class="slide level2">
+<h2>A program telling what kind of expression something is</h2>
+<div id="lst-tell-value-categories" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-tell-value-categories-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;4: Program telling value categories. Filename=<code>tell_value_categories.cpp</code>
+</figcaption>
+<div aria-describedby="lst-tell-value-categories-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb16-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb16-2"><a href=""></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
+<span id="cb16-3"><a href=""></a></span>
+<span id="cb16-4"><a href=""></a><span class="co">// T&amp; is an lvalue reference, so this overload will be preferred for lvalues</span></span>
+<span id="cb16-5"><a href=""></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb16-6"><a href=""></a><span class="kw">constexpr</span> <span class="dt">bool</span> is_lvalue<span class="op">(</span>T<span class="op">&amp;)</span></span>
+<span id="cb16-7"><a href=""></a><span class="op">{</span></span>
+<span id="cb16-8"><a href=""></a>    <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb16-9"><a href=""></a><span class="op">}</span></span>
+<span id="cb16-10"><a href=""></a></span>
+<span id="cb16-11"><a href=""></a><span class="co">// T&amp;&amp; is an rvalue reference, so this overload will be preferred for rvalues</span></span>
+<span id="cb16-12"><a href=""></a><span class="kw">template</span> <span class="op">&lt;</span><span class="kw">typename</span> T<span class="op">&gt;</span></span>
+<span id="cb16-13"><a href=""></a><span class="kw">constexpr</span> <span class="dt">bool</span> is_lvalue<span class="op">(</span>T<span class="op">&amp;&amp;)</span></span>
+<span id="cb16-14"><a href=""></a><span class="op">{</span></span>
+<span id="cb16-15"><a href=""></a>    <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb16-16"><a href=""></a><span class="op">}</span></span>
+<span id="cb16-17"><a href=""></a></span>
+<span id="cb16-18"><a href=""></a><span class="co">// A helper macro (#expr prints whatever is passed in for expr as text)</span></span>
+<span id="cb16-19"><a href=""></a><span class="pp">#define PRINT_VALUE_CATEGORY</span><span class="op">(</span>expr<span class="op">)</span><span class="pp"> </span><span class="op">{</span><span class="pp"> </span><span class="bu">std::</span>cout<span class="pp"> </span><span class="op">&lt;&lt;</span><span class="pp"> </span><span class="op">#</span>expr<span class="pp"> </span><span class="op">&lt;&lt;</span><span class="pp"> </span><span class="st">" is an "</span><span class="pp"> </span><span class="op">&lt;&lt;</span><span class="pp"> </span><span class="op">(</span>is_lvalue<span class="op">(</span>expr<span class="op">)</span><span class="pp"> </span><span class="op">?</span><span class="pp"> </span><span class="st">"lvalue</span><span class="sc">\n</span><span class="st">"</span><span class="pp"> </span><span class="op">:</span><span class="pp"> </span><span class="st">"rvalue</span><span class="sc">\n</span><span class="st">"</span><span class="op">);</span><span class="pp"> </span><span class="op">}</span></span>
+<span id="cb16-20"><a href=""></a></span>
+<span id="cb16-21"><a href=""></a><span class="dt">int</span> get_int<span class="op">()</span> <span class="op">{</span> <span class="cf">return</span> <span class="dv">5</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-22"><a href=""></a></span>
+<span id="cb16-23"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb16-24"><a href=""></a><span class="op">{</span></span>
+<span id="cb16-25"><a href=""></a>    PRINT_VALUE_CATEGORY<span class="op">(</span><span class="dv">5</span><span class="op">);</span>           <span class="co">// rvalue</span></span>
+<span id="cb16-26"><a href=""></a>    PRINT_VALUE_CATEGORY<span class="op">(</span>get_int<span class="op">());</span>   <span class="co">// rvalue</span></span>
+<span id="cb16-27"><a href=""></a>    <span class="dt">int</span> x <span class="op">{</span> <span class="dv">5</span> <span class="op">};</span></span>
+<span id="cb16-28"><a href=""></a>    PRINT_VALUE_CATEGORY<span class="op">(</span>x<span class="op">);</span>                        <span class="co">// lvalue</span></span>
+<span id="cb16-29"><a href=""></a>    PRINT_VALUE_CATEGORY<span class="op">(</span><span class="bu">std::</span>string <span class="op">{</span><span class="st">"Hello"</span><span class="op">});</span>    <span class="co">// rvalue</span></span>
+<span id="cb16-30"><a href=""></a>    PRINT_VALUE_CATEGORY<span class="op">(</span><span class="st">"Hello"</span><span class="op">);</span>                  <span class="co">// lvalue</span></span>
+<span id="cb16-31"><a href=""></a>    PRINT_VALUE_CATEGORY<span class="op">(++</span>x<span class="op">);</span>                      <span class="co">// lvalue</span></span>
+<span id="cb16-32"><a href=""></a>    PRINT_VALUE_CATEGORY<span class="op">(</span>x<span class="op">++);</span>                      <span class="co">// rvalue</span></span>
+<span id="cb16-33"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section></section>
+<section>
+<section id="lvalue-references" class="title-slide slide level1 center">
+<h1>lvalue references</h1>
+
+</section>
+<section id="references" class="slide level2">
+<h2>References</h2>
+<p>A <span style="color:red"><strong>reference</strong></span> is an alias for an existing object.</p>
+<ul>
+<li>Once a reference has been defined, any operation on the reference is applied to the object being referenced.</li>
+<li>We can use a reference to read or modify the object being referenced.</li>
+</ul>
+<div class="fragment">
+<p><strong>Note</strong>&nbsp;</p>
+<ul>
+<li>Although references might seem silly, useless or redundant, they are used everywhere in C++.</li>
+<li>Otherwise, people won’t introduce this concept.</li>
+</ul>
+</div>
+<div class="fragment">
+<blockquote>
+<p><strong>Key point</strong></p>
+<p><span style="color:navy">A <strong>reference</strong> is essentially identical to the object being referenced.</span></p>
+</blockquote>
+</div>
+<div class="fragment">
+<p>Two types of references:</p>
+<ul>
+<li><span style="color:red">lvalue references</span></li>
+<li><span style="color:red">rvalue references</span></li>
+</ul>
+<p><strong>Note</strong> ➥ We discuss <strong>lvalue references</strong> in this Chapter.</p>
+</div>
+</section></section>
+<section>
+<section id="lvalue-reference" class="title-slide slide level1 center">
+<h1>lvalue reference</h1>
+
+</section>
+<section id="lvalue-reference-definition" class="slide level2">
+<h2>lvalue reference: Definition</h2>
+<div class="fragment">
+<blockquote>
+<p>An <span style="color:red"><strong>lvalue reference</strong></span> acts as an <span style="color:red"><strong>alias</strong></span> for an existing lvalue (such as a variable)</p>
+</blockquote>
+</div>
+<div class="fragment">
+<p>➥&nbsp; <strong>lvalue reference</strong> is commonly just called a <span style="color:red"><strong>reference</strong></span> since prior to C++ there was only one type of reference.</p>
+<p>➥&nbsp; Just like the type of an object determines what kind of value it can hold, <span style="color:navy">the type of a reference determines what type of object it can reference.</span></p>
+</div>
+<div class="fragment">
+<p><strong>Some history</strong></p>
+<ul>
+<li>By history, we just call “<em>reference</em>”.</li>
+<li>When you hear an expert saying “<em>reference</em>”, they mean “<em>lvalue reference</em>”.</li>
+<li>In fact, not all the veteran in C++ knows two types of references.</li>
+</ul>
+</div>
+</section>
+<section id="lvalue-reference-syntax" class="slide level2">
+<h2>lvalue reference: Syntax</h2>
+<p>➥&nbsp; lvalue reference types can be identified by use of a <span style="color:red"><strong>single ampersand</strong></span> in the type specifier</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb17-1"><a href=""></a><span class="co">// regular types</span></span>
+<span id="cb17-2"><a href=""></a><span class="dt">int</span>        <span class="co">// a normal int type (not an reference)</span></span>
+<span id="cb17-3"><a href=""></a><span class="dt">int</span><span class="op">&amp;</span>       <span class="co">// an lvalue reference to an int object</span></span>
+<span id="cb17-4"><a href=""></a><span class="dt">double</span><span class="op">&amp;</span>    <span class="co">// an lvalue reference to a double object</span></span>
+<span id="cb17-5"><a href=""></a><span class="at">const</span> <span class="dt">int</span><span class="op">&amp;</span> <span class="co">// an lvalue reference to a const int object</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="fragment">
+<p><strong>Remark</strong></p>
+<ul>
+<li>Note that we use <u>only one ampersand</u> (&amp;) for lvalue reference.</li>
+<li>We shall learn that <u>two ampersands</u> (&amp;&amp;) are used for rvalue reference.</li>
+</ul>
+</div>
+<div class="fragment">
+<p><strong>Interpretation</strong></p>
+<ul>
+<li><code>int&amp;</code> is the type of an lvalue reference to an <code>int</code> object.</li>
+<li><code>const int&amp;</code> is the type of an lvalue reference to a <code>const int</code> object.</li>
+</ul>
+</div>
+<div class="fragment">
+<p><strong>Terminology</strong></p>
+<ul>
+<li>A type that specifies a reference (e.g.&nbsp;<code>int&amp;</code>) is called a <span style="color:red"><strong>reference type</strong></span></li>
+<li>The type that can be referenced (e.g.&nbsp;<code>int</code>) is called the <span style="color:red"><strong>referenced type</strong></span></li>
+</ul>
+</div>
+</section></section>
+<section>
+<section id="lvalue-reference-variables" class="title-slide slide level1 center">
+<h1>lvalue reference variables</h1>
+
+</section>
+<section id="lvalue-reference-variables-1" class="slide level2">
+<h2>lvalue reference variables</h2>
+<p>An <span style="color:red"><strong>lvalue reference variable</strong></span> is a variable that acts as a reference to an lvalue (usually another variable)</p>
+<div id="lst-lvalue-reference-variable" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-lvalue-reference-variable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;5: Define lvalue reference variable. Filename=<code>tell_value_categories.cpp</code>
+</figcaption>
+<div aria-describedby="lst-lvalue-reference-variable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb18-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb18-2"><a href=""></a></span>
+<span id="cb18-3"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb18-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb18-5"><a href=""></a>    <span class="dt">int</span> x <span class="op">{</span> <span class="dv">5</span> <span class="op">};</span>    <span class="co">// x is a normal integer variable</span></span>
+<span id="cb18-6"><a href=""></a>    <span class="dt">int</span><span class="op">&amp;</span> ref <span class="op">{</span> x <span class="op">};</span> <span class="co">// ref is an lvalue reference variable that can now be used as an alias for variable x</span></span>
+<span id="cb18-7"><a href=""></a></span>
+<span id="cb18-8"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span>  <span class="co">// print the value of x (5)</span></span>
+<span id="cb18-9"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> ref <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span> <span class="co">// print the value of x via ref (5)</span></span>
+<span id="cb18-10"><a href=""></a></span>
+<span id="cb18-11"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb18-12"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+<ul>
+<li>The type <code>int&amp;</code> defines <code>ref</code> as an lvalue reference to an <code>int</code>.</li>
+<li>We initialize <code>ref</code> with lvalue expression <code>x</code>.</li>
+<li>Thereafter, <code>ref</code> and <code>x</code> can be used synonymously.</li>
+</ul>
+<p>➥&nbsp; Let us run this code snippet.</p>
+</section>
+<section id="lvalue-reference-variables-writing-style" class="slide level2">
+<h2>lvalue reference variables: Writing style</h2>
+<p><strong>Writing style</strong></p>
+<div class="fragment">
+<ul>
+<li>It does not matter whether the ampersand is “attached” to the type name (<code>int&amp; ref</code>) or the variable’s name (<code>int &amp;ref</code>)</li>
+<li>Modern C++ programmers tend to prefer attaching the ampersand to the type, i.e.&nbsp;<code>int&amp; ref</code>.</li>
+<li>The style <code>int&amp; ref</code> makes it clear that the reference is part of the type information, not the identifier.</li>
+</ul>
+</div>
+<div class="fragment">
+<blockquote>
+<p><strong>Best practice</strong></p>
+<p>When defining a reference, place the ampersand next to the type (not the reference variable’s name)</p>
+</blockquote>
+</div>
+<div class="fragment">
+<p><strong>Warning for later learning</strong></p>
+<ul>
+<li>We shall learn <strong>pointers</strong> and <strong>address of objects</strong>.</li>
+<li>The ampersand in this context does not mean “address of” (also retrieved by using ampersand). <em>Be careful!</em></li>
+<li>But don’t worry too much, you will see the difference after some practice.</li>
+</ul>
+</div>
+</section>
+<section id="lvalue-reference-to-non-const-and-lvalue-reference-to-const" class="slide level2">
+<h2>lvalue reference to non-const and lvalue reference to const</h2>
+<p>Two kinds of lvalue references (just common sense):</p>
+<ul>
+<li><span style="color:red"><strong>lvalue reference to non-const</strong></span>, or a <span style="color:red"><strong>non-const lvalue reference</strong></span> is an lvalue reference to a non-const (non-constant lvalue).</li>
+<li><span style="color:blue"><strong>lvalue reference to const</strong></span>, or a <span style="color:blue"><strong>const lvalue reference</strong></span> is an lvalue reference to a const.</li>
+</ul>
+<p>➥&nbsp; We shall focus on lvalue reference to non-const first.</p>
+</section></section>
+<section>
+<section id="modifying-values-through-a-non-const-lvalue-reference" class="title-slide slide level1 center">
+<h1>Modifying values through a non-const lvalue reference</h1>
+
+</section>
+<section id="modifying-values-through-a-non-const-lvalue-reference-1" class="slide level2">
+<h2>Modifying values through a non-const lvalue reference</h2>
+<p>We can also use a non-const reference to modify the value of the object being referenced.</p>
+<div id="lst-modify-through-ref" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-modify-through-ref-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;6: Modifying values through non-const lvalue references. Filename=<code>modify_value_through_nonconst_reference.cpp</code>
+</figcaption>
+<div aria-describedby="lst-modify-through-ref-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb19-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb19-2"><a href=""></a></span>
+<span id="cb19-3"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb19-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb19-5"><a href=""></a>    <span class="dt">int</span> x <span class="op">{</span> <span class="dv">42</span> <span class="op">};</span>            <span class="co">// normal integer variable</span></span>
+<span id="cb19-6"><a href=""></a>    <span class="dt">int</span><span class="op">&amp;</span> ref <span class="op">{</span> x <span class="op">};</span>         <span class="co">// ref is now an alias for variable x</span></span>
+<span id="cb19-7"><a href=""></a></span>
+<span id="cb19-8"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> ref <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span>  </span>
+<span id="cb19-9"><a href=""></a></span>
+<span id="cb19-10"><a href=""></a>    x <span class="op">=</span> <span class="dv">24</span><span class="op">;</span>                             <span class="co">// x now has value 24</span></span>
+<span id="cb19-11"><a href=""></a></span>
+<span id="cb19-12"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> ref <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span>      </span>
+<span id="cb19-13"><a href=""></a></span>
+<span id="cb19-14"><a href=""></a>    ref <span class="op">=</span> <span class="dv">12</span><span class="op">;</span>    <span class="co">// the object being referenced (x) now has value 12</span></span>
+<span id="cb19-15"><a href=""></a></span>
+<span id="cb19-16"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> ref <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb19-17"><a href=""></a></span>
+<span id="cb19-18"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb19-19"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+<p>➥&nbsp; Let us run this code snippet. <strong>Question</strong>: What would be the output you expect to see?</p>
+</section>
+<section id="reference-initialization" class="slide level2">
+<h2>Reference initialization</h2>
+<p>Much like constants, <span style="color:navy"><strong>all references must be initialized</strong></span>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb20-1"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb20-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb20-3"><a href=""></a>    <span class="dt">int</span><span class="op">&amp;</span> invalid_ref<span class="op">;</span>   <span class="co">// error: references must be initialized</span></span>
+<span id="cb20-4"><a href=""></a></span>
+<span id="cb20-5"><a href=""></a>    <span class="dt">int</span> x <span class="op">{</span> <span class="dv">5</span> <span class="op">};</span></span>
+<span id="cb20-6"><a href=""></a>    <span class="dt">int</span><span class="op">&amp;</span> ref <span class="op">{</span> x <span class="op">};</span>     <span class="co">// okay: reference to int is bound to int variable</span></span>
+<span id="cb20-7"><a href=""></a></span>
+<span id="cb20-8"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb20-9"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="fragment">
+<p><strong>Terminologies</strong></p>
+<ul>
+<li>References are initialized using a form of initialization called <span style="color:red"><strong>reference initialization</strong></span></li>
+<li>When a reference is initialized with an object (or function), we say it is <span style="color:red"><strong>bound</strong></span> to that object (or function).</li>
+<li>The process by which a reference is bound is called <span style="color:red"><strong>reference binding</strong></span></li>
+<li>The object (or function) being referenced is called the <span style="color:red"><strong>referent</strong></span></li>
+</ul>
+</div>
+<div class="fragment">
+<blockquote>
+<p>Don’t worry! <em>I won’t test your memory of these terminologies in the paper exam.</em></p>
+</blockquote>
+</div>
+</section>
+<section id="reference-initialization-more" class="slide level2">
+<h2>Reference initialization: more</h2>
+<p>non-const lvalue references can only be bound to a <em>modifiable</em> lvalue</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb21-1"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb21-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb21-3"><a href=""></a>    <span class="dt">int</span> x <span class="op">{</span> <span class="dv">5</span> <span class="op">};</span></span>
+<span id="cb21-4"><a href=""></a>    <span class="dt">int</span><span class="op">&amp;</span> ref <span class="op">{</span> x <span class="op">};</span>         <span class="co">// okay: non-const lvalue reference bound to a modifiable lvalue</span></span>
+<span id="cb21-5"><a href=""></a></span>
+<span id="cb21-6"><a href=""></a>    <span class="at">const</span> <span class="dt">int</span> y <span class="op">{</span> <span class="dv">5</span> <span class="op">};</span>      <span class="co">// const int</span></span>
+<span id="cb21-7"><a href=""></a></span>
+<span id="cb21-8"><a href=""></a>    <span class="co">// invalid: non-const lvalue reference can't bind to a non-modifiable lvalue</span></span>
+<span id="cb21-9"><a href=""></a>    <span class="dt">int</span><span class="op">&amp;</span> invalidRef <span class="op">{</span> y <span class="op">};</span>  </span>
+<span id="cb21-10"><a href=""></a></span>
+<span id="cb21-11"><a href=""></a>    <span class="co">// invalid: non-const lvalue reference can't bind to an rvalue</span></span>
+<span id="cb21-12"><a href=""></a>    <span class="dt">int</span><span class="op">&amp;</span> invalidRef2 <span class="op">{</span> <span class="dv">0</span> <span class="op">};</span> </span>
+<span id="cb21-13"><a href=""></a></span>
+<span id="cb21-14"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb21-15"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="fragment">
+<p><strong>Question</strong>&nbsp; Why cannot we bound non-const lvalue reference to a const value?</p>
+</div>
+<div class="fragment">
+<blockquote>
+<p><strong>Key insight</strong> (just common sense)</p>
+<p>If non-const lvalue references could be bound to non-modifiable (const) lvalues or rvalues, then you would be able to change those values through the reference, which would be a violation of their const-ness.</p>
+</blockquote>
+</div>
+</section>
+<section id="references-cannot-be-reseated-changed-to-refer-to-another-object" class="slide level2">
+<h2>References cannot be reseated (changed to refer to another object)</h2>
+<p>➥&nbsp; <span style="color:navy"><strong>Once initialized, a reference cannot be reseated.</strong></span> It cannot be changed to reference another object.</p>
+<div id="lst-ref-cannot-be-reseated" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-ref-cannot-be-reseated-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;7: References cannot be reseated (changed to refer another object). Filename=<code>reference_cannot_be_reseated.cpp</code>
+</figcaption>
+<div aria-describedby="lst-ref-cannot-be-reseated-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb22-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb22-2"><a href=""></a></span>
+<span id="cb22-3"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb22-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb22-5"><a href=""></a>    <span class="dt">int</span> x <span class="op">{</span> <span class="dv">5</span> <span class="op">};</span></span>
+<span id="cb22-6"><a href=""></a>    <span class="dt">int</span> y <span class="op">{</span> <span class="dv">6</span> <span class="op">};</span></span>
+<span id="cb22-7"><a href=""></a></span>
+<span id="cb22-8"><a href=""></a>    <span class="dt">int</span><span class="op">&amp;</span> ref <span class="op">{</span> x <span class="op">};</span> <span class="co">// ref is now an alias for x</span></span>
+<span id="cb22-9"><a href=""></a></span>
+<span id="cb22-10"><a href=""></a>    ref <span class="op">=</span> y<span class="op">;</span> <span class="co">// assigns 6 (the value of y) to x (the object being referenced by ref)</span></span>
+<span id="cb22-11"><a href=""></a>    <span class="co">// The above line does NOT change ref into a reference to variable y!</span></span>
+<span id="cb22-12"><a href=""></a></span>
+<span id="cb22-13"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span> <span class="co">// user is expecting this to print 5</span></span>
+<span id="cb22-14"><a href=""></a></span>
+<span id="cb22-15"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb22-16"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+<p>➥&nbsp; Let us run this code snippet. Surprisingly, this program prints <code>6</code>.</p>
+<div class="fragment">
+<p>➜&nbsp; <strong>What happened</strong>: When a reference is evaluated in an expression, it resolves to the object it’s referencing. So, <code>ref = y</code> does not change <code>ref</code> to now reference <code>y</code>. Rather, because <code>ref</code> is an alias for <code>x</code>, the expression evaluates as if it was written <code>x = y</code> – and since <code>y</code> evaluates to value <code>6</code>, <code>x</code> is assigned the value <code>6</code>.</p>
+</div>
+</section>
+<section id="references-and-refents-have-independent-lifetimes" class="slide level2">
+<h2>References and refents have independent lifetimes</h2>
+<p><span style="color:navy"><strong>The lifetime of a reference and the lifetime of its referent are independent</strong></span></p>
+<ul>
+<li>A reference can be destroyed before the object it is referencing.</li>
+<li>The object being referenced can be destroyed before the reference.</li>
+</ul>
+<p><em>When a reference is destroyed before the referent, the referent is not impacted.</em></p>
+<div id="lst-lifetime-reference-referent" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-lifetime-reference-referent-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;8: References and referents have independent lifetimes. Filename=<code>lifetime_reference_and_referent.cpp</code>
+</figcaption>
+<div aria-describedby="lst-lifetime-reference-referent-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb23-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb23-2"><a href=""></a></span>
+<span id="cb23-3"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb23-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb23-5"><a href=""></a>    <span class="dt">int</span> x <span class="op">{</span> <span class="dv">42</span> <span class="op">};</span></span>
+<span id="cb23-6"><a href=""></a></span>
+<span id="cb23-7"><a href=""></a>    <span class="op">{</span>   <span class="co">// note these curly braces</span></span>
+<span id="cb23-8"><a href=""></a>        <span class="dt">int</span><span class="op">&amp;</span> ref <span class="op">{</span> x <span class="op">};</span>             <span class="co">// ref is a reference to x</span></span>
+<span id="cb23-9"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> ref <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span>   <span class="co">// prints value of ref (42)</span></span>
+<span id="cb23-10"><a href=""></a>    <span class="op">}</span>   <span class="co">// ref is destroyed here -- x is unaware of this</span></span>
+<span id="cb23-11"><a href=""></a></span>
+<span id="cb23-12"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span> <span class="co">// prints value of x (5)</span></span>
+<span id="cb23-13"><a href=""></a></span>
+<span id="cb23-14"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb23-15"><a href=""></a><span class="op">}</span>   <span class="co">// x destroyed here</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="dangling-references" class="slide level2">
+<h2>Dangling references</h2>
+<ul>
+<li class="fragment">When an object being referenced is destroyed before a reference to it, the reference is left referencing an object that no longer exists.</li>
+<li class="fragment">Such a reference is called a <span style="color:red"><strong>dangling reference</strong></span>.</li>
+<li class="fragment"><em>Accessing a dangling reference leads to undefined behavior.</em></li>
+</ul>
+</section>
+<section id="references-are-not-objects" class="slide level2">
+<h2>References are not objects</h2>
+<ul>
+<li class="fragment">Perhaps surprisingly, references are not objects in C++.</li>
+<li class="fragment">A reference is not required to exist or occupy storage.</li>
+<li class="fragment">If possible, the compiler will optimize references away by replacing all occurrences of a reference with the referent.</li>
+<li class="fragment">However, this isn’t always possible, and in such cases, references may require storage.</li>
+</ul>
+<div class="fragment">
+<p><strong>Consequences</strong></p>
+<ul>
+<li>The term “reference variable” is a bit of a misnomer, as variables are objects with a name, and references aren’t objects.</li>
+<li>Because references are not objects, they cannot be used anywhere an object is required (e.g.&nbsp;you cannot have a reference to a reference, since an lvalue reference must reference an identifiable object).</li>
+</ul>
+</div>
+<div class="fragment">
+<blockquote>
+<p>Although references seem a bit useless at this point, they are used a lot. We will cover one of the primary reasons why shortly.</p>
+</blockquote>
+</div>
+</section></section>
+<section>
+<section id="pass-by-lvalue-reference" class="title-slide slide level1 center">
+<h1>Pass by lvalue reference</h1>
+<p>Why do we create an alias to a variable when we can just use the variable itself?</p>
+</section>
+<section id="rationale-recalling-pass-by-value" class="slide level2">
+<h2>Rationale: Recalling pass by value</h2>
+<p>We discussed <span style="color:red"><strong>pass by value</strong></span>, where an argument passed to a function is copied into the function’s parameter.</p>
+<div id="lst-pass-by-value" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-pass-by-value-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;9: An example of pass by value Filename=<code>pass_by_value.cpp</code>
+</figcaption>
+<div aria-describedby="lst-pass-by-value-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb24-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb24-2"><a href=""></a></span>
+<span id="cb24-3"><a href=""></a><span class="dt">void</span> print_value<span class="op">(</span><span class="dt">double</span> v<span class="op">)</span></span>
+<span id="cb24-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb24-5"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> v <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb24-6"><a href=""></a><span class="op">}</span>   <span class="co">// v is destroyed here</span></span>
+<span id="cb24-7"><a href=""></a></span>
+<span id="cb24-8"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb24-9"><a href=""></a><span class="op">{</span></span>
+<span id="cb24-10"><a href=""></a>    <span class="dt">double</span> x <span class="op">{</span> <span class="fl">42.0</span> <span class="op">};</span></span>
+<span id="cb24-11"><a href=""></a></span>
+<span id="cb24-12"><a href=""></a>    print_value<span class="op">(</span>x<span class="op">);</span> <span class="co">// x is passed by value (copied) </span></span>
+<span id="cb24-13"><a href=""></a>                    <span class="co">// into parameter v (inexpensive)</span></span>
+<span id="cb24-14"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb24-15"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="rationale-some-objects-are-expensive-to-copy" class="slide level2">
+<h2>Rationale: Some objects are expensive to copy</h2>
+<div class="fragment">
+<ul>
+<li class="fragment">Most of the types provided by the standard library (such as <code>std::string</code>) are class types. Class types are usually expensive to copy.</li>
+<li class="fragment">We want to avoid making unnecessary copies of objects that are expensive to copy, especially when these copied objects will be destroyed almost immediately.</li>
+</ul>
+</div>
+<div class="fragment">
+<div id="lst-pass-by-value-string" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-pass-by-value-string-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;10: Making a copy of <code>std::string</code> object is expensive. Filename=<code>pass_by_value_string.cpp</code>
+</figcaption>
+<div aria-describedby="lst-pass-by-value-string-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb25-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb25-2"><a href=""></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
+<span id="cb25-3"><a href=""></a></span>
+<span id="cb25-4"><a href=""></a><span class="dt">void</span> print_value<span class="op">(</span><span class="bu">std::</span>string y<span class="op">)</span></span>
+<span id="cb25-5"><a href=""></a><span class="op">{</span></span>
+<span id="cb25-6"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> y <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb25-7"><a href=""></a><span class="op">}</span> <span class="co">// y is destroyed here</span></span>
+<span id="cb25-8"><a href=""></a></span>
+<span id="cb25-9"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb25-10"><a href=""></a><span class="op">{</span></span>
+<span id="cb25-11"><a href=""></a>    <span class="bu">std::</span>string x <span class="op">{</span> <span class="st">"My name is Khiem, what's your name?"</span> <span class="op">};</span> <span class="co">// x is a std::string</span></span>
+<span id="cb25-12"><a href=""></a>    print_value<span class="op">(</span>x<span class="op">);</span> <span class="co">// x is passed by value (copied) </span></span>
+<span id="cb25-13"><a href=""></a>                    <span class="co">// into parameter y (expensive)</span></span>
+<span id="cb25-14"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb25-15"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+<p>➥&nbsp;This program is inefficient.</p>
+</div>
+</section>
+<section id="pass-by-reference" class="slide level2">
+<h2>Pass by reference</h2>
+<div class="fragment">
+<ul>
+<li class="fragment">To avoid making an expensive copy, we can use <span style="color:red"><strong>pass by reference</strong></span> instead of <em>pass by value</em>.</li>
+<li class="fragment">To use <span style="color:red"><strong>pass by reference</strong></span>, we declare a function parameter as a <em>reference type</em> (or <em>const reference type</em>) rather than as a normal type.</li>
+</ul>
+</div>
+<div class="fragment">
+<div id="lst-pass-by-reference" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-pass-by-reference-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;11: To avoid expensive copy of arguments, use pass by reference. Filename=<code>pass_by_reference.cpp</code>
+</figcaption>
+<div aria-describedby="lst-pass-by-reference-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb26-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb26-2"><a href=""></a><span class="pp">#include </span><span class="im">&lt;string&gt;</span></span>
+<span id="cb26-3"><a href=""></a><span class="dt">void</span> print_value<span class="op">(</span><span class="bu">std::</span>string<span class="op">&amp;</span> y<span class="op">)</span> <span class="co">// type changed to std::string&amp;</span></span>
+<span id="cb26-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb26-5"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> y <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb26-6"><a href=""></a><span class="op">}</span> <span class="co">// y is destroyed here</span></span>
+<span id="cb26-7"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb26-8"><a href=""></a><span class="op">{</span></span>
+<span id="cb26-9"><a href=""></a>    <span class="bu">std::</span>string x <span class="op">{</span> <span class="st">"Hello, world!"</span> <span class="op">};</span></span>
+<span id="cb26-10"><a href=""></a>    print_value<span class="op">(</span>x<span class="op">);</span> <span class="co">// x is now passed by reference into </span></span>
+<span id="cb26-11"><a href=""></a>                    <span class="co">// reference parameter y (inexpensive)</span></span>
+<span id="cb26-12"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb26-13"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+<p>➥&nbsp; When the function is called, each reference parameter is bound to the appropriate argument. <strong>Note</strong> <em>the ampersand in</em> <code>std::string&amp; y</code> <em>for the parameter declaration</em>.</p>
+</div>
+</section>
+<section id="pass-by-reference-key-insight" class="slide level2">
+<h2>Pass by reference: Key insight</h2>
+<div class="my-box">
+<p><strong>Key insight</strong></p>
+<p><span style="color:red"><strong>Pass by reference</strong></span> allows us to pass arguments to a function <span style="color:red">without making copies</span> of those arguments each time the function is called.</p>
+</div>
+<p>➥&nbsp; You don’t believe me 😑😑😑 Let us run the following program in the next slide.</p>
+</section>
+<section id="pass-by-reference-examine-the-addresses" class="slide level2">
+<h2>Pass by reference: Examine the addresses</h2>
+<div id="lst-pass-by-reference-address" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-pass-by-reference-address-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;12: Mix of pass by value and pass by reference. Filename=<code>pass_by_value_vs_pass_by_reference.cpp</code>
+</figcaption>
+<div aria-describedby="lst-pass-by-reference-address-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb27-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb27-2"><a href=""></a></span>
+<span id="cb27-3"><a href=""></a><span class="dt">void</span> print_addresses<span class="op">(</span><span class="dt">double</span> val<span class="op">,</span> <span class="dt">double</span><span class="op">&amp;</span> ref<span class="op">)</span></span>
+<span id="cb27-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb27-5"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"The address of the value parameter is    : "</span> <span class="op">&lt;&lt;</span> <span class="op">&amp;</span>val <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb27-6"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"The address of the reference parameter is: "</span> <span class="op">&lt;&lt;</span> <span class="op">&amp;</span>ref <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb27-7"><a href=""></a><span class="op">}</span></span>
+<span id="cb27-8"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb27-9"><a href=""></a><span class="op">{</span></span>
+<span id="cb27-10"><a href=""></a>    <span class="dt">double</span> x <span class="op">{</span> <span class="fl">42.0</span> <span class="op">};</span></span>
+<span id="cb27-11"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"The address of x is: "</span> <span class="op">&lt;&lt;</span> <span class="op">&amp;</span>x <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb27-12"><a href=""></a>    print_addresses<span class="op">(</span>x<span class="op">,</span> x<span class="op">);</span></span>
+<span id="cb27-13"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb27-14"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="pass-by-reference-allows-us-to-change-the-value-of-an-argument" class="slide level2">
+<h2>Pass by reference allows us to change the value of an argument</h2>
+<p>➥&nbsp; Since a reference acts identically to the object being referenced, any changes made to the reference parameter will affect the argument.</p>
+<div id="lst-pass-by-ref-change-value" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-pass-by-ref-change-value-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;13: Pass by reference allows us to change the value of an argument. Filename=<code>pass_by_reference_change_value.cpp</code>
+</figcaption>
+<div aria-describedby="lst-pass-by-ref-change-value-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb28-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb28-2"><a href=""></a></span>
+<span id="cb28-3"><a href=""></a><span class="dt">void</span> add_value<span class="op">(</span><span class="dt">double</span> <span class="op">&amp;</span>y<span class="op">,</span> <span class="dt">double</span> v<span class="op">)</span> <span class="co">// y is bound to the actual object x</span></span>
+<span id="cb28-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb28-5"><a href=""></a>    y <span class="op">+=</span> v<span class="op">;</span> <span class="co">// this modifies the actual object x</span></span>
+<span id="cb28-6"><a href=""></a><span class="op">}</span></span>
+<span id="cb28-7"><a href=""></a></span>
+<span id="cb28-8"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb28-9"><a href=""></a><span class="op">{</span></span>
+<span id="cb28-10"><a href=""></a>    <span class="dt">double</span> x <span class="op">{</span> <span class="fl">42.0</span> <span class="op">};</span></span>
+<span id="cb28-11"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"value of x = "</span> <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb28-12"><a href=""></a>    add_value<span class="op">(</span>x<span class="op">,</span> <span class="fl">24.0</span><span class="op">);</span></span>
+<span id="cb28-13"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"value of x = "</span> <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span> <span class="co">// x has been modified</span></span>
+<span id="cb28-14"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb28-15"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+<p>➥&nbsp; Let us run this code snippet.</p>
+</section>
+<section id="pass-by-reference-allows-us-to-change-the-value-of-an-argument-key-insight" class="slide level2">
+<h2>Pass by reference allows us to change the value of an argument: Key insight</h2>
+<div class="my-box">
+<p><strong>Key insight</strong></p>
+<p>Passing values by reference to non-const allows us to write functions that modify the value of arguments passed in.</p>
+</div>
+</section>
+<section id="pass-by-reference-can-only-accept-modifiable-lvalue-arguments" class="slide level2">
+<h2>Pass by reference can only accept modifiable lvalue arguments</h2>
+<p>Because a reference to a non-const value can only bind to a modifiable lvalue (essentially a non-const variable) ➜ this means that <span style="color:navy"><em>pass by reference only works with arguments that are modifiable lvalues.</em></span></p>
+<div id="lst-pass-by-reference-accept-modifiable-lvalue" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-pass-by-reference-accept-modifiable-lvalue-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;14: Pass by reference can only accept modifiable lvalue arguments Filename=<code>pass_by_reference_change_value.cpp</code>
+</figcaption>
+<div aria-describedby="lst-pass-by-reference-accept-modifiable-lvalue-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb29-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb29-2"><a href=""></a></span>
+<span id="cb29-3"><a href=""></a><span class="dt">void</span> print_value<span class="op">(</span><span class="dt">int</span><span class="op">&amp;</span> y<span class="op">)</span> <span class="co">// y only accepts modifiable lvalues</span></span>
+<span id="cb29-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb29-5"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> y <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb29-6"><a href=""></a><span class="op">}</span></span>
+<span id="cb29-7"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb29-8"><a href=""></a><span class="op">{</span></span>
+<span id="cb29-9"><a href=""></a>    <span class="dt">int</span> x <span class="op">{</span> <span class="dv">5</span> <span class="op">};</span></span>
+<span id="cb29-10"><a href=""></a>    print_value<span class="op">(</span>x<span class="op">);</span> <span class="co">// ok: x is a modifiable lvalue</span></span>
+<span id="cb29-11"><a href=""></a>    <span class="at">const</span> <span class="dt">int</span> z <span class="op">{</span> <span class="dv">5</span> <span class="op">};</span></span>
+<span id="cb29-12"><a href=""></a>    <span class="co">// print_value(z); // error: z is a non-modifiable lvalue</span></span>
+<span id="cb29-13"><a href=""></a>    <span class="co">// print_value(5); // error: 5 is an rvalue</span></span>
+<span id="cb29-14"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb29-15"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+<p>➥&nbsp; Open the <code>cpp</code> file to see that IntelliSense informs the error before compilation.</p>
+</section>
+<section id="pass-by-reference-can-only-accept-modifiable-lvalue-arguments-1" class="slide level2">
+<h2>Pass by reference can only accept modifiable lvalue arguments</h2>
+<p>Because a reference to a non-const value can only bind to a modifiable lvalue (essentially a non-const variable) ➜ this means that <span style="color:navy"><em>pass by reference only works with arguments that are modifiable lvalues.</em></span></p>
+<div style="height: 100px;">
+
+</div>
+<div class="fragment">
+<p>➥&nbsp; A problem arises here:</p>
+<ul>
+<li class="fragment">We define a const object which is pretty expensive to make copy.</li>
+<li class="fragment">We want to pass this const object as a function argument.</li>
+<li class="fragment">We also want to avoid making copy.</li>
+</ul>
+</div>
+</section></section>
+<section>
+<section id="pass-by-const-lvalue-reference" class="title-slide slide level1 center">
+<h1>Pass by const lvalue reference</h1>
+<p><strong>Recall</strong></p>
+<p>Unlike a reference to non-const (which can only bind to modifiable lvalues), a reference to const can bind to modifiable lvalues, non-modifiable lvalues, and rvalues.</p>
+</section>
+<section id="pass-by-const-lvalue-reference-1" class="slide level2">
+<h2>Pass by const lvalue reference</h2>
+<p>➥&nbsp; If we make a reference parameter const, then it will be able to bind to any type of argument.</p>
+<div id="lst-pass-by-const-reference" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-pass-by-const-reference-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;15: By making a reference parameter const, we can pass non-modifiable lvalues and rvalue literals. Filename=<code>pass_by_reference_change_value.cpp</code>
+</figcaption>
+<div aria-describedby="lst-pass-by-const-reference-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb30-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb30-2"><a href=""></a></span>
+<span id="cb30-3"><a href=""></a><span class="dt">void</span> print_value<span class="op">(</span><span class="dt">int</span><span class="op">&amp;</span> y<span class="op">)</span> <span class="co">// y only accepts modifiable lvalues</span></span>
+<span id="cb30-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb30-5"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> y <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb30-6"><a href=""></a><span class="op">}</span></span>
+<span id="cb30-7"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb30-8"><a href=""></a><span class="op">{</span></span>
+<span id="cb30-9"><a href=""></a>    <span class="dt">int</span> x <span class="op">{</span> <span class="dv">5</span> <span class="op">};</span></span>
+<span id="cb30-10"><a href=""></a>    print_value<span class="op">(</span>x<span class="op">);</span> <span class="co">// ok: x is a modifiable lvalue</span></span>
+<span id="cb30-11"><a href=""></a>    <span class="at">const</span> <span class="dt">int</span> z <span class="op">{</span> <span class="dv">5</span> <span class="op">};</span></span>
+<span id="cb30-12"><a href=""></a>    <span class="co">// print_value(z); // error: z is a non-modifiable lvalue</span></span>
+<span id="cb30-13"><a href=""></a>    <span class="co">// print_value(5); // error: 5 is an rvalue</span></span>
+<span id="cb30-14"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb30-15"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="pass-by-const-lvalue-reference-2" class="slide level2">
+<h2>Pass by const lvalue reference</h2>
+<ul>
+<li>Passing by const reference offers the same primary benefit as pass by non-const reference (avoiding making a copy of the argument).</li>
+<li>The function can not change the value being referenced.</li>
+</ul>
+<p>The following is not allowed:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb31-1"><a href=""></a><span class="dt">void</span> add_value<span class="op">(</span><span class="at">const</span> <span class="dt">double</span><span class="op">&amp;</span> ref<span class="op">,</span> <span class="dt">double</span> value<span class="op">)</span></span>
+<span id="cb31-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb31-3"><a href=""></a>    ref <span class="op">=</span> ref <span class="op">+</span> value<span class="op">;</span>  <span class="co">// not allowed.</span></span>
+<span id="cb31-4"><a href=""></a>                        <span class="co">// We promise the compiler that ref is const.</span></span>
+<span id="cb31-5"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>➥&nbsp; Fortunately, in most cases we don’t want our functions modifying the value of arguments. But we also don’t want to make expensive copies. We are greedy😉😉!!!</p>
+</section>
+<section id="pass-by-const-lvalue-reference-best-practice" class="slide level2">
+<h2>Pass by const lvalue reference: Best Practice</h2>
+<div class="my-box">
+<p><strong>Best practice</strong></p>
+<p>Favor passing by const reference over passing by non-const reference unless you have a specific reason to do otherwise (e.g.&nbsp;the function needs to change the value of an argument).</p>
+</div>
+<p>➥&nbsp; Now, we can understand the motivation for allowing const lvalue references to bind to rvalues:</p>
+<p>➜&nbsp; <span style="color:navy">Without that capability, there would be no way to pass literals (or other rvalues) to functions that used pass by reference!</span></p>
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="chap_07_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="chap_07_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="chap_07_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="chap_07_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="chap_07_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="chap_07_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="chap_07_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="chap_07_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="chap_07_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="chap_07_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="chap_07_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: true,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
