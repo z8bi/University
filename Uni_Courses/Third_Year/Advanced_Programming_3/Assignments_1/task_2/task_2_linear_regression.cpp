@@ -8,7 +8,7 @@ using namespace std;
 
 //Little helper to calculate mean
 
-template<typename T> //We can actualy use the templates here to make sure our helper works for int and double, etc.
+template<typename T> //We can actualy use the templates here to ensure our helper works for int and double, etc.
 
 double calculate_mean(vector<T> &vect) {
     double mean{0};
@@ -24,7 +24,7 @@ double calculate_mean(vector<T> &vect) {
 
 struct Dataset {
     double k_value; //gradient
-    double b_value; //intercept
+    double prev_b_value; //intercept
     size_t size;
 
     vector<double> x_values; 
@@ -32,6 +32,7 @@ struct Dataset {
 
     //futureproofing - to use in lin reg calculations - 
     double omega_value{0};
+    double b_value{0};
     double x_mean{0}; 
     double y_mean{0};
     vector<double> y_lin_reg_values; //this way the dataset contains both the original data and lin_reg data
@@ -39,9 +40,6 @@ struct Dataset {
     //Simple contrustor so we can easily create new datasets
     Dataset(double k , double b, size_t num_points, int min, int max, int seed, double noise_multiplier, double sigma) {
 
-        k_value = k;
-        b_value = b;
-        
         mt19937 rng(seed); //initialize random using our seed
         std::uniform_int_distribution<int> range(min, max); //clamp random values to a range
         normal_distribution<double> noise_gauss(0.0, sigma);; //clamp random values to a range
@@ -53,17 +51,20 @@ struct Dataset {
         }
         
         size = num_points;
+        k_value = k;
+        prev_b_value = b;
 
     };
 
-    //default contructor (empty)
+    //default contructor (empty) - to be safe, since we declared a custom constructor the default one is overwritten
     Dataset() {
         k_value = 0;
-        b_value = 0;
+        prev_b_value = 0;
         size = 0;
-        x_values = {};
-        y_values = {};
+        x_values = {0.0};
+        y_values = {0.0};
         omega_value = 0;
+        b_value = 0;
         x_mean = 0;
         y_mean = 0;
 
@@ -89,75 +90,27 @@ struct Dataset {
 
     //Basic print function to confirm internal values - once again const to be safe
     void print_internals() const {
-        cout << "k: " << k_value;
-        cout << "\nb: " << b_value;
+        cout << "\ndataset size: " << size;
+        cout << "\nk: " << k_value;
+        cout << "\nprev_b: " << prev_b_value;
         cout << "\nomega: " << omega_value;
+        cout << "\nb: " << b_value;
         cout << "\nx_mean: " << x_mean;
         cout << "\ny_mean: " << y_mean << "\n";
     };
-};
 
-//==========================================================
-//=================DOUBLE DATASET STRUCT====================
-//==========================================================
-
-struct DoubleDataset {
-    vector<vector<double>> x_values{2};
-    vector<double> omega_values{2};
-    vector<double> y_values;    
-    double b_value{0};
-    size_t size{0};
-
-    //main constructor which uses two input datasets
-    DoubleDataset(Dataset d1, Dataset d2) {
-        x_values[0] = d1.x_values;
-        x_values[1] = d2.x_values;
-        omega_values[0] = d1.omega_value; 
-        omega_values[1] = d2.omega_value;
-
-        y_values.resize(d1.x_values.size()); //resize the y values to fit the dataset sizes
-        size = d1.x_values.size();
-    };
-
-    //default contructor (empty) - just in case
-    DoubleDataset() {
-        x_values = {};
-        y_values = {};
-        omega_values = {};
-        b_value = {};
+    void print_errors() const {
+        
+        //calculate percentage errors
+        double omega_error = (omega_value - k_value) / k_value * 100;
+        double b_error = (b_value - prev_b_value) / prev_b_value * 100;
+        //print percentage errors
+        cout << "\nPercentage errors are the following:\n";
+        cout << "\nomega error: " << omega_error << " %";
+        cout << "\nb error: " << b_error << " %\n";
     };
 };
 
-//this function could also be expanded to accept a vector of Datasets meaning the multiple linear regression would accept a variable amount
-//this assignment however only requires two meaning this is the easier, but less futureproof method
-
-DoubleDataset multiple_linear_regression(DoubleDataset data, double learning_rate, double gradient_components_limit) {
-    vector<double> L_domega = {1, 1}; //initialize the vector of derivatives for each omega
-    double L_db{1};
-
-    //Again ensure we don't burn CPU time lol
-    size_t iter = 0;
-    const size_t max_iters = 100000;
-
-    while( ( std::abs(L_domega[1]) > gradient_components_limit || 
-            std::abs(L_domega[1]) > gradient_components_limit || 
-            std::abs(L_db) > gradient_components_limit ) 
-            && iter < max_iters ) {
-        
-        //compute derivatives fresh
-        L_domega = {0.0, 0.0}; 
-        L_db = 0.0;
-        
-        //compute the all derivatives
-        for(size_t i{0}; i < 2; i++) {
-            for(size_t j{0}; j < data.size; i++) {
-                L_domega[i] += ( data.omega_values[j] * data.x_values[i][j] + data.b_value - data.y_values[i][j]) * data.x_values[i][j];
-            } 
-        } 
-        
-
-    }
-}
 
 //==========================================================
 //===============LINEAR REGRESSION FUNCTIONS================
@@ -199,16 +152,19 @@ Dataset normal_equation_lin_reg(Dataset data) {
 }
 
 Dataset gradient_method_linear_regression(Dataset data, double learning_rate, double gradient_components_limit) {
+
     //initialize all required variables
     double L_domega{1};
     double L_db{1};
 
-    //keep iterating until a sufficiently small derivative is found (absolute value because negative derivative also possible)
+    //make sure the lin reg y values are empty, in case user calls it twice on a dataset which already has them calculated
+    data.y_lin_reg_values.clear();
 
     //make sure we don't burn CPU time lol
     size_t iter = 0;
     const size_t max_iters = 100000; 
-    
+
+    //keep iterating until a sufficiently small derivative is found (absolute value because negative derivative also possible)
     while( ( std::abs(L_domega) > gradient_components_limit || std::abs(L_db) > gradient_components_limit ) && iter < max_iters) {
 
         //ensure they are clean for the next iteration
@@ -251,10 +207,188 @@ Dataset gradient_method_linear_regression(Dataset data, double learning_rate, do
 }
 
 
+
+//==========================================================
+//=================DOUBLE DATASET STRUCT====================
+//==========================================================
+
+
+
+struct DoubleDataset {
+
+    //these are the inputs
+    vector<vector<double>> x_values{{}, {}};
+    vector<double> y_values{};
+    double k1_value{0}; 
+    double k2_value{0}; 
+    double prev_b_value{0}; 
+    size_t dataset_size{0}; 
+
+    //these are the outputs after lin reg
+    vector<double> omega_values{0,0};
+    double b_value{0};
+    vector<double> lin_reg_y_values{};
+    
+    //constructor which creates the two datsets
+    DoubleDataset(double k1, double k2, double b, size_t num_points, int min, int max, int seed, double noise_multiplier, double sigma) {
+        
+        mt19937 rng(seed); //initialize random using our seed
+        std::uniform_int_distribution<int> range(min, max); //clamp random values to a range
+        normal_distribution<double> noise_gauss(0.0, sigma);; //clamp random values to a range
+
+        for (size_t i{0}; i < num_points; i++) {
+            double current_x1 = range(rng);
+            double current_x2 = range(rng);
+            x_values[0].push_back(current_x1); //cast to integer the creation of mt
+            x_values[1].push_back(current_x2);
+            y_values.push_back((k1*current_x1 + k2*current_x2) + b + noise_multiplier*noise_gauss(rng)); // calculate y + add noise
+        }
+        
+        //assign the rest of the variables for later comparison
+        dataset_size = num_points;
+        k1_value = k1;
+        k2_value = k2;
+        prev_b_value = b;
+    };
+
+
+    //Constructor which uses two input datasets
+    DoubleDataset(vector<double> x1, vector<double> x2, vector<double> y) {
+
+        //assign all inner variables
+        x_values[0] = x1;
+        x_values[1] = x2;
+        y_values = y;
+        dataset_size = x1.size();
+    };
+
+    //default contructor (empty) - just in case, since default constructor isn't created when we specify a
+    DoubleDataset() {
+        x_values = {{0.0},{0.0}};
+        y_values = {0.0};
+        omega_values = {0.0,0.0};
+        b_value = {0.0};
+        dataset_size = {0};
+    };
+
+    //print functions again
+    void print_internals() const {
+        cout << "\ndataset size: " << dataset_size;
+        cout << "\nk_1: " << k1_value;
+        cout << "\nk_2: " << k2_value;
+        cout << "\nprev_b: " << prev_b_value;
+        cout << "\nomega_1: " << omega_values[0];
+        cout << "\nomega_2: " << omega_values[1];
+        cout << "\nb: " << b_value << "\n";
+    };
+
+    //prints datasets
+    void print_datasets() const {
+        cout << "\nOriginal Values:\n";
+        for (size_t i{0}; i < x_values[0].size(); i++) {
+            cout << "[ " << x_values[0][i] << ", "<< x_values[1][i] << ", "<< y_values[i] << " ]\n";
+        }
+        cout << "\n";
+
+        // if linear regression was calculated, print too
+        if (lin_reg_y_values.size() == x_values[0].size()) {
+            cout << "\nLinear Regression Values:\n";
+            for (size_t i{0}; i < x_values[0].size(); i++) {
+                cout << "[ "<< x_values[0][i] << ", "<< x_values[1][i] << ", "<< lin_reg_y_values[i] << " ]\n";
+            }
+            cout << "\n";
+        }
+    }
+
+    void print_errors() const {
+        
+        //calculate percentage errors
+        double omega_1_error = (omega_values[0] - k1_value) / k1_value * 100;
+        double omega_2_error = (omega_values[1] - k2_value) / k2_value * 100;
+        double b_error = (b_value - prev_b_value) / prev_b_value * 100;
+        //print percentage errors
+        cout << "\nPercentage errors are the following:\n";
+        cout << "\nomega_1 error: " << omega_1_error << " %";
+        cout << "\nomega_2 error: " << omega_2_error << " %";
+        cout << "\nb error: " << b_error << " %";
+    };
+};
+
+//this function could also be expanded to accept a vector of Datasets meaning the multiple linear regression would accept a variable amount
+//this assignment however only requires two meaning this is the easier, but less futureproof method
+
+DoubleDataset multiple_linear_regression(DoubleDataset data, double learning_rate, double gradient_components_limit) {
+    //initialize the derivatives, here omega has two doubles
+    vector<double> L_domega = {1, 1}; 
+    double L_db{1};
+
+    //make sure the lin reg y values are empty, in case user calls it twice on a dataset which already has them calculated
+    data.lin_reg_y_values.clear();
+
+    //Again ensure we don't burn CPU time lol
+    size_t iter = 0;
+    const size_t max_iters = 100000;
+
+    //keep going intil precision limit is met or maximum iterations reached
+    while( ( std::abs(L_domega[0]) > gradient_components_limit || 
+            std::abs(L_domega[1]) > gradient_components_limit || 
+            std::abs(L_db) > gradient_components_limit ) 
+            && iter < max_iters ) {
+        
+        //compute derivatives fresh
+        L_domega = {0.0, 0.0}; 
+        L_db = 0.0;
+        
+        //compute the all derivatives, outer loop iterates over the omega number (2 of them), inner computes it using the equation
+        for(size_t i{0}; i < 2; i++) {
+            for(size_t j{0}; j < data.dataset_size; j++) {
+                L_domega[i] += ( 
+                    ( data.omega_values[0] * data.x_values[0][j] + data.omega_values[1] * data.x_values[1][j]) + data.b_value // Y hat (predicted Y)
+                    - data.y_values[j]) // - previous Y
+                    * data.x_values[i][j]; // times current X
+            } 
+        } 
+
+        //Compute b value
+        for(size_t j{0}; j < data.dataset_size; j++) {
+            L_db += ( data.omega_values[0] * data.x_values[0][j] + data.omega_values[1] * data.x_values[1][j]) + data.b_value // Y hat (predicted Y)
+                    - data.y_values[j]; // - previous Y
+        } 
+
+        //Assign all three new variables - dataset_size is size_t, so we need to cast as double to ensure no errors
+        data.omega_values[0] = data.omega_values[0] - learning_rate * (1 / double(data.dataset_size)) * L_domega[0]; 
+        data.omega_values[1] = data.omega_values[1] - learning_rate * (1 / double(data.dataset_size)) * L_domega[1]; 
+        data.b_value = data.b_value - learning_rate * (1 / double(data.dataset_size)) *L_db; 
+
+        iter++;
+    
+    }
+
+    //calculate the new Y based on the linear regression variables for comparison in the print functions
+    for(size_t i{0}; i < data.dataset_size; i++) {
+        data.lin_reg_y_values.push_back((data.omega_values[0]*data.x_values[0][i] + data.omega_values[1] * data.x_values[1][i]) + data.b_value); // calculate y + add noise
+    }
+
+    return data;
+}
+
+
+
+
+
 int main() {
 
     //our basic example dataset
-    Dataset d(2, 5, 7, 0, 100, 3, 0.2, 1);
+    Dataset d(
+        2,      // k 
+        5,      // b 
+        10,      // num_points
+        0,      // min x
+        100,    // max x
+        3,      // seed
+        0.2,    // noise_multiplier - larger meanst larger error
+        1       // sigma - used in adding error, larger sigma means larger error
+    );
 
     cout << "\n=========================================\n";
     cout << "Printing values for default dataset: \n";
@@ -273,10 +407,15 @@ int main() {
 
     d_lin_reg.print_datasets();
     d_lin_reg.print_internals(); 
+    d_lin_reg.print_errors(); 
 
 
     //gradient based linear regression model
-    Dataset d_gradient_reg = gradient_method_linear_regression(d, 0.0001, 0.01);
+    Dataset d_gradient_reg = gradient_method_linear_regression(
+        d, //input dataset
+        0.0001, //learning rate
+        0.01 //stopping accuracy
+    );
 
     cout << "\n==========================================================\n";
     cout << "Printing values for gradient based linear regression dataset: \n";
@@ -284,6 +423,39 @@ int main() {
 
     d_gradient_reg.print_datasets();
     d_gradient_reg.print_internals();
+    d_gradient_reg.print_errors(); 
+
+
+
+    //==========================================================
+    //=================MULTIPLE LIN REG TEST====================
+    //==========================================================
+
+
+    cout << "\n=======================================================\n";
+    cout << "Printing values for multiple linear regression dataset: \n";
+    cout << "=========================================================\n";
+
+    DoubleDataset dd(
+        2.0,    // k1 
+        -1.5,   // k2 
+        4.0,    // b 
+        10,   // num_points
+        0,    // min x
+        100,     // max x
+        42,     // seed 
+        0.2,    // noise_multiplier - larger means more noise
+        1.0     // sigma - larger means more noise
+    );
+
+    dd = multiple_linear_regression(
+        dd, //input double dataset
+        0.0001, //learning rate
+        0.01 //stopping accuracy
+    );
+    dd.print_datasets();
+    dd.print_internals();
+    dd.print_errors();
 
     //make sure the console doesn't immediatelly close :D
     char bs;
