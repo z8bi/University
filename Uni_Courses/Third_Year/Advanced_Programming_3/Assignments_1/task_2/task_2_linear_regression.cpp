@@ -102,7 +102,6 @@ struct Dataset {
 //==========================================================
 
 struct DoubleDataset {
-<<<<<<< HEAD
     vector<vector<double>> x_values{2};
     vector<double> omega_values{2};
     vector<double> y_values;    
@@ -127,18 +126,11 @@ struct DoubleDataset {
         omega_values = {};
         b_value = {};
     };
-=======
-    vector<vector<double>> x_values;
-    vector<double> y_values;
-    vector<double> weights;
-    double b_value;
->>>>>>> refs/remotes/origin/main
 };
 
 //this function could also be expanded to accept a vector of Datasets meaning the multiple linear regression would accept a variable amount
 //this assignment however only requires two meaning this is the easier, but less futureproof method
 
-<<<<<<< HEAD
 DoubleDataset multiple_linear_regression(DoubleDataset data, double learning_rate, double gradient_components_limit) {
     vector<double> L_domega = {1, 1}; //initialize the vector of derivatives for each omega
     double L_db{1};
@@ -165,10 +157,6 @@ DoubleDataset multiple_linear_regression(DoubleDataset data, double learning_rat
         
 
     }
-=======
-DoubleDataset multiple_linear_regression(DoubleDataset data) {
-
->>>>>>> refs/remotes/origin/main
 }
 
 //==========================================================
@@ -178,10 +166,6 @@ DoubleDataset multiple_linear_regression(DoubleDataset data) {
 
 //Create linear regression using normal equation
 Dataset normal_equation_lin_reg(Dataset data) {
-<<<<<<< HEAD
-=======
-
->>>>>>> refs/remotes/origin/main
     //use the helper to calculate mean
     data.x_mean = calculate_mean(data.x_values);
     data.y_mean = calculate_mean(data.y_values);
