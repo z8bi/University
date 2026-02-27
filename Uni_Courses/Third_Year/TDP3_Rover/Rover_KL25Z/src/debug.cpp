@@ -166,7 +166,7 @@ void tick()
     char buf[260];
 
     int n = snprintf(buf, sizeof(buf),
-    "%s | Front:%d.%d(%d) Right:%d.%d(%d) | %s\r\n",
+    "%s | Front: %d.%d(%d) Right: %d.%d(%d) | %s\r\n",
     state_str(st),
     front_dcm/10, abs(front_dcm%10), up.front_valid,
     right_dcm/10, abs(right_dcm%10), up.right_valid,

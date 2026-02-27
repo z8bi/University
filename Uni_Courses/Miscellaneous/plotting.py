@@ -1,10 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# ---- Data ----
-Vp = np.array([5.09, 10.12, 15.09, 20.15, 25.00, 30.08, 35.10, 40.14, 45.09])
-Ip = np.array([0.0169, 0.0294, 0.0424, 0.0574, 0.0754, 0.1022, 0.1473, 0.3018, 1.5420])
-THD = np.array([2.24, 4.21, 6.64, 9.39, 12.84, 18.38, 28.14, 54.29, 93.47])
+# Measured currents (µA)
+I_TP1 = np.array([11.54, 25.40, 45.50, 64.96, 85.63, 104.8])  # ammeter @ TP1
+I_RB1 = np.array([9.30, 20.68, 37.45, 53.66, 70.85, 87.45])   # from Vdrop/47k
 
 def false_zero_limits(y, pad_frac=0.08):
     ymin, ymax = float(np.min(y)), float(np.max(y))
@@ -12,47 +11,22 @@ def false_zero_limits(y, pad_frac=0.08):
     pad = span * pad_frac
     return ymin - pad, ymax + pad
 
-# ---- Knee point (first break in linearity) ----
-knee_idx = np.where(Vp == 35.10)[0][0]
-knee_voltage = Vp[knee_idx]
-knee_current = Ip[knee_idx]
-knee_thd = THD[knee_idx]
-
-# ---- Plot 1: Voltage vs Current ----
 plt.figure()
-plt.plot(Ip, Vp, marker='o')
-plt.scatter(knee_current, knee_voltage)
-plt.axhline(knee_voltage, linestyle='--')
+plt.scatter(I_RB1, I_TP1)
 
-plt.text(knee_current, knee_voltage - 2.0,
-         f"KNEE ≈ {knee_voltage:.2f} V",
-         color='red', fontweight='bold')
+# Ideal line (if they were equal): y = x
+xline = np.linspace(min(I_RB1.min(), I_TP1.min()),
+                    max(I_RB1.max(), I_TP1.max()), 200)
+plt.plot(xline, xline, linestyle="--", label="Ideal: I_TP1 = I_RB1")
 
-plt.xlabel("Primary Current (A)")
-plt.ylabel("Primary Input Voltage (V)")
-plt.title("Primary Input Voltage vs Primary Current")
-plt.ylim(*false_zero_limits(Vp))
-plt.grid(True, linestyle='--', linewidth=0.6)
+plt.xlabel("Current through RB1 (µA)")
+plt.ylabel("Current through TP1 (µA)")
+plt.title("Current Mirror: Output Current vs Reference Current")
+plt.xlim(*false_zero_limits(I_RB1))
+plt.ylim(*false_zero_limits(I_TP1))
+plt.grid(True, linestyle="--", linewidth=0.6)
+plt.legend()
 plt.tight_layout()
 
-plt.savefig("Primary_Voltage_vs_Primary_Current.png", dpi=300)
-
-
-# ---- Plot 2: Voltage vs THD ----
-plt.figure()
-plt.plot(THD, Vp, marker='o')
-plt.scatter(knee_thd, knee_voltage)
-plt.axhline(knee_voltage, linestyle='--')
-
-plt.text(knee_thd, knee_voltage - 2.0,
-         f"KNEE ≈ {knee_voltage:.2f} V",
-         color='red', fontweight='bold')
-
-plt.xlabel("Primary Current THD (%)")
-plt.ylabel("Primary Input Voltage (V)")
-plt.title("Primary Input Voltage vs Primary Current THD")
-plt.ylim(*false_zero_limits(Vp))
-plt.grid(True, linestyle='--', linewidth=0.6)
-plt.tight_layout()
-
-plt.savefig("Primary_Voltage_vs_Primary_THD.png", dpi=300)
+plt.savefig("Current_Mirror_TP1_vs_RB1.png", dpi=300)
+plt.show()

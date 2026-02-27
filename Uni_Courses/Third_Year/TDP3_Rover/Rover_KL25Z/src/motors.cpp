@@ -1,13 +1,12 @@
 #include "motors.hpp"
 
-// ===== Hardware objects (private to this file) =====
-DigitalOut left_in2(D7);
-DigitalOut left_in1(D6);
-PwmOut     left_pwm(D5);
-
-DigitalOut right_in2(D4);
-DigitalOut right_in1(D3);
-PwmOut     right_pwm(D2);
+// ===== Hardware objects =====
+extern DigitalOut left_in2;
+extern DigitalOut left_in1;
+extern DigitalOut right_in1;
+extern DigitalOut right_in2;
+extern PwmOut     left_pwm;
+extern PwmOut     right_pwm;
 
 // ===== Initialisation =====
 void motors_init(float pwm_freq_hz) {

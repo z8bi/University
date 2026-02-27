@@ -20,10 +20,10 @@ public:
 
     // Returns {cm, valid}. If invalid, cm is -1.
     // max_range_cm clamps the pulse width timeout.
-    Reading read_cm(float max_range_cm = 200.0f);
+    Reading read_cm(float max_range_cm = 40.0f);
 
     // Convenience: returns cm or -1 if invalid
-    float read_cm_value(float max_range_cm = 200.0f);
+    float read_cm_value(float max_range_cm = 40.0f);
 
 private:
     DigitalOut _trig;
@@ -31,8 +31,7 @@ private:
     bool       _trig_active_high;
 
     // Tunable timeouts (microseconds)
-    static constexpr int RISE_TIMEOUT_US = 3000;   // wait for echo rising edge
-    static constexpr int FALL_TIMEOUT_US = 12000;  // wait for echo falling edge (overridden by max_range_cm)
+    static constexpr int RISE_TIMEOUT_US = 3000;   // wait for echo rising edge - if doesn't come then leave funciton and return -1 
 };
 
 #endif // ULTRASONIC_SENSOR_HPP

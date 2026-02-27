@@ -38,13 +38,13 @@ UltrasonicSensor::Reading UltrasonicSensor::read_cm(float max_range_cm)
     t.start();
     while (_echo.read() == 1) {
         if ((int)chrono::duration_cast<chrono::microseconds>(t.elapsed_time()).count() > fall_timeout_us) {
-            return {-1.0f, false};
+            return {-2.0f, false};
         }
     }
     t.stop();
 
     const int time_us = (int)chrono::duration_cast<chrono::microseconds>(t.elapsed_time()).count();
-    if (time_us <= 0) return {-1.0f, false};
+    if (time_us <= 0) return {-3.0f, false};
 
     const float cm = (float)time_us * 0.0343f / 2.0f;
     return {cm, true};

@@ -1,0 +1,489 @@
+---
+title: "Object-oriented programming"
+author: |
+    Khiem Nguyen 
+    <br>Lecturer in Multiscale Materials
+    <br><khiem.nguyen@glasgow.ac.uk>
+author-meta: "Lecturer in Multiscale Materials"
+format: 
+    revealjs:
+        theme: simple   # other themes: beige, blood, dark, dracula, league, moon, night, serif, simple, sky, solarized
+        mouse-wheel: true
+        highlight-style: github
+        slide-number: true
+        title-slide-style: pandoc
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: false          # <-- remove white background in code blocks
+        # code-block-border-left: false # optional: remove left border
+        # highlight-style: monokai      # good for dark images
+        toc: true
+        toc-depth: 1
+        toc-title: Presentation Outline
+        chalkboard: true
+        css: ../../simple.css
+---
+
+# Member access
+
+We have used structs in all the example in the last Chapter.
+
+
+- This demonstrated that `struct` is pretty much the same as `class`.
+- The difference between `struct` and `class` is 
+  - By default, every data members and member functions of a `struct` is `public` by default.
+  - By default, every data members and member functions of a `struct` is `private` by default.
+
+We study now **access level** to debunk the meaning of two keywords `private` and `public`.
+
+## Member access
+
+![](./figures/private-vs-public.jpg)
+
+You feel tired on the way going home and want to sit down in peace as you are an introvert. Two choices:
+
+- The park with all the screaming kids. Not want to hear all the screamings. It is `public`, you [can access]{style="color:green"}.
+- The private residential house with warm and TV. Want to sit in silence. It is `private`, you [cannot access]{style="color:red"}.
+
+## Member access
+
+&#9998;&nbsp; Each member of a class type (`struct` or `class`) have a property called an [**access level**]{style="color:red"}.
+
+&#9998;&nbsp; **Access level** determines who can access that member:
+
+1. `public`
+2. `private`
+3. `protected`
+
+We'll cover 
+
+- `public` and `private` in this Chapter
+- `protected` in Chapter "Inheritance".
+
+## Members of a struct are public by default
+
+[**Terminologies**]{style="color:magenta"}
+
+- Members that have the public access level are called [**public members**]{style="color:red"}.
+- [**Public members**]{style="color:red"} are members of a class type that [do not have any restrictions on how they can be accessed]{style="color:blue"}.
+
+::: {.fragment}
+[**Meaning**]{style="color:magenta"}
+
+
+- Public members can be accessed by other members of the same class.
+- [**Public members can also be accessed by the public**]{style="color:blue"}, which is what we call code that exists outside the members of a given class type.
+:::
+
+::: {.fragment}
+::: {.my-box}
+
+**Key points to remember**
+
+- The members of a struct are [public by default]{style="color:blue"}.
+- Public members can be accessed by other members of the class type, and [by public]{style="color:blue"}
+:::
+:::
+
+## Members of a struct are public by default: Example
+We have done this all the time before:
+
+::: {#lst-struct-public-by-default lst-cap="All the members of a struct are `public` by default. Filename=`struct_public_by_default.cpp`"}
+```{.cpp}
+{{< include ./cpp/struct_public_by_default.cpp >}}
+```
+:::
+
+## The members of a class are private by default
+
+Now, look at this example again but using `class` instead of `struct`:
+
+::: {#lst-class-private-by-default lst-cap="All the members of a class are `private` by default. Filename=`class_private_by_default.cpp`"}
+```{.cpp}
+{{< include ./cpp/class_private_by_default.cpp >}}
+```
+:::
+
+## The members of a class are private by default
+
+::: {.my-box}
+
+**Key points to remember**
+
+- The members of a class are [private by default]{style="color:blue"}.
+- Private members can be accessed by other members of the class type, [**but cannot be accessed by public**]{style="color:blue"}
+:::
+
+::: {.fragment}
+[**Repeat**]{style="color:magenta"}
+
+`struct` and `class` are only different by technical detail, but essentially interchangeable:
+:::
+
+:::{.fragment}
+- To make `struct` look like `class`, we make all the members `private`.
+- To make `class` look like `struct`, we make all the members `public`.
+:::
+
+## Naming your private member variables
+
+&#9998;&nbsp; It is a common convention to _name private data members starting with an_ `m_` _prefix._ But $\ldots$ talk later.
+
+Consider:
+
+```{.cpp}
+// Some member function that sets private member m_name to 
+// the value of the name parameter
+void set_name(std::string_view name)
+{
+    m_name = name;
+}
+```
+
+- The `m_` prefix differentiates data members from function parameters or local variables.
+- The `m_` prefix helps prevent naming collisions between private member variables and the names of local variables.
+
+## Naming your private member variables
+
+&#10149;&nbsp; If we had named private members `name` instead of `m_name`, it looks like this
+```{.cpp}
+// then we need to change the parameter's name here
+void set_name(std::string_view name) 
+{
+    // function parameter "name" shadows the private data member "name"
+    name = name // of course won't work
+}
+```
+
+
+&#10149;&nbsp; But $\ldots$ soon we will see this is even not necessary in modern C++.
+
+:::{.fragment}
+[**Well, why do I need to mention?**]{style="color:magenta"}
+
+- You need to read legacy code when you go to industry. 
+- But the use of prefix `m_` is declining.
+- Many high-profile open-source projects have moved away from `m_` in [**favor of a trailing underscore**]{style="color:blue"} (`variable_`) or [**no prefix at all**]{style="color:blue"}
+:::
+
+
+## Naming your private member variables: Examples
+
+[**Examples**]{style="color:magenta"} -- <u>Click on the links to show the students examples</u>
+
+- **Google**: trailing underscore `variable_`
+- **PyTorch** (famous Machine Learning framework): no prefix, no suffix
+  
+    [[Link to one example]{style="color:navy"}](https://github.com/pytorch/pytorch/blob/main/torch/csrc/api/include/torch/nn/modules/linear.h), Lines 68 -- 75
+- **deal.II** (famous finite element library): no prefix, no suffix
+  
+    [[Link to one example]{style="color:navy"}](https://github.com/dealii/dealii/blob/master/include/deal.II/fe/fe.h), Lines 2522 -- 2721
+
+::: {.fragmnet}
+[**Morale of the story**]{style="color:magenta"}
+
+- All the examples in real-world libraries/application look extremely complicated.
+- But $\ldots$ [_Hey! You want to earn $6$-digit salary and want it to look simple?_]{style="color:navy"}
+:::
+
+::: {.v-space style="height: 30px;"}
+:::
+
+::: {.fragment}
+::: {.my-box}
+**I am not against GenAI chatbot.** You can hate me now but I want to say this:
+
+You want to get the job in industry after using ChatGPT/Gemini to generate solution for the programming courses? 
+
+**Just think about that!?!?** 😏😏😏
+:::
+:::
+
+## Setting access levels via access specifiers
+
+&#9998;&nbsp; We can explicitly set the access level of our members by using an access specifier.
+
+&#9998;&nbsp; An access specifier sets the access level of all members that follow the specifier. 
+
+&#9998;&nbsp; Three access specifiers:
+
+- `public:`
+- `private:`
+- `protected:`
+
+## Setting access levels via access specifiers: Example
+
+::: {#lst-access-specifier-ex lst-cap="We can use access specifiers to define access levels of members. Filename=`access_specifier_example.cpp`"}
+```{.cpp}
+{{< include ./cpp/access_specifier_example.cpp >}}
+```
+:::
+
+&#9998;&nbsp; We can omit `private:` specifier in `class` as classes default to `private` access.
+
+&#10149;&nbsp; Let us compile and run this code.
+
+## Access level summary
+
+|Access level |	Access specifier |	Member access |	Derived class access |	Public access |
+|:---- | :---- | :---- | :----- | :----- |
+| Public |`public:` |	yes	| yes	| yes |
+| Protected	|`protected:`|	yes	|yes	|no|
+| Private	 |`private:`|	yes|	no|	no|
+
+**Don't worry! We talk about this later.**
+
+- Some little practice will get you understand and remember them. 
+- However, notice the triangle pattern of "yes" and triangle pattern of "no".
+
+## Access levels work on a per-class basis
+
+&#9998;&nbsp; One nuance of C++ access levels that is often missed or misunderstood is that -- otherwise, it is a real big headache:
+
+:::{.my-box}
+**Access to members is defined on a per-class basis, not on a per-object basis.**
+:::
+
+## Access levels work on a per-class basis: Example
+
+::: {#lst-access-level-per-class lst-cap="Access levels work on per-class basis, not on object basis. Filename=`access_level_per_class_basis.cpp`"}
+```{.cpp}
+{{< include ./cpp/access_level_per_class_basis.cpp >}}
+```
+:::
+&#10149;&nbsp; We can access member `name` of the object `p` in the member function `kisses`. 
+
+&#10149;&nbsp; `p.name` is not private to only `p`. Any member functions of `Person` can access `name` of other `Person` objects.
+
+# A detour back to pointers & class type (`struct` and `class`)
+
+You have just seen `this->name`. 
+
+- But we skip the lecture on `struct` on purpose.
+- I explained why we skip the lecture on `struct`.
+- Now, I have to pay the price. We must make a detour to revisit pointers.
+
+## What is an aggregate?
+
+- In general programming, an aggregate data type (also called an aggregate) is any type that can contain multiple data members.
+- Some types of aggregates allow members to have different types (e.g. structs).
+- Others require that all members must be of a single type (e.g. arrays).
+
+**In our course:** 
+
+When we use the term "aggregate" (or "non-aggregate") we will mean the C++ definition of aggregate.
+
+
+
+## Aggregate initialization of a struct: Example
+
+::: {#lst-aggregate-initialization lst-cap="We can initialize aggregate by using copy-list initialization or list initialization. Filename=`aggregate_initialization.cpp`"}
+```{.cpp}
+{{< include ./cpp/aggregate_initialization.cpp >}}
+```
+:::
+
+::: {.my-box}
+**Best practice**: Prefer the (non-copy) braced list form when initializing aggregates.
+:::
+
+
+## Member selection with pointers and references
+
+## Member selection for references to structs 
+&#9998;&nbsp; Because references to an object act just like the object itself, we can also use the member selection operator (`.`) to select a member from a reference to a struct
+
+::: {#lst-reference-selects-members lst-cap="Reference to a struct object can selects members by using selection operator (`.`) Filename=`reference_selection_operator.cpp`"}
+```{.cpp}
+{{< include ./cpp/reference_selection_operator.cpp >}}
+```
+:::
+
+## Member selection for pointers to structs
+
+We know that this code is wrong -- **Question**: What is wrong here?
+```{.cpp}
+#include <iostream>
+
+struct Employee
+{
+    int id{};
+    int age{};
+    long double wage{};
+};
+
+int main()
+{
+    Employee khiem{ 1, 42, 429999999999999999999.42 };
+    Employee* ptr { &khiem };
+    std::cout << ptr.id << '\n'; 
+    return 0;
+}
+```
+&#10149;&nbsp; My salary is correct. It is not the error!
+
+## Member selection for pointers to structs
+&#10149;&nbsp; To fix this, we just need to dereference first to retrieve the struct object.
+
+::: {#lst-pointer-selects-members lst-cap="Pointer to a struct object can selects members by using dereference first. Filename=`pointers_to_structs_select_members_deref.cpp`"}
+```{.cpp}
+{{< include ./cpp/pointers_to_structs_select_members_deref.cpp >}}
+```
+:::
+
+&#10149;&nbsp; Now, both my salary and code are fine.
+
+## Member selection for pointers to structs
+
+&#9998;&nbsp; C++ offers a [**member selection from pointer operator**]{style="color:red"} (`->`) (also sometimes called the [**arrow operator**]{style="color:red"}) that can be used to select members from a pointer to an object.
+
+::: {#lst-pointer-selects-members lst-cap="Pointer to a struct object can selects members by using dereference first. Filename=`pointers_to_structs_select_members_deref.cpp`"}
+```{.cpp}
+{{< include ./cpp/pointers_to_structs_select_members_deref.cpp >}}
+```
+:::
+
+&#10149;&nbsp; `ptr->id` is just equivalent to `(*ptr).id`. That's all.
+
+## What's next
+
+From now on:
+
+- I prefer "no prefix, no suffix" naming convention, and use `this` pointer instead. 
+- We talk about this soon, but you kinda get the point here.
+
+# Introduction to constructors
+
+In Introductory Programming 2, you learn:
+
+- Constructor is defined by the special method: `__init__(self, ...)`
+- Constructor is used to do a lot of stuffs other than just assigning variable `self.age = age`, e.g., checking 
+  - whether `age < 0`
+  - whether `id` is unique
+  - whether `birthdate` is a proper date
+  - more
+
+
+**Note:**&nbsp; We can write constructors for both `struct` and `class`. We just don't see people do that for `struct`.
+
+::: {.v-space style="height: 60px;"}
+:::
+
+<center>We now learn constructors in C++.</center>
+
+
+## Intro to constructors: Rationale
+
+&#10149;&nbsp; We have just learned we can do this:
+```{.cpp}
+struct Foo // Foo is an aggregate
+{
+    int x {};
+    int y {};
+};
+
+int main()
+{
+    Foo foo { 6, 7 }; // uses aggregate initialization
+    return 0;
+}
+```
+
+## Intro to constructors: Rationale
+
+But we cannot do this:
+```{.cpp}
+class Foo // Foo is not an aggregate (has private members)
+{
+    int x {};
+    int y {};
+};
+int main()
+{
+    Foo foo { 6, 7 }; // compile error: can not use aggregate initialization
+    return 0;
+}
+```
+
+Not allowing class types with private members to be initialized via aggregate initialization makes sense:
+
+- Aggregate initialization requires knowing about the implementation of the class, which we’re intentionally trying to avoid when we hide our data members.
+- If our class had some kind of invariant (e.g., $18 < \text{age} < 65$ for working age), we would be relying on the user to initialize the class in a way that preserves the invariant.
+
+&#10140;&nbsp; [That's why we need a constructor and it can do all the security check if needed.]{style="color:red"} -- just like you learned in Python.
+
+## Constructors
+
+A [**constructor**]{style="color:red"} is a special member function that is [automatically called after a non-aggregate class type object is created]{style="color:blue"}.
+
+When a non-aggregate class type object is defined, the compiler looks to see if it can find an accessible constructor that is a match for the initialization values provided by the callers.^[Well, just like the compiler looks for functions and overloaded functions matching the funcation call.]
+
+
+::: {.my-box}
+**Key insight**
+
+- Many new programmers are confused about whether constructors create the objects or not. 
+- They do not -- the compiler sets up the memory allocation for the object prior to the constructor call. The constructor is then called on the uninitialized object.
+- After the constructor finishes executing, we say the object has been "constructed", and the object should now be in a consistent, usable state.
+:::
+
+[**Note**]{style="color:red"}
+
+&#9998;&nbsp; [Aggregates are not allowed to have constructors]{style="color:red"} -- so if we add a constructor to an aggregate, it is no longer an aggregate.
+
+## Naming constructors
+
+- Constructors must have the same name as the class (with the same capitalization).
+- For template classes, this name excludes the template parameters.^[We have not learned about this so far.]
+- Constructors have no return type (not even `void`)
+
+```{.cpp}
+class Student
+{
+private:
+    std::string name;
+    int age;
+    int ID;
+
+public:
+    Student(std::string name, int age, int ID) 
+    { 
+        // code goes here.
+    }   // Does this remind you of Python class?
+}
+```
+
+## A basic constructor example
+
+::: {#lst-basic-constructor-example lst-cap="Constructor must have the same name as class. Filename=`basic_constructor_example.cpp`"}
+```{.cpp}
+{{< include ./cpp/basic_constructor_example.cpp >}}
+```
+:::
+&#10149;&nbsp; Let run this code snippet.
+
+# Constructor member initializer lists
+
+Can we do something like `self.x = x`, `self.y = y` in Python?
+
+## Mimic Python constructor: Part 1
+
+::: {#lst-mimic-python-constructor-01 lst-cap="Let us mimic Python constructor we have learned. Filename=`mimic_python_constructor_01.cpp`"}
+```{.cpp}
+{{< include ./cpp/mimic_python_constructor_01.cpp >}}
+```
+:::
+**Question**: How about we want to keep the constructor's parameter names `x` and `y`?
+
+## Mimic Python constructor: Part 2
+Yes, we can use the pointer `this` to make distinction: `this->x`
+
+::: {#lst-mimic-python-constructor-01 lst-cap="Let us mimic Python constructor we have learned. Filename=`mimic_python_constructor_01.cpp`"}
+```{.cpp}
+{{< include ./cpp/mimic_python_constructor_02.cpp >}}
+```
+:::
+
+## Member initialization via a member initialization list
+

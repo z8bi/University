@@ -17,8 +17,8 @@ using namespace std::chrono_literals;
 namespace Config {
 
 // Sensor reading timings
-static constexpr int CTRL_PERIOD_MS = 20;
-static constexpr int DEBUG_PERIOD_MS = 250;
+static constexpr int CTRL_PERIOD_MS = 10;
+static constexpr int DEBUG_PERIOD_MS = 200;
 static constexpr int COLOR_PERIOD_MS = 100;
 static constexpr int ULTRA_PERIOD_MS  = 80;
 
@@ -26,15 +26,15 @@ static constexpr int ULTRA_PERIOD_MS  = 80;
 static constexpr int FOUND_TICKS = 1;
 
 // Drive tunables
-static constexpr float DUTY_FWD   = 0.45f;
-static constexpr float DUTY_TURN  = 0.73f;
+static constexpr float DUTY_FWD   = 0.75f;
+static constexpr float DUTY_TURN  = 0.77f;
 
-static constexpr float ALIGN_DUTY_TURN     = 0.80f;
+static constexpr float ALIGN_DUTY_TURN     = 0.82f;
 static constexpr float TURN_BRAKE_STRENGTH = 0.90f;
 
 // Gentler turning in FOLLOW
-static constexpr float DUTY_FOLLOW_TURN      = 0.65f;
-static constexpr float FOLLOW_BRAKE_STRENGTH = 0.75f;
+static constexpr float DUTY_FOLLOW_TURN      = 0.7f;
+static constexpr float FOLLOW_BRAKE_STRENGTH = 0.8;
 
 //SEEK BRAKING
 static constexpr float BRAKE_STRENGTH = 1.0f;
@@ -45,18 +45,18 @@ static constexpr int   FULL_STOP_BRAKE_MS       = 120;  // tune: 60–200ms
 static constexpr float FULL_STOP_BRAKE_STRENGTH = 1.0f; // tune: 0.7–1.0
 
 //Align and Follow parameters
-static constexpr int FOLLOW_LOST_CONFIRM_MS = 80;
+static constexpr int FOLLOW_LOST_CONFIRM_MS = 30;
 static constexpr int FOLLOW_LOST_TICKS      = FOLLOW_LOST_CONFIRM_MS / CTRL_PERIOD_MS;
 
-static constexpr int ALIGN_LOST_CONFIRM_MS  = 80;
+static constexpr int ALIGN_LOST_CONFIRM_MS  = 30;
 static constexpr int ALIGN_LOST_TICKS       = ALIGN_LOST_CONFIRM_MS / CTRL_PERIOD_MS;
 
 //How long does SEEK look for the center of the line
-static constexpr int SEEK_CENTER_LOCK_MS = 200;
+static constexpr int SEEK_CENTER_LOCK_MS = 300;
 
 // Ultrasonic
-static constexpr float FRONT_MAX_CM     = 200.0f;
-static constexpr float RIGHT_MAX_CM     = 80.0f;
+static constexpr float FRONT_MAX_CM     = 40.0f;
+static constexpr float RIGHT_MAX_CM     = 40.0f;
 static constexpr int   ULTRA_STAGGER_MS = 8;
 
 // Obstacle detection
@@ -77,8 +77,8 @@ static constexpr float PWM_FREQ_HZ = 20000.0f;
 
 //=======MANUAL========
 // Manual BT (WASD) control
-static constexpr float BT_DUTY_FWD  = 0.5f;
-static constexpr float BT_DUTY_REV  = 0.4f;
+static constexpr float BT_DUTY_FWD  = 0.6f;
+static constexpr float BT_DUTY_REV  = 0.6f;
 static constexpr float BT_DUTY_TURN = 0.75f;
 
 } // namespace Config
@@ -103,13 +103,21 @@ static bool manual_mode = false;
 // DAC output (unused in this file, but keep if you use it elsewhere)
 AudioPlayer audio(PTE30);
 
-//Motors
-AnalogIn left_sensor_2(A4);
-AnalogIn left_sensor_1(A3);
+// Line sensors
+AnalogIn left_sensor_2(A0);
+AnalogIn left_sensor_1(A1);
 AnalogIn middle_sensor(A2);
-AnalogIn right_sensor_2(A1);
-AnalogIn right_sensor_1(A0);
+AnalogIn right_sensor_1(A3);
+AnalogIn right_sensor_2(A2);
 DigitalOut sensor_transistor(PTC11);
+
+//Motors
+DigitalOut right_in1(D7);
+DigitalOut right_in2(D6);
+PwmOut     right_pwm(D5);
+DigitalOut left_in2(D4);
+DigitalOut left_in1(D3);
+PwmOut     left_pwm(D2);
 
 // RGB LEDs (KL25Z are active-low)
 DigitalOut LED_R(LED_RED);
@@ -119,9 +127,9 @@ DigitalOut LED_B(LED_BLUE);
 // Color sensor
 tcs3472::TCS3472 color(PTE0, PTE1, 100000); // SDA=PTE0, SCL=PTE1 (if wired that way)
 
-// Ultrasonic sensors
-UltrasonicSensor us_front(D8,  D9);
-UltrasonicSensor us_right(D10, D11);
+// Ultrasonic sensors - DECLARED IN MAIN!
+//UltrasonicSensor us_front(D8,  D9);
+//UltrasonicSensor us_right(D10, D11);
 
 //Bluetooth state
 DigitalIn bt_state(PTE21);
@@ -264,11 +272,11 @@ static LightState classify_light(const tcs3472::RGBC& v) {
 }
 
 static inline bool should_ping_front(CtrlState st) {
-    return (st == CtrlState::FOLLOW || st == CtrlState::ALIGN);
+    return (st == CtrlState::FULLY_STOPPED || st == CtrlState::FOLLOW || st == CtrlState::ALIGN || st == CtrlState::OBSTACLE_AVOID || st == CtrlState::SEEK_LEFT || st == CtrlState::SEEK_RIGHT);
 }
 
 static inline bool should_ping_right(CtrlState st) {
-    return (st != CtrlState::SEEK_LEFT && st != CtrlState::SEEK_RIGHT);
+    return (st == CtrlState::FULLY_STOPPED || st == CtrlState::OBSTACLE_AVOID);
 }
 
 //======================================================
@@ -625,6 +633,7 @@ static void controller_update() {
 //======================================================
 
 int main() {
+
     sensor_transistor = 1; //Line sensing transistor on
 
     //USB + Bluetooth debugging
@@ -634,10 +643,14 @@ int main() {
     //Motors PWM start
     motors_init(Config::PWM_FREQ_HZ);
 
-    //Audio init (for buzzer)
+    UltrasonicSensor us_front(D8,  D9);
+    UltrasonicSensor us_right(D10, D11);
 
+    //Audio init (for buzzer)
+    /*
     audio.init(); 
     audio.play_u8_mono(mario_style, mario_style_len, mario_style_rate);
+    */
 
     // Color Sensor init
     const bool tcs_ok = color.init(100.0f, tcs3472::Gain::X16);
@@ -646,7 +659,7 @@ int main() {
     }
 
     //Start in fully sopped
-    enter_state(CtrlState::FOLLOW, 0);
+    enter_state(CtrlState::FULLY_STOPPED, 0);
     
     //Init ticks and ISRs
     colorTick.attach(&color_isr, chrono::milliseconds(Config::COLOR_PERIOD_MS));
@@ -715,7 +728,7 @@ int main() {
         
         //================ COLOR =================
         if (do_color && tcs_ok) {
-            auto v = color.read_raw(true, 5);
+            auto v = color.read_raw(true, 2);
 
             static LightState cand = LightState::NONE;
             static int cand_cnt = 0;
@@ -798,7 +811,6 @@ int main() {
                 }
             }
         }
-        ThisThread::sleep_for(1ms);
     }
     
 }
