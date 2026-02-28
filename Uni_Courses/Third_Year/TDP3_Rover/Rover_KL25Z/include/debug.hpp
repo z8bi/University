@@ -5,6 +5,7 @@
 #include "types.hpp"        // CtrlState, LightState
 #include "sensors.hpp"      // Sensors, LineInfo
 #include "tcs3472.hpp"      // tcs3472::RGBC
+#include "ultrasonic_sensor.hpp" //Ultrasonic Info
 
 namespace Debug {
 
@@ -17,10 +18,13 @@ struct LinePacket {
 };
 
 struct UltraPacket {
-    float front_cm = -1.0f;
-    bool  front_valid = false;
-    float right_cm = -1.0f;
-    bool  right_valid = false;
+    float front_cm;
+    bool  front_valid;
+    UltrasonicSensor::Reading::State front_state;  
+
+    float right_cm;
+    bool  right_valid;
+    UltrasonicSensor::Reading::State right_state;  
 };
 
 struct ColorPacket {
@@ -32,7 +36,10 @@ struct ColorPacket {
 //==================== BUILDERS ====================
 
 LinePacket  make_line(const Sensors& s, const LineInfo& li, bool valid);
-UltraPacket make_ultra(float front_cm, bool front_valid, float right_cm, bool right_valid);
+UltraPacket make_ultra(float front_cm, bool front_valid,
+                       UltrasonicSensor::Reading::State front_state,
+                       float right_cm, bool right_valid,
+                       UltrasonicSensor::Reading::State right_state);
 ColorPacket make_color(const tcs3472::RGBC& v, bool valid, LightState light);
 
 //==================== INIT / LOG ====================

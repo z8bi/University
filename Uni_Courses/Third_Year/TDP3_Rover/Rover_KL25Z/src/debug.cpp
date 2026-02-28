@@ -49,6 +49,17 @@ static const char* light_str(LightState ls)
     }
 }
 
+static const char* ultra_state_str(UltrasonicSensor::Reading::State s)
+{
+    switch (s) {
+        case UltrasonicSensor::Reading::State::VALID:      return "OK";
+        case UltrasonicSensor::Reading::State::NO_ECHO:    return "NO_ECHO";
+        case UltrasonicSensor::Reading::State::MAX_RANGE:  return "MAX_RANGE";
+        case UltrasonicSensor::Reading::State::TIMING_ERR: return "TIMING_ERR";
+        default:                                           return "UNK";
+    }
+}
+
 //==================== BUILDERS ====================
 
 LinePacket make_line(const Sensors& s, const LineInfo& li, bool valid)
@@ -60,13 +71,19 @@ LinePacket make_line(const Sensors& s, const LineInfo& li, bool valid)
     return p;
 }
 
-UltraPacket make_ultra(float front_cm, bool front_valid, float right_cm, bool right_valid)
+UltraPacket make_ultra(float front_cm, bool front_valid,
+                       UltrasonicSensor::Reading::State front_state,
+                       float right_cm, bool right_valid,
+                       UltrasonicSensor::Reading::State right_state)
 {
     UltraPacket p;
     p.front_cm = front_cm;
     p.front_valid = front_valid;
+    p.front_state = front_state;
+
     p.right_cm = right_cm;
     p.right_valid = right_valid;
+    p.right_state = right_state;
     return p;
 }
 
@@ -163,13 +180,57 @@ void tick()
     int front_dcm = (int)(up.front_cm * 10.0f);
     int right_dcm = (int)(up.right_cm * 10.0f);
 
+    char front_buf[40];
+    char right_buf[40];
     char buf[260];
 
+    // ---------- FRONT ----------
+    if (up.front_state == UltrasonicSensor::Reading::State::VALID) {
+
+        snprintf(front_buf, sizeof(front_buf),
+                "%d.%dcm[%s]",
+                front_dcm/10, abs(front_dcm%10),
+                ultra_state_str(up.front_state));
+
+    } else if (up.front_state == UltrasonicSensor::Reading::State::MAX_RANGE) {
+
+        snprintf(front_buf, sizeof(front_buf),
+                "40+cm[%s]",
+                ultra_state_str(up.front_state));
+
+    } else {
+
+        snprintf(front_buf, sizeof(front_buf),
+                "[%s]",
+                ultra_state_str(up.front_state));
+    }
+
+    // ---------- RIGHT ----------
+    if (up.right_state == UltrasonicSensor::Reading::State::VALID) {
+
+        snprintf(right_buf, sizeof(right_buf),
+                "%d.%dcm[%s]",
+                right_dcm/10, abs(right_dcm%10),
+                ultra_state_str(up.right_state));
+
+    } else if (up.right_state == UltrasonicSensor::Reading::State::MAX_RANGE) {
+
+        snprintf(right_buf, sizeof(right_buf),
+                "40+cm[%s]",
+                ultra_state_str(up.right_state));
+
+    } else {
+
+        snprintf(right_buf, sizeof(right_buf),
+                "[%s]",
+                ultra_state_str(up.right_state));
+    }
+
     int n = snprintf(buf, sizeof(buf),
-    "%s | Front: %d.%d(%d) Right: %d.%d(%d) | %s\r\n",
+    "%s | Front: %s Right: %s | %s\r\n",
     state_str(st),
-    front_dcm/10, abs(front_dcm%10), up.front_valid,
-    right_dcm/10, abs(right_dcm%10), up.right_valid,
+    front_buf,
+    right_buf,
     light_str(cp.light)
     );
 

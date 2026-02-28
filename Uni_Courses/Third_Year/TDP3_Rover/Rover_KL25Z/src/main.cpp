@@ -16,6 +16,9 @@ using namespace std::chrono_literals;
 
 namespace Config {
 
+//Main PWM frequency (for motors)
+static constexpr float PWM_FREQ_HZ = 20000.0f;
+
 // Sensor reading timings
 static constexpr int CTRL_PERIOD_MS = 10;
 static constexpr int DEBUG_PERIOD_MS = 200;
@@ -29,6 +32,7 @@ static constexpr int FOUND_TICKS = 1;
 static constexpr float DUTY_FWD   = 0.75f;
 static constexpr float DUTY_TURN  = 0.77f;
 
+//Align parameters
 static constexpr float ALIGN_DUTY_TURN     = 0.82f;
 static constexpr float TURN_BRAKE_STRENGTH = 0.90f;
 
@@ -41,7 +45,7 @@ static constexpr float BRAKE_STRENGTH = 1.0f;
 static constexpr int   BRAKE_MS       = 50;
 
 // FULLY_STOPPED behavior (BT/manual hard stop)
-static constexpr int   FULL_STOP_BRAKE_MS       = 120;  // tune: 60–200ms
+static constexpr int   FULL_STOP_BRAKE_MS       = 200;  // tune: 60–200ms
 static constexpr float FULL_STOP_BRAKE_STRENGTH = 1.0f; // tune: 0.7–1.0
 
 //Align and Follow parameters
@@ -61,19 +65,26 @@ static constexpr int   ULTRA_STAGGER_MS = 8;
 
 // Obstacle detection
 static constexpr float OB_FRONT_TRIG_CM      = 15.0f;
+static constexpr float OB_RIGHT_TRIG_CM      = 20.0f;
 static constexpr int   OB_CONFIRM_CTRL_TICKS = 2;
 
 // Traffic light confirm at controller level
 static constexpr int RED_CTRL_CONFIRM_TICKS = 2;
+static constexpr int COLOR_INTENSITY = 5000;
 
 // STOPPED behavior for red light: how long to reverse before trying to find red again
-static constexpr float DUTY_REV_FIND_RED          = 0.25f;
-static constexpr int   LOST_RED_TICKS_BEFORE_REV  = 5;  // 5*20ms = 100ms
+static constexpr float DUTY_REV_FIND_RED          = 0.30f;
+static constexpr int   LOST_RED_TICKS_BEFORE_REV  = 10;  // 5*20ms = 100ms
 static constexpr int   RED_REACQUIRE_TICKS        = 2;
-static constexpr int   STOP_BRAKE_MS              = 500;
+static constexpr int   STOP_BRAKE_MS              = 250;
 
-//Main PWM frequency (for motors)
-static constexpr float PWM_FREQ_HZ = 20000.0f;
+//============OBSTACLE AVOID===========
+static constexpr int   TURN_45_MS     = 220;
+static constexpr float DUTY_OB_TURN   = 0.70f;
+static constexpr float DUTY_OB_FWD    = 0.40f;
+static constexpr float DUTY_OB_RIGHT  = 0.55f;
+static constexpr int   FWD_BURST_MS   = 180;
+static constexpr int   RIGHT_BURST_MS = 70;
 
 //=======MANUAL========
 // Manual BT (WASD) control
@@ -194,7 +205,7 @@ static inline void leds_set(bool r, bool g, bool b) {
     LED_B = !b;
 }
 
-// Generic debounce helper
+// Generic debounce helper - helps avoid issues due to sudden error spikes in readings which last only one reading
 static inline bool debounce(bool cond, int& counter, int threshold) {
     counter = cond ? (counter + 1) : 0;
     return counter >= threshold;
@@ -224,6 +235,7 @@ static void leds_for_state(CtrlState st) {
     }
 }
 
+//helps change LED's when we're in manual control
 static void leds_for_manual_cmd(char cmd)
 {
     // cmd is already uppercased in your BT handler
@@ -243,6 +255,7 @@ static void leds_for_manual_cmd(char cmd)
     }
 }
 
+//runs to change state and for how long
 static void enter_state(CtrlState st, int duration_ms) {
     core_util_critical_section_enter();
     state = st;
@@ -253,13 +266,15 @@ static void enter_state(CtrlState st, int duration_ms) {
     Debug::update_state(st);
 }
 
+//checks for elapsed time 
 static inline bool state_time_elapsed() {
     return Kernel::Clock::now() >= state_until;
 }
 
+//helper to check if red or green is spotted
 static LightState classify_light(const tcs3472::RGBC& v) {
     //IF LIGHT IS TOO DIM THEN CHANGE V.C LOWER
-    if (!v.valid || v.c < 5000) return LightState::NONE;
+    if (!v.valid || v.c < Config::COLOR_INTENSITY) return LightState::NONE;
 
     const int rP = (int)((100U * v.r) / v.c);
     const int gP = (int)((100U * v.g) / v.c);
@@ -271,6 +286,7 @@ static LightState classify_light(const tcs3472::RGBC& v) {
     return LightState::NONE;
 }
 
+//is the state correct to ping front or right sensor -- helps avoid unnecessary wait times from the sound travelling if reading is not neccessary
 static inline bool should_ping_front(CtrlState st) {
     return (st == CtrlState::FULLY_STOPPED || st == CtrlState::FOLLOW || st == CtrlState::ALIGN || st == CtrlState::OBSTACLE_AVOID || st == CtrlState::SEEK_LEFT || st == CtrlState::SEEK_RIGHT);
 }
@@ -287,6 +303,7 @@ static void controller_update() {
     Sensors s = read_sensors();
     LineInfo li = interpret(s);
 
+    //assume previous state was follow - static means this tracks for all subsequent executions
     static CtrlState prev_state = CtrlState::FOLLOW;
 
     //Updates position of the line
@@ -335,7 +352,7 @@ static void controller_update() {
         return;
     }
 
-    //=========================== line debouncing ===========================
+    //=========================== LINE DEBOUNCIGN ===========================
 
     // SEEK: confirm we've found the line again (not lost)
     static int found_cnt = 0;
@@ -370,7 +387,7 @@ static void controller_update() {
         seek_lock_dir = 0;
     }
 
-    // OBSTACLE reset flag
+    // OBSTACLE reset flag --> clears the static internal states of the obstacle detection when we enter again
     static bool ob_reset_pending = false;
     if (state != prev_state) {
         if (state == CtrlState::OBSTACLE_AVOID) ob_reset_pending = true;
@@ -378,6 +395,17 @@ static void controller_update() {
     }
 
     //============================== FSM ==============================
+
+    /*
+        FOLLOW - DRIVES IN A STRAIGHT LINE IF CENTERED, ATTEMPTS SLIGHT SMOOTH TURNS --> FALLS BACK TO ALIGN FOR BIGGER MISALIGNMENTS
+        ALIGN - USES SMOOTH TURNING TO MORE AGGRESIVELY ATTEMPT TO CENTER --> FALLS BACK TO SEEK IF LINE IS LOST
+        SEEK - USES SKID STEERING TO TURN IN A DIRECTION BASED ON THE LAST KNOWN DIRECTION UNTIL THE LINE IS FOUND AGAIN, ATTEMPTS TO FIND CENTER BUT GOES TO ALIGN IF CENTER NOT FOUND IN TIME LIMIT SET BY CONFIG
+        BRAKING - OBVIOUS
+        OBSTACLE_AVOID - TRIGGERED WHEN FRONT SENSOR SPOTS OBJECT, TURNS LEFT AND USES THE RIGHT SENSOR TO MANUEVER AROUND THE OBJECT UNTIL THE LINE IS FOUND AGAIN
+        STOPPED - TRIGGERED WHEN THE COLOR SENSOR SPOTS THE RED TRAFFIC LIGHT, RELEASED WHEN GREEN IS SPOTTED. IF RED LIGHT IS LOST (ROVER HADN'T BRAKED FOR LONG ENOUGH AND WENT PAST), REVERSE UNTIL RED LIGHT IS SPOTTED AGAIN
+        FULLY_STOPPED - DEFAULT STATE AT THE START SO BLUETOOTH CAN BE PAIRED, ALSO TRIGGERED BY MANUAL CONTROL AND CAN ONLY BE RELEASED BY THE USER OVER BLUETOOTH
+    */
+
     switch (state) {
 
     case CtrlState::FOLLOW: {
@@ -392,6 +420,24 @@ static void controller_update() {
             if (li.pos > 0.0f) turn_right_break_inner(Config::FOLLOW_BRAKE_STRENGTH, Config::DUTY_FOLLOW_TURN);
             else               turn_left_break_inner (Config::FOLLOW_BRAKE_STRENGTH, Config::DUTY_FOLLOW_TURN);
         }
+        break;
+    }   
+
+    case CtrlState::ALIGN: {
+        if (li.centered) {
+            enter_state(CtrlState::FOLLOW, 0);
+            move_forward(Config::DUTY_FWD);
+            break;
+        }
+
+        if (align_lost_confirmed) {
+            enter_state(CtrlState::BRAKING, Config::BRAKE_MS);
+            motors_brake(Config::BRAKE_STRENGTH);
+            break;
+        }
+
+        if (li.pos > 0.0f) turn_right_break_inner(Config::TURN_BRAKE_STRENGTH, Config::ALIGN_DUTY_TURN);
+        else               turn_left_break_inner (Config::TURN_BRAKE_STRENGTH, Config::ALIGN_DUTY_TURN);
         break;
     }
 
@@ -455,24 +501,6 @@ static void controller_update() {
         break;
     }
 
-    case CtrlState::ALIGN: {
-        if (li.centered) {
-            enter_state(CtrlState::FOLLOW, 0);
-            move_forward(Config::DUTY_FWD);
-            break;
-        }
-
-        if (align_lost_confirmed) {
-            enter_state(CtrlState::BRAKING, Config::BRAKE_MS);
-            motors_brake(Config::BRAKE_STRENGTH);
-            break;
-        }
-
-        if (li.pos > 0.0f) turn_right_break_inner(Config::TURN_BRAKE_STRENGTH, Config::ALIGN_DUTY_TURN);
-        else               turn_left_break_inner (Config::TURN_BRAKE_STRENGTH, Config::ALIGN_DUTY_TURN);
-        break;
-    }
-
     case CtrlState::BRAKING: {
         if (state_time_elapsed()) {
             motors_all_off();
@@ -489,27 +517,26 @@ static void controller_update() {
     }
 
     case CtrlState::OBSTACLE_AVOID: {
-        enum class Phase { TURN_LEFT_45, GO_AROUND };
+
+        enum class Phase {
+            TURN_LEFT_45,
+            SEARCH_RIGHT_WALL,   // go forward until right sees obstacle < 15
+            FOLLOW_UNTIL_LOST,   // go forward while right sees it
+            REACQUIRE            // skid right until right sees it again
+        };
+
         static Phase phase = Phase::TURN_LEFT_45;
-        static bool doing_forward = true;
-
-        static constexpr int   TURN_45_MS     = 220;
-        static constexpr float DUTY_OB_TURN   = 0.70f;
-        static constexpr float DUTY_OB_FWD    = 0.40f;
-        static constexpr float DUTY_OB_RIGHT  = 0.55f;
-        static constexpr int   FWD_BURST_MS   = 180;
-        static constexpr int   RIGHT_BURST_MS = 70;
-
         static Kernel::Clock::time_point phase_until;
         static int line_found_cnt = 0;
 
+        // --- line exit condition ---
         if (!li.lost) line_found_cnt++;
         else          line_found_cnt = 0;
 
+        //in case we found obstacle again, make sure all static variables are reset
         if (ob_reset_pending) {
             ob_reset_pending = false;
             phase = Phase::TURN_LEFT_45;
-            doing_forward = true;
             phase_until = {};
             line_found_cnt = 0;
         }
@@ -520,38 +547,55 @@ static void controller_update() {
             break;
         }
 
+        // --- right ultrasonic "fresh + valid" gate ---
+        const bool right_fresh = (Kernel::Clock::now() - sh.right_stamp) < 300ms;
+        const bool right_seen  = sh.right_ok && right_fresh && sh.right_cm > 0.0f
+                                && sh.right_cm < Config::OB_RIGHT_TRIG_CM; // 15cm threshold reused
+
         switch (phase) {
+
+            //only the beginning phase to go around on the left
             case Phase::TURN_LEFT_45: {
                 if (phase_until.time_since_epoch().count() == 0) {
-                    phase_until = Kernel::Clock::now() + chrono::milliseconds(TURN_45_MS);
+                    phase_until = Kernel::Clock::now() + chrono::milliseconds(Config::TURN_45_MS);
                 }
 
-                turn_left_skid_reverse_inner(DUTY_OB_TURN);
+                turn_left_skid_reverse_inner(Config::DUTY_OB_TURN);
 
                 if (Kernel::Clock::now() >= phase_until) {
                     phase_until = {};
-                    phase = Phase::GO_AROUND;
-                    doing_forward = true;
+                    phase = Phase::SEARCH_RIGHT_WALL;
                 }
                 break;
             }
 
-            case Phase::GO_AROUND:
-            default: {
-                if (phase_until.time_since_epoch().count() == 0) {
-                    phase_until = Kernel::Clock::now() + chrono::milliseconds(FWD_BURST_MS);
-                    doing_forward = true;
-                }
+            case Phase::SEARCH_RIGHT_WALL: {
+                // Go forward until right sensor sees obstacle < 15cm
+                move_forward(Config::DUTY_OB_FWD);
 
-                if (Kernel::Clock::now() >= phase_until) {
-                    doing_forward = !doing_forward;
-                    phase_until = Kernel::Clock::now() + chrono::milliseconds(
-                        doing_forward ? FWD_BURST_MS : RIGHT_BURST_MS
-                    );
+                if (right_seen) {
+                    phase = Phase::FOLLOW_UNTIL_LOST;
                 }
+                break;
+            }
 
-                if (doing_forward) move_forward(DUTY_OB_FWD);
-                else               turn_right_skid_reverse_inner(DUTY_OB_RIGHT);
+            case Phase::FOLLOW_UNTIL_LOST: {
+                // Keep going forward while right sensor still sees obstacle < 15cm
+                move_forward(Config::DUTY_OB_FWD);
+
+                if (!right_seen) {
+                    phase = Phase::REACQUIRE;
+                }
+                break;
+            }
+
+            case Phase::REACQUIRE: {
+                // Skid-turn right until right sensor sees obstacle again
+                turn_right_skid_reverse_inner(Config::DUTY_OB_RIGHT);
+
+                if (right_seen) {
+                    phase = Phase::FOLLOW_UNTIL_LOST;
+                }
                 break;
             }
         }
@@ -634,11 +678,11 @@ static void controller_update() {
 
 int main() {
 
-    sensor_transistor = 1; //Line sensing transistor on
+    sensor_transistor = 1; //Line sensing transistor on -> can be blinked on and off for ambient light removal, works fine the now
 
     //USB + Bluetooth debugging
     Debug::init(true, true, BT_TX, BT_RX, BT_BAUD);
-    manual_mode = false;
+    manual_mode = false; //default state is not under manual control --> this variable is used to skip the FSM because rover is under manual control
 
     //Motors PWM start
     motors_init(Config::PWM_FREQ_HZ);
@@ -646,7 +690,7 @@ int main() {
     UltrasonicSensor us_front(D8,  D9);
     UltrasonicSensor us_right(D10, D11);
 
-    //Audio init (for buzzer)
+    //Audio init (for DAC speaker)
     /*
     audio.init(); 
     audio.play_u8_mono(mario_style, mario_style_len, mario_style_rate);
@@ -658,7 +702,7 @@ int main() {
         Debug::log("TCS3472 init failed");
     }
 
-    //Start in fully sopped
+    //Start in fully sopped --> user releases the rover over bluetooth
     enter_state(CtrlState::FULLY_STOPPED, 0);
     
     //Init ticks and ISRs
@@ -696,21 +740,29 @@ int main() {
             const bool do_front = should_ping_front(st);
             const bool do_right = should_ping_right(st);
 
+            UltrasonicSensor::Reading::State front_state = UltrasonicSensor::Reading::State::NO_ECHO;
+            UltrasonicSensor::Reading::State right_state = UltrasonicSensor::Reading::State::NO_ECHO;
+
             if (do_front) {
                 auto rf = us_front.read_cm(Config::FRONT_MAX_CM);
+                front_state = rf.state;
+
                 core_util_critical_section_enter();
                 g_shared.front_cm    = rf.valid ? rf.cm : -1.0f;
                 g_shared.front_ok    = rf.valid;
                 g_shared.front_stamp = Kernel::Clock::now();
                 core_util_critical_section_exit();
             }
-
+            
+            //avoids crosstalk between the two
             if (do_front && do_right) {
                 ThisThread::sleep_for(chrono::milliseconds(Config::ULTRA_STAGGER_MS));
             }
 
             if (do_right) {
                 auto rr = us_right.read_cm(Config::RIGHT_MAX_CM);
+                right_state = rr.state;
+
                 core_util_critical_section_enter();
                 g_shared.right_cm    = rr.valid ? rr.cm : -1.0f;
                 g_shared.right_ok    = rr.valid;
@@ -722,13 +774,16 @@ int main() {
             const Shared sh = shared_snapshot();
 
             //Update debug snapshot with ultrasonic data
-            Debug::update_ultra(Debug::make_ultra(sh.front_cm, sh.front_ok, sh.right_cm, sh.right_ok));
+            Debug::update_ultra(Debug::make_ultra(
+                sh.front_cm, sh.front_ok, front_state,
+                sh.right_cm, sh.right_ok, right_state
+            ));
         }
         
         
-        //================ COLOR =================
+        //================ COLOR ================= (read only if color was initialized)
         if (do_color && tcs_ok) {
-            auto v = color.read_raw(true, 2);
+            auto v = color.read_raw(true, 1); //1 milisecond maximum block if reading isn't done
 
             static LightState cand = LightState::NONE;
             static int cand_cnt = 0;
@@ -757,11 +812,12 @@ int main() {
             Debug::update_color(Debug::make_color(sh.rgbc, sh.rgbc_valid, sh.light));
         }
         
-        //================ DEBUG / BLUETOOTH =================
+        //================ DEBUG USB + BLUETOOTH =================
         if (do_debug) {
-            Debug::tick();
+            Debug::tick(); //prints to USB and BT
         }
 
+        //READS BLUETOOTH COMMANDS
         if (bt_connected() && Debug::bt_read_char(c)) {
 
             // ignore CR/LF

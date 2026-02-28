@@ -1,7 +1,7 @@
 #include "sensors.hpp"
 #include <cmath>
 
-// --- DEFINE the pin objects exactly once here ---
+//pins defined in main
 extern AnalogIn left_sensor_2;
 extern AnalogIn left_sensor_1;
 extern AnalogIn middle_sensor;
@@ -9,13 +9,9 @@ extern AnalogIn right_sensor_2;
 extern AnalogIn right_sensor_1;
 extern DigitalOut sensor_transistor;
 
+//Shmidtt trigger thresholds
 static constexpr float TH_ON  = 0.60f;
 static constexpr float TH_OFF = 0.50f;
-
-//Analogue thresholds for "gap" detection (classifying lost hints)
-static constexpr float GAP_SUM_TH = 1.05f; // tune (depends on your surface)
-static constexpr float GAP_MAX_TH = 0.55f; // tune
-
 
 Sensors read_sensors() {
     Sensors s{};
@@ -46,14 +42,21 @@ LineInfo interpret(const Sensors& s) {
         }
     }
 
+    //lost if no sensors are active
     li.lost = (li.active_count == 0);
+
+    //tracks the direction of the last known position
     li.pos  = (!li.lost) ? (static_cast<float>(li.pos_sum) / li.active_count) : 0.0f;
 
+    //centered if the middle sensor is on the line and the two adjacent aren't
     li.centered = s.on[2] && !(s.on[1] || s.on[3]);
 
+    // used to check for right degree turns
     li.right_turn_sig = (s.on[3] && s.on[4]) || (s.on[2] && s.on[4]);
     li.left_turn_sig  = (s.on[0] && s.on[1]) || (s.on[0] && s.on[2]);
     li.junction        = (s.on[2] && (li.right_turn_sig || li.left_turn_sig));
+    //
+    
 
     return li;
 }
