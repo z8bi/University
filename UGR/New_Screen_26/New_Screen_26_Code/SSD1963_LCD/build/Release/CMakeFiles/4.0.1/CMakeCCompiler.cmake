@@ -1,7 +1,7 @@
-set(CMAKE_C_COMPILER "/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-gcc")
+set(CMAKE_C_COMPILER "/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-gcc")
 set(CMAKE_C_COMPILER_ARG1 "")
 set(CMAKE_C_COMPILER_ID "GNU")
-set(CMAKE_C_COMPILER_VERSION "14.2.1")
+set(CMAKE_C_COMPILER_VERSION "14.3.1")
 set(CMAKE_C_COMPILER_VERSION_INTERNAL "")
 set(CMAKE_C_COMPILER_WRAPPER "")
 set(CMAKE_C_STANDARD_COMPUTED_DEFAULT "17")
@@ -22,11 +22,11 @@ set(CMAKE_C_SIMULATE_VERSION "")
 
 
 
-set(CMAKE_AR "/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-ar")
-set(CMAKE_C_COMPILER_AR "/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-gcc-ar")
-set(CMAKE_RANLIB "/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-ranlib")
-set(CMAKE_C_COMPILER_RANLIB "/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-gcc-ranlib")
-set(CMAKE_LINKER "/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-g++")
+set(CMAKE_AR "/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-ar")
+set(CMAKE_C_COMPILER_AR "/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-gcc-ar")
+set(CMAKE_RANLIB "/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-ranlib")
+set(CMAKE_C_COMPILER_RANLIB "/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-gcc-ranlib")
+set(CMAKE_LINKER "/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-g++")
 set(CMAKE_LINKER_LINK "")
 set(CMAKE_LINKER_LLD "")
 set(CMAKE_C_COMPILER_LINKER "NOTFOUND")
@@ -77,7 +77,7 @@ endif()
 
 
 
-set(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES "/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/lib/gcc/arm-none-eabi/14.2.1/include;/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/lib/gcc/arm-none-eabi/14.2.1/include-fixed;/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/arm-none-eabi/include")
+set(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES "/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/lib/gcc/arm-none-eabi/14.3.1/include;/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/lib/gcc/arm-none-eabi/14.3.1/include-fixed;/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/arm-none-eabi/include")
 set(CMAKE_C_IMPLICIT_LINK_LIBRARIES "")
 set(CMAKE_C_IMPLICIT_LINK_DIRECTORIES "")
 set(CMAKE_C_IMPLICIT_LINK_FRAMEWORK_DIRECTORIES "")

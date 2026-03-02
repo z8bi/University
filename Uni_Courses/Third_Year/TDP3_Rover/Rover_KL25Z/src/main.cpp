@@ -63,14 +63,19 @@ static constexpr float FRONT_MAX_CM     = 40.0f;
 static constexpr float RIGHT_MAX_CM     = 40.0f;
 static constexpr int   ULTRA_STAGGER_MS = 8;
 
-// Obstacle detection
-static constexpr float OB_FRONT_TRIG_CM      = 15.0f;
-static constexpr float OB_RIGHT_TRIG_CM      = 20.0f;
-static constexpr int   OB_CONFIRM_CTRL_TICKS = 2;
+//============OBSTACLE AVOID===========
+static constexpr float OB_FRONT_TRIG_CM      = 35.0f;
+static constexpr float OB_RIGHT_TRIG_CM      = 30.0f;
+static constexpr int   OB_CONFIRM_CTRL_TICKS = 1;
+static constexpr int   OB_BRAKE_MS           = 150;
+static constexpr int   TURN_45_MS     = 800;
+static constexpr float DUTY_OB_TURN   = 0.75f;
+static constexpr float DUTY_OB_FWD    = 0.40f;
+static constexpr float DUTY_OB_RIGHT  = 0.75f;
 
 // Traffic light confirm at controller level
 static constexpr int RED_CTRL_CONFIRM_TICKS = 2;
-static constexpr int COLOR_INTENSITY = 5000;
+static constexpr int COLOR_INTENSITY = 6000;
 
 // STOPPED behavior for red light: how long to reverse before trying to find red again
 static constexpr float DUTY_REV_FIND_RED          = 0.30f;
@@ -78,13 +83,7 @@ static constexpr int   LOST_RED_TICKS_BEFORE_REV  = 10;  // 5*20ms = 100ms
 static constexpr int   RED_REACQUIRE_TICKS        = 2;
 static constexpr int   STOP_BRAKE_MS              = 250;
 
-//============OBSTACLE AVOID===========
-static constexpr int   TURN_45_MS     = 220;
-static constexpr float DUTY_OB_TURN   = 0.70f;
-static constexpr float DUTY_OB_FWD    = 0.40f;
-static constexpr float DUTY_OB_RIGHT  = 0.55f;
-static constexpr int   FWD_BURST_MS   = 180;
-static constexpr int   RIGHT_BURST_MS = 70;
+
 
 //=======MANUAL========
 // Manual BT (WASD) control
@@ -119,7 +118,7 @@ AnalogIn left_sensor_2(A0);
 AnalogIn left_sensor_1(A1);
 AnalogIn middle_sensor(A2);
 AnalogIn right_sensor_1(A3);
-AnalogIn right_sensor_2(A2);
+AnalogIn right_sensor_2(A4);
 DigitalOut sensor_transistor(PTC11);
 
 //Motors
@@ -235,6 +234,25 @@ static void leds_for_state(CtrlState st) {
     }
 }
 
+enum class ObPhase {
+    TURN_LEFT_45,
+    SEARCH_RIGHT_WALL,
+    FOLLOW_UNTIL_LOST,
+    REACQUIRE
+};
+
+static inline void leds_for_ob_phase(ObPhase p)
+{
+    // pick any mapping you like; these are just clear/unique
+    switch (p) {
+        case ObPhase::TURN_LEFT_45:      leds_set(true,  false, false); break; // RED
+        case ObPhase::SEARCH_RIGHT_WALL: leds_set(false, false, true ); break; // BLUE
+        case ObPhase::FOLLOW_UNTIL_LOST: leds_set(false, true,  true ); break; // CYAN
+        case ObPhase::REACQUIRE:         leds_set(true,  true,  false); break; // YELLOW
+        default:                         leds_set(false, true,  true ); break; // fallback
+    }
+}
+
 //helps change LED's when we're in manual control
 static void leds_for_manual_cmd(char cmd)
 {
@@ -303,95 +321,133 @@ static void controller_update() {
     Sensors s = read_sensors();
     LineInfo li = interpret(s);
 
-    //assume previous state was follow - static means this tracks for all subsequent executions
     static CtrlState prev_state = CtrlState::FOLLOW;
 
-    //Updates position of the line
     Debug::update_line(Debug::make_line(s, li, true));
 
-    // ---- snapshot shared data (one critical section) ----
     const Shared sh = shared_snapshot();
     const LightState ls = sh.light;
-
-    //====SKIP STATE MACHINE IF USER IS IN CONTROL OVER BLUETOOTH (MANUAL MODE)====  
 
     if (manual_mode && state != CtrlState::FULLY_STOPPED) return;
 
     //================================================
-    //======= DEBOUNCE AND SMOOTHING SECTION =========
+    //======= STATIC STATE (declare once) ============
     //================================================
+    static bool ob_reset_pending = false;
+    static bool ob_active        = false;  
 
-    //================ COLOR -> STOPPED (RED) ================
-    static int red_ctrl_cnt = 0;
-    const bool red_confirmed = debounce(ls == LightState::RED, red_ctrl_cnt, Config::RED_CTRL_CONFIRM_TICKS);
+    static int  red_ctrl_cnt   = 0;
+    static int  ob_cnt         = 0;
+    static int  found_cnt      = 0;
+    static int  lost_cnt       = 0;
+    static int  align_lost_cnt = 0;
 
-    // Don't let traffic-light logic kick in if we're FULLY_STOPPED (BT/manual hold)
-    if (state != CtrlState::FULLY_STOPPED &&
-        state != CtrlState::STOPPED &&
-        red_confirmed)
-    {
-        red_ctrl_cnt = 0; // optional: keep it explicit
-        enter_state(CtrlState::STOPPED, 0);
-        stop_brake_until = Kernel::Clock::now() + chrono::milliseconds(Config::STOP_BRAKE_MS);
-        motors_brake(Config::BRAKE_STRENGTH);
-        return;
-    }
-
-    //================ ULTRASONIC (front obstacle) ============
-    const bool front_fresh = (Kernel::Clock::now() - sh.front_stamp) < 300ms;
-    const bool front_hit =
-        sh.front_ok && front_fresh && sh.front_cm > 0.0f && sh.front_cm < Config::OB_FRONT_TRIG_CM;
-
-    static int ob_cnt = 0;
-    const bool ob_gate = (state == CtrlState::FOLLOW || state == CtrlState::ALIGN);
-    const bool obstacle_confirmed = debounce(ob_gate && front_hit, ob_cnt, Config::OB_CONFIRM_CTRL_TICKS);
-
-    if (ob_gate && obstacle_confirmed) {
-        enter_state(CtrlState::OBSTACLE_AVOID, 0);
-        motors_brake(Config::BRAKE_STRENGTH);
-        return;
-    }
-
-    //=========================== LINE DEBOUNCIGN ===========================
-
-    // SEEK: confirm we've found the line again (not lost)
-    static int found_cnt = 0;
-    const bool in_seek = (state == CtrlState::SEEK_LEFT || state == CtrlState::SEEK_RIGHT);
-    const bool found_confirmed = debounce(in_seek && !li.lost, found_cnt, Config::FOUND_TICKS);
-
-    //Keep track of where the line was for diretion of next SEEK
-    if (!li.lost) {
-        if (li.pos > 0.2f)       last_pos = +1;
-        else if (li.pos < -0.2f) last_pos = -1;
-    }
-
-    //follow lost confirmation: confirm we've lost the line in FOLLOW before we switch to ALIGN
-    static int lost_cnt = 0;
-    const bool follow_lost_confirmed = debounce(state == CtrlState::FOLLOW && li.lost,
-                                            lost_cnt,
-                                            Config::FOLLOW_LOST_TICKS);
-
-    // ALIGN lost confirmation: confirm we've lost the line in ALIGN before we brake and switch to SEEK                                       
-    static int align_lost_cnt = 0;
-    const bool align_lost_confirmed = debounce(state == CtrlState::ALIGN && li.lost,
-                                           align_lost_cnt,
-                                           Config::ALIGN_LOST_TICKS);
-
-    // SEEK center-lock
     static bool seek_lock_active = false;
     static int  seek_lock_dir    = 0;
     static Kernel::Clock::time_point seek_lock_until;
 
-    if (state != CtrlState::SEEK_LEFT && state != CtrlState::SEEK_RIGHT) {
-        seek_lock_active = false;
-        seek_lock_dir = 0;
-    }
+    //================================================
+    //======= MODE / ENTRY DETECT (always runs) ======
+    //================================================
+    const bool lock_ob = ob_active;  
 
-    // OBSTACLE reset flag --> clears the static internal states of the obstacle detection when we enter again
-    static bool ob_reset_pending = false;
     if (state != prev_state) {
         if (state == CtrlState::OBSTACLE_AVOID) ob_reset_pending = true;
         prev_state = state;
+    }
+
+    if (ob_active && state != CtrlState::OBSTACLE_AVOID) {
+        enter_state(CtrlState::OBSTACLE_AVOID, 0);
+    }
+
+    //================================================
+    //======= COMPUTED FLAGS (defaults if locked) =====
+    //================================================
+    bool red_confirmed         = false;
+    bool obstacle_confirmed    = false;
+    bool found_confirmed       = false;
+    bool follow_lost_confirmed = false;
+    bool align_lost_confirmed  = false;
+
+    bool front_hit   = false;
+    bool front_fresh = false;
+
+    //================================================
+    //======= DEBOUNCE + TRANSITIONS (skip if locked) 
+    //================================================
+    if (!lock_ob) {
+
+        // -------- RED -> STOPPED --------
+        red_confirmed = debounce(ls == LightState::RED,
+                                 red_ctrl_cnt,
+                                 Config::RED_CTRL_CONFIRM_TICKS);
+
+        if (state != CtrlState::FULLY_STOPPED &&
+            state != CtrlState::STOPPED &&
+            red_confirmed)
+        {
+            red_ctrl_cnt = 0;
+            enter_state(CtrlState::STOPPED, 0);
+            stop_brake_until = Kernel::Clock::now() + chrono::milliseconds(Config::STOP_BRAKE_MS);
+            motors_brake(Config::BRAKE_STRENGTH);
+            return;
+        }
+
+        // -------- FRONT OBSTACLE -> OBSTACLE_AVOID --------
+        front_fresh = (Kernel::Clock::now() - sh.front_stamp) < 300ms;
+        front_hit =
+            sh.front_ok && front_fresh &&
+            sh.front_cm > 0.0f && sh.front_cm < Config::OB_FRONT_TRIG_CM;
+
+        const bool ob_gate = (state == CtrlState::FOLLOW || state == CtrlState::ALIGN);
+
+        obstacle_confirmed = debounce(ob_gate && front_hit,
+                                      ob_cnt,
+                                      Config::OB_CONFIRM_CTRL_TICKS);
+
+        if (ob_gate && obstacle_confirmed) {
+            
+            ob_active = true;                 
+            ob_reset_pending = true;          
+
+            red_ctrl_cnt = 0;
+            lost_cnt = 0;
+            align_lost_cnt = 0;
+            found_cnt = 0;
+            ob_cnt = 0;
+
+            enter_state(CtrlState::OBSTACLE_AVOID, Config::OB_BRAKE_MS);
+            motors_brake(Config::BRAKE_STRENGTH);
+            return;
+        }
+
+        // -------- LINE / SEEK / ALIGN debounce --------
+        const bool in_seek = (state == CtrlState::SEEK_LEFT || state == CtrlState::SEEK_RIGHT);
+
+        found_confirmed = debounce(in_seek && !li.lost,
+                                   found_cnt,
+                                   Config::FOUND_TICKS);
+
+        // last_pos update (you probably want this even when locked_ob is false only;
+        // if you want it always, move it out of this block)
+        if (!li.lost) {
+            if (li.pos > 0.2f)       last_pos = +1;
+            else if (li.pos < -0.2f) last_pos = -1;
+        }
+
+        follow_lost_confirmed = debounce(state == CtrlState::FOLLOW && li.lost,
+                                         lost_cnt,
+                                         Config::FOLLOW_LOST_TICKS);
+
+        align_lost_confirmed  = debounce(state == CtrlState::ALIGN && li.lost,
+                                         align_lost_cnt,
+                                         Config::ALIGN_LOST_TICKS);
+
+        // SEEK center-lock housekeeping
+        if (state != CtrlState::SEEK_LEFT && state != CtrlState::SEEK_RIGHT) {
+            seek_lock_active = false;
+            seek_lock_dir = 0;
+        }
     }
 
     //============================== FSM ==============================
@@ -518,44 +574,54 @@ static void controller_update() {
 
     case CtrlState::OBSTACLE_AVOID: {
 
-        enum class Phase {
-            TURN_LEFT_45,
-            SEARCH_RIGHT_WALL,   // go forward until right sees obstacle < 15
-            FOLLOW_UNTIL_LOST,   // go forward while right sees it
-            REACQUIRE            // skid right until right sees it again
-        };
+        // Initial brake window 
+        if (!state_time_elapsed()) {
+            motors_brake(Config::BRAKE_STRENGTH);
+            leds_for_state(CtrlState::OBSTACLE_AVOID); 
+            break;
+        }
 
-        static Phase phase = Phase::TURN_LEFT_45;
+        static ObPhase phase = ObPhase::TURN_LEFT_45;
         static Kernel::Clock::time_point phase_until;
+        static bool did_follow = false;
         static int line_found_cnt = 0;
 
-        // --- line exit condition ---
+        auto set_phase = [&](ObPhase p) {
+            if (phase != p) {
+                phase = p;
+                leds_for_ob_phase(phase);
+            }
+        };
+
+        // ---- line exit condition ----
         if (!li.lost) line_found_cnt++;
         else          line_found_cnt = 0;
 
-        //in case we found obstacle again, make sure all static variables are reset
+        // reset when re-entering obstacle avoid
         if (ob_reset_pending) {
             ob_reset_pending = false;
-            phase = Phase::TURN_LEFT_45;
+            did_follow = false;
+            phase = ObPhase::TURN_LEFT_45;
             phase_until = {};
             line_found_cnt = 0;
+            leds_for_ob_phase(phase);
         }
 
-        if (line_found_cnt >= 2) {
+        if (did_follow && line_found_cnt >= 2) {
             line_found_cnt = 0;
+            ob_active = false; 
             enter_state(CtrlState::ALIGN, 0);
             break;
         }
 
-        // --- right ultrasonic "fresh + valid" gate ---
-        const bool right_fresh = (Kernel::Clock::now() - sh.right_stamp) < 300ms;
-        const bool right_seen  = sh.right_ok && right_fresh && sh.right_cm > 0.0f
-                                && sh.right_cm < Config::OB_RIGHT_TRIG_CM; // 15cm threshold reused
+        const bool right_seen  = sh.right_ok && sh.right_cm < Config::OB_RIGHT_TRIG_CM;
 
         switch (phase) {
 
-            //only the beginning phase to go around on the left
-            case Phase::TURN_LEFT_45: {
+            case ObPhase::TURN_LEFT_45: {
+                // ensure LED is correct even if we land here without a transition
+                leds_for_ob_phase(phase);
+
                 if (phase_until.time_since_epoch().count() == 0) {
                     phase_until = Kernel::Clock::now() + chrono::milliseconds(Config::TURN_45_MS);
                 }
@@ -564,37 +630,36 @@ static void controller_update() {
 
                 if (Kernel::Clock::now() >= phase_until) {
                     phase_until = {};
-                    phase = Phase::SEARCH_RIGHT_WALL;
+                    set_phase(ObPhase::SEARCH_RIGHT_WALL);
                 }
                 break;
             }
 
-            case Phase::SEARCH_RIGHT_WALL: {
-                // Go forward until right sensor sees obstacle < 15cm
+            case ObPhase::SEARCH_RIGHT_WALL: {
                 move_forward(Config::DUTY_OB_FWD);
 
                 if (right_seen) {
-                    phase = Phase::FOLLOW_UNTIL_LOST;
+                    phase = ObPhase::FOLLOW_UNTIL_LOST;
+                    leds_for_ob_phase(phase);
                 }
                 break;
             }
 
-            case Phase::FOLLOW_UNTIL_LOST: {
-                // Keep going forward while right sensor still sees obstacle < 15cm
+            case ObPhase::FOLLOW_UNTIL_LOST: {
                 move_forward(Config::DUTY_OB_FWD);
+                did_follow = true;
 
                 if (!right_seen) {
-                    phase = Phase::REACQUIRE;
+                    set_phase(ObPhase::REACQUIRE);
                 }
                 break;
             }
 
-            case Phase::REACQUIRE: {
-                // Skid-turn right until right sensor sees obstacle again
+            case ObPhase::REACQUIRE: {
                 turn_right_skid_reverse_inner(Config::DUTY_OB_RIGHT);
 
                 if (right_seen) {
-                    phase = Phase::FOLLOW_UNTIL_LOST;
+                    set_phase(ObPhase::FOLLOW_UNTIL_LOST);
                 }
                 break;
             }
@@ -658,6 +723,7 @@ static void controller_update() {
 
         break;
     }
+
     case CtrlState::FULLY_STOPPED: {
         if (!state_time_elapsed()) motors_brake(Config::FULL_STOP_BRAKE_STRENGTH);
         else                       motors_all_off();
@@ -703,7 +769,7 @@ int main() {
     }
 
     //Start in fully sopped --> user releases the rover over bluetooth
-    enter_state(CtrlState::FULLY_STOPPED, 0);
+    enter_state(CtrlState::SEEK_LEFT, 0);
     
     //Init ticks and ISRs
     colorTick.attach(&color_isr, chrono::milliseconds(Config::COLOR_PERIOD_MS));

@@ -227,11 +227,12 @@ void tick()
     }
 
     int n = snprintf(buf, sizeof(buf),
-    "%s | Front: %s Right: %s | %s\r\n",
+    "%s | Front: %s Right: %s | %s (%s)\r\n",
     state_str(st),
     front_buf,
     right_buf,
-    light_str(cp.light)
+    light_str(cp.light),
+    cp.rgbc.c
     );
 
 

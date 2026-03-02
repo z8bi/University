@@ -15,18 +15,18 @@
 ########################
 
 //Path to a program.
-CMAKE_ADDR2LINE:FILEPATH=/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-addr2line
+CMAKE_ADDR2LINE:FILEPATH=/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-addr2line
 
 //Path to a program.
-CMAKE_AR:FILEPATH=/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-ar
+CMAKE_AR:FILEPATH=/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-ar
 
 //A wrapper around 'ar' adding the appropriate '--plugin' option
 // for the GCC compiler
-CMAKE_ASM_COMPILER_AR:FILEPATH=/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-gcc-ar
+CMAKE_ASM_COMPILER_AR:FILEPATH=/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-gcc-ar
 
 //A wrapper around 'ranlib' adding the appropriate '--plugin' option
 // for the GCC compiler
-CMAKE_ASM_COMPILER_RANLIB:FILEPATH=/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-gcc-ranlib
+CMAKE_ASM_COMPILER_RANLIB:FILEPATH=/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-gcc-ranlib
 
 //Flags used by the ASM compiler during all build types.
 CMAKE_ASM_FLAGS:STRING=
@@ -47,13 +47,16 @@ CMAKE_ASM_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
 // MinSizeRel ...
 CMAKE_BUILD_TYPE:STRING=Release
 
+//No help, variable specified on the command line.
+CMAKE_COMMAND:UNINITIALIZED=cube-cmake
+
 //A wrapper around 'ar' adding the appropriate '--plugin' option
 // for the GCC compiler
-CMAKE_CXX_COMPILER_AR:FILEPATH=/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-gcc-ar
+CMAKE_CXX_COMPILER_AR:FILEPATH=/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-gcc-ar
 
 //A wrapper around 'ranlib' adding the appropriate '--plugin' option
 // for the GCC compiler
-CMAKE_CXX_COMPILER_RANLIB:FILEPATH=/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-gcc-ranlib
+CMAKE_CXX_COMPILER_RANLIB:FILEPATH=/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-gcc-ranlib
 
 //Flags used by the CXX compiler during all build types.
 CMAKE_CXX_FLAGS:STRING=
@@ -72,11 +75,11 @@ CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
 
 //A wrapper around 'ar' adding the appropriate '--plugin' option
 // for the GCC compiler
-CMAKE_C_COMPILER_AR:FILEPATH=/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-gcc-ar
+CMAKE_C_COMPILER_AR:FILEPATH=/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-gcc-ar
 
 //A wrapper around 'ranlib' adding the appropriate '--plugin' option
 // for the GCC compiler
-CMAKE_C_COMPILER_RANLIB:FILEPATH=/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-gcc-ranlib
+CMAKE_C_COMPILER_RANLIB:FILEPATH=/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-gcc-ranlib
 
 //Flags used by the C compiler during all build types.
 CMAKE_C_FLAGS:STRING=
@@ -120,8 +123,8 @@ CMAKE_FIND_PACKAGE_REDIRECTS_DIR:STATIC=/Users/danielborkovec/University/UGR/New
 //Install path prefix, prepended onto install directories.
 CMAKE_INSTALL_PREFIX:PATH=/usr/local
 
-//Program used to build from build.ninja files.
-CMAKE_MAKE_PROGRAM:FILEPATH=/Users/danielborkovec/.mcuxpressotools/ninja-1.12.1/ninja
+//make program
+CMAKE_MAKE_PROGRAM:FILEPATH=/Users/danielborkovec/Library/Application Support/stm32cube/bundles/ninja/1.13.1+st.1/bin/ninja
 
 //Flags used by the linker during the creation of modules during
 // all build types.
@@ -144,10 +147,10 @@ CMAKE_MODULE_LINKER_FLAGS_RELEASE:STRING=
 CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
 //Path to a program.
-CMAKE_NM:FILEPATH=/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-nm
+CMAKE_NM:FILEPATH=/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-nm
 
 //Path to a program.
-CMAKE_OBJDUMP:FILEPATH=/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-objdump
+CMAKE_OBJDUMP:FILEPATH=/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-objdump
 
 //Value Computed by CMake
 CMAKE_PROJECT_DESCRIPTION:STATIC=
@@ -159,10 +162,10 @@ CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 CMAKE_PROJECT_NAME:STATIC=SSD1963_LCD
 
 //Path to a program.
-CMAKE_RANLIB:FILEPATH=/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-ranlib
+CMAKE_RANLIB:FILEPATH=/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-ranlib
 
 //Path to a program.
-CMAKE_READELF:FILEPATH=/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-readelf
+CMAKE_READELF:FILEPATH=/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-readelf
 
 //Flags used by the linker during the creation of shared libraries
 // during all build types.
@@ -212,7 +215,7 @@ CMAKE_STATIC_LINKER_FLAGS_RELEASE:STRING=
 CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
 //Path to a program.
-CMAKE_STRIP:FILEPATH=/Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/arm-none-eabi-strip
+CMAKE_STRIP:FILEPATH=/Users/danielborkovec/Library/Application Support/stm32cube/bundles/gnu-tools-for-stm32/14.3.1+st.2/bin/arm-none-eabi-strip
 
 //Path to a program.
 CMAKE_TAPI:FILEPATH=/opt/anaconda3/bin/tapi
@@ -267,8 +270,6 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=4
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=0
 //Patch version of cmake used to create the current loaded cache
 CMAKE_CACHE_PATCH_VERSION:INTERNAL=1
-//Path to CMake executable.
-CMAKE_COMMAND:INTERNAL=/Users/danielborkovec/Library/Application Support/stm32cube/bundles/cmake/4.0.1+st.3/CMake.app/Contents/bin/cmake
 //Path to cpack program executable.
 CMAKE_CPACK_COMMAND:INTERNAL=/Users/danielborkovec/Library/Application Support/stm32cube/bundles/cmake/4.0.1+st.3/CMake.app/Contents/bin/cpack
 //Path to ctest program executable.
@@ -304,7 +305,7 @@ CMAKE_C_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_DLLTOOL
 CMAKE_DLLTOOL-ADVANCED:INTERNAL=1
 //Path to cache edit program executable.
-CMAKE_EDIT_COMMAND:INTERNAL=/Users/danielborkovec/.mcuxpressotools/cmake-3.30.0-macos10.10-universal/CMake.app/Contents/bin/ccmake
+CMAKE_EDIT_COMMAND:INTERNAL=/Users/danielborkovec/Library/Application Support/stm32cube/bundles/cmake/4.0.1+st.3/CMake.app/Contents/bin/ccmake
 //Executable file format
 CMAKE_EXECUTABLE_FORMAT:INTERNAL=ELF
 //ADVANCED property for variable: CMAKE_EXE_LINKER_FLAGS
