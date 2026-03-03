@@ -2,14 +2,6 @@
 #include "mbed.h"
 #include <cstdint>
 
-// --- Sensor pin objects are DEFINED in sensors.cpp, only declared here ---
-extern AnalogIn left_sensor_2;
-extern AnalogIn left_sensor_1;
-extern AnalogIn middle_sensor;
-extern AnalogIn right_sensor_2;
-extern AnalogIn right_sensor_1;
-extern DigitalOut sensor_transistor;
-
 struct Sensors {
     float a[5];  // raw analog 0..1
     bool  on[5]; // debounced digital

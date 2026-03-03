@@ -1,13 +1,8 @@
 #include "sensors.hpp"
+
+#include "pin_definitions.hpp"
 #include <cmath>
 
-//pins defined in main
-extern AnalogIn left_sensor_2;
-extern AnalogIn left_sensor_1;
-extern AnalogIn middle_sensor;
-extern AnalogIn right_sensor_2;
-extern AnalogIn right_sensor_1;
-extern DigitalOut sensor_transistor;
 
 //Shmidtt trigger thresholds
 static constexpr float TH_ON  = 0.60f;
@@ -15,11 +10,11 @@ static constexpr float TH_OFF = 0.50f;
 
 Sensors read_sensors() {
     Sensors s{};
-    s.a[0] = left_sensor_2.read();
-    s.a[1] = left_sensor_1.read();
-    s.a[2] = middle_sensor.read();
-    s.a[3] = right_sensor_1.read();
-    s.a[4] = right_sensor_2.read();
+    s.a[0] = HW::left_sensor_2.read();
+    s.a[1] = HW::left_sensor_1.read();
+    s.a[2] = HW::middle_sensor.read();
+    s.a[3] = HW::right_sensor_1.read();
+    s.a[4] = HW::right_sensor_2.read();
 
     static bool prev[5] = {false,false,false,false,false};
 
