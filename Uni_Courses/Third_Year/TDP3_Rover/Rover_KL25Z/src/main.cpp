@@ -41,7 +41,7 @@
     //======================================================
 
     //Obstacle-avoid sub states
-    enum class ObPhase { TURN_LEFT_45, SEARCH_RIGHT_WALL, REACQUIRE }; 
+    enum class ObPhase { MOVE_CLOSER, TURN_LEFT_45, SEARCH_RIGHT_WALL, REACQUIRE }; 
 
     //all statics of controller runtime - stored in variable rt to be used in controller update and obstacle avoid logic
     struct ControllerRuntime {
@@ -475,6 +475,7 @@
 
                 auto leds_for_ob_phase = [](ObPhase p) {
                     switch (p) {
+                        case ObPhase::MOVE_CLOSER:       leds_set(false,  true, false); break; // GREEN
                         case ObPhase::TURN_LEFT_45:      leds_set(true,  false, true); break; // PURPLE
                         case ObPhase::SEARCH_RIGHT_WALL: leds_set(false, false, true ); break; // BLUE
                         case ObPhase::REACQUIRE:         leds_set(true,  true,  false); break; // YELLOW
@@ -487,12 +488,14 @@
                     rt.ob_reset_pending = false;
                     rt.did_follow       = false;
                     rt.reacq_has_seen = false;
-                    rt.phase            = ObPhase::TURN_LEFT_45;
+                    rt.phase            = ObPhase::MOVE_CLOSER;
                     rt.phase_until      = {};
                     rt.line_found_cnt   = 0;
                     rt.sub_brake_until  = {};
                     rt.target_right_distance = Config::RIGHT_MAX_CM;
                     rt.forward_min_until = {};
+                    rt.right_counter = 0;
+                    rt.ob_seek_force_full_duration = false;
                     leds_for_ob_phase(rt.phase);
                 }
 
@@ -514,15 +517,15 @@
                 };
 
                 // Line exit condition -> debounced tho
-                if (rt.did_follow && !li.lost) rt.line_found_cnt++;
+                if (rt.did_follow && li.middle) rt.line_found_cnt++;
 
-                if (rt.line_found_cnt >= 3) {
+                if (rt.line_found_cnt >= 2) {
                     rt.ob_active = false;
                     rt.found_cnt = 0; 
                     
                     // Force a clockwise re-orient: turn LEFT for a short time
                     rt.seek_lock_active = true;
-                    rt.seek_lock_dir    = +1;
+                    rt.seek_lock_dir    = -1;
                     rt.seek_lock_until  = Kernel::Clock::now() + std::chrono::milliseconds(Config::OB_SEEK_DURATION);
 
                     // NEW: do not allow centered to cancel this seek early
@@ -539,12 +542,20 @@
                     rt.target_right_distance = sh.right_cm;
                 }
 
-                if (!right_seen && sh.right_cm > rt.target_right_distance) {
+                if (!right_seen || sh.right_cm > rt.target_right_distance) {
                     rt.right_counter++;
                 }
 
                 //sub-state machine
                 switch (rt.phase) {
+                    case ObPhase::MOVE_CLOSER: {
+                        move_forward(Config::OB_FRONT_CLOSER_SPEED);
+
+                        if(sh.front_cm <= Config::OB_FRONT_CLOSE_CM || !sh.front_ok) { // if we got close enough or lost the reading (maybe we went past the object), start turning left to find a way around
+                            set_phase(ObPhase::TURN_LEFT_45);
+                        }
+                        break;
+                    }
                     case ObPhase::TURN_LEFT_45: {
                         if (rt.phase_until.time_since_epoch().count() == 0) {
                             rt.phase_until = Kernel::Clock::now() + std::chrono::milliseconds(Config::TURN_45_MS);
@@ -568,15 +579,27 @@
 
                         move_forward(Config::DUTY_OB_FWD);
 
+                        if (right_seen && !rt.reacq_has_seen) {
+                            rt.reacq_has_seen = true;
+                            rt.right_counter = 0;
+
+                        }
+
+                        if(rt.reacq_has_seen) {
+                        }
+                        else if (Kernel::Clock::now() <= rt.forward_min_until) {
+                            rt.right_counter = 0; // reset counter during forward phase until min time is hit at least once, then allow it to trigger reacquisition phase if obstacle is moving away
+                            break;
+                        }
+
                         // only allow leaving forward phase after min time elapsed
-                        if (Kernel::Clock::now() >= rt.forward_min_until) {
-                            if (rt.right_counter >= 1) {
-                                rt.right_counter = 0;
-                                rt.forward_min_until = {};     
-                                rt.reacq_has_seen = false;
-                                set_phase(ObPhase::REACQUIRE);
-                                rt.did_follow = true;
-                            }
+                        if (rt.right_counter >= 1) {
+                            rt.right_counter = 0;
+                            rt.forward_min_until = {};     
+                            rt.reacq_has_seen = false;
+                            rt.target_right_distance = sh.right_cm; // reset target distance for reacquisition phase
+                            set_phase(ObPhase::REACQUIRE);
+                            rt.did_follow = true;                            
                         }
 
                         break;
@@ -593,7 +616,6 @@
 
                             if (right_seen) {
                                 rt.reacq_has_seen = true;
-                                rt.target_right_distance = sh.right_cm;  // seed baseline
                                 rt.right_counter = 0;
                             }
                             break;
@@ -601,10 +623,9 @@
 
                         turn_right_skid_reverse_inner(Config::DUTY_OB_TURN);
 
-                        if (rt.right_counter >= 1) {
+                        if (rt.reacq_has_seen && !right_seen) { // if it's moving away, try to reacquire line/ {rt.right_counter >= 10}
                             rt.right_counter = 0;
                             rt.reacq_has_seen = false;
-                            rt.target_right_distance = Config::RIGHT_MAX_CM;
                             set_phase(ObPhase::SEARCH_RIGHT_WALL);
                         }
 
@@ -744,54 +765,79 @@
         Debug::update_color(Debug::make_color(sh.rgbc, sh.rgbc_valid, sh.light));
     }
 
-    static void task_bluetooth() {
-        if (!bt_connected()) return;
-        if (!Debug::bt_read_char(bt_char)) return;
+ static void task_bluetooth() {
+    if (!bt_connected()) return;
+    if (!Debug::bt_read_char(bt_char)) return;
 
-        char c = bt_char;
+    char c = bt_char;              // existing logic uses this
 
-        if (c == '\r' || c == '\n' || c < 32 || c > 126) return;
-        c = (char)toupper((unsigned char)c);
+    if (c == '\r' || c == '\n' || c < 32 || c > 126) return;
 
-        if (c == 'W' || c == 'A' || c == 'S' || c == 'D') {
-            manual_mode = true;
-            cancel_obstacle_mode();
-            enter_state(CtrlState::MANUAL_BT, 0);
-            leds_for_manual_cmd(c);
-
-            if (c == 'W') move_forward(Config::BT_DUTY_FWD);
-            if (c == 'S') move_backward(Config::BT_DUTY_REV);
-            if (c == 'A') turn_left_skid_reverse_inner(Config::BT_DUTY_TURN);
-            if (c == 'D') turn_right_skid_reverse_inner(Config::BT_DUTY_TURN);
-            return;
-        }
-
-        if (c == 'Q') {
-            manual_mode = true;
-            cancel_obstacle_mode();
-            enter_state(CtrlState::FULLY_STOPPED, Config::FULL_STOP_BRAKE_MS);
-            motors_brake(Config::FULL_STOP_BRAKE_STRENGTH);
-            Debug::log("BT: FULLY_STOPPED\r\n");
-            return;
-        }
-
-        if (c == 'X') {
-            manual_mode = false;
-            cancel_obstacle_mode();
-            enter_state((last_pos >= 0) ? CtrlState::SEEK_RIGHT : CtrlState::SEEK_LEFT, 0);
-            Debug::log("BT: EXIT MANUAL -> SEEK\r\n");
-            return;
-        }
-
-        if (c == 'H') {
-            cancel_obstacle_mode();
-            Debug::log("BT: WASD=manual, Q=hard stop, X=exit manual+seek\r\n");
-            return;
-        }
-
-        Debug::log("BT: unknown cmd\r\n");
+    if (c == 'w') {
+        manual_mode = true;
+        cancel_obstacle_mode();
+        enter_state(CtrlState::MANUAL_BT, 0);
+        leds_for_manual_cmd('W');             
+        move_forward(Config::BT_DUTY_FWD_SLOW); 
+        return;
+    }
+    if (c == 's') {
+        manual_mode = true;
+        cancel_obstacle_mode();
+        enter_state(CtrlState::MANUAL_BT, 0);
+        leds_for_manual_cmd('S');
+        move_backward(Config::BT_DUTY_REV_SLOW);
+        return;
+    }
+    if (c == 'a') {
+        manual_mode = true;
+        cancel_obstacle_mode();
+        enter_state(CtrlState::MANUAL_BT, 0);
+        leds_for_manual_cmd('A');
+        turn_left_break_inner(0.9, 0.82); 
+    }
+    if (c == 'd') {
+        manual_mode = true;
+        cancel_obstacle_mode();
+        enter_state(CtrlState::MANUAL_BT, 0);
+        leds_for_manual_cmd('D');
+        turn_right_break_inner(0.9, 0.82); 
+        return;
     }
 
+    // ---- EXISTING BEHAVIOR (unchanged) ----
+    if (c == 'W' || c == 'A' || c == 'S' || c == 'D') {
+        manual_mode = true;
+        cancel_obstacle_mode();
+        enter_state(CtrlState::MANUAL_BT, 0);
+        leds_for_manual_cmd(c);
+
+        if (c == 'W') move_forward(Config::BT_DUTY_FWD);                
+        if (c == 'S') move_backward(Config::BT_DUTY_REV);               
+        if (c == 'A') turn_left_skid_reverse_inner(Config::BT_DUTY_TURN);  
+        if (c == 'D') turn_right_skid_reverse_inner(Config::BT_DUTY_TURN); 
+        return;
+    }
+
+    if (c == 'Q') {
+        manual_mode = true;
+        cancel_obstacle_mode();
+        enter_state(CtrlState::FULLY_STOPPED, Config::FULL_STOP_BRAKE_MS);
+        motors_brake(Config::FULL_STOP_BRAKE_STRENGTH);
+        Debug::log("BT: FULLY_STOPPED\r\n");
+        return;
+    }
+
+    if (c == 'X') {
+        manual_mode = false;
+        cancel_obstacle_mode();
+        enter_state((last_pos >= 0) ? CtrlState::SEEK_RIGHT : CtrlState::SEEK_LEFT, 0);
+        Debug::log("BT: EXIT MANUAL -> SEEK\r\n");
+        return;
+    }
+
+    Debug::log("BT: unknown cmd\r\n");
+}
     //======================================================
     //========================== MAIN ======================
     //======================================================
@@ -812,7 +858,7 @@
         if (!tcs_ok) Debug::log("TCS3472 init failed");
 
         // START BEHAVIOR!!!! MAKE FULL STOPPED FOR BLUETOOTH -> SEEK FOR QUICK TESTS
-        enter_state(CtrlState::FULLY_STOPPED, 0);
+        enter_state(CtrlState::SEEK_LEFT, 0);
 
         Flags::colorTick.attach(&Flags::color_isr,   std::chrono::milliseconds(Config::COLOR_PERIOD_MS));
         Flags::controlTick.attach(&Flags::control_isr, std::chrono::milliseconds(Config::CTRL_PERIOD_MS));

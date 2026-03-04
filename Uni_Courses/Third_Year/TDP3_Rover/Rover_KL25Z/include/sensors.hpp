@@ -12,6 +12,7 @@ struct LineInfo {
     int   pos_sum      = 0;
     float pos          = 0.0f;
     bool  centered     = false;
+    bool  middle = false;
     bool  lost         = false;
 
     // you can delete these later if truly unused
