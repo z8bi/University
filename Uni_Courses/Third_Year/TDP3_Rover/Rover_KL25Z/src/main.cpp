@@ -819,7 +819,7 @@
         return;
     }
 
-    if (c == 'Q') {
+    if (c == 'Q' || c == 'q') {
         manual_mode = true;
         cancel_obstacle_mode();
         enter_state(CtrlState::FULLY_STOPPED, Config::FULL_STOP_BRAKE_MS);
@@ -828,7 +828,7 @@
         return;
     }
 
-    if (c == 'X') {
+    if (c == 'X' || c == 'x') {
         manual_mode = false;
         cancel_obstacle_mode();
         enter_state((last_pos >= 0) ? CtrlState::SEEK_RIGHT : CtrlState::SEEK_LEFT, 0);
@@ -843,7 +843,6 @@
     //======================================================
 
     int main() {
-        HW::sensor_transistor = 1;
 
         Debug::init(true, true, HW::BT_TX, HW::BT_RX, HW::BT_BAUD);
         manual_mode = false;
@@ -858,7 +857,8 @@
         if (!tcs_ok) Debug::log("TCS3472 init failed");
 
         // START BEHAVIOR!!!! MAKE FULL STOPPED FOR BLUETOOTH -> SEEK FOR QUICK TESTS
-        enter_state(CtrlState::SEEK_LEFT, 0);
+        //enter_state(CtrlState::SEEK_LEFT, 0);
+        enter_state(CtrlState::FULLY_STOPPED, 0);
 
         Flags::colorTick.attach(&Flags::color_isr,   std::chrono::milliseconds(Config::COLOR_PERIOD_MS));
         Flags::controlTick.attach(&Flags::control_isr, std::chrono::milliseconds(Config::CTRL_PERIOD_MS));

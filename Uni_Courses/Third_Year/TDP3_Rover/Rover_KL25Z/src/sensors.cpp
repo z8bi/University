@@ -1,5 +1,4 @@
 #include "sensors.hpp"
-
 #include "pin_definitions.hpp"
 #include <cmath>
 
@@ -9,6 +8,8 @@ static constexpr float TH_ON  = 0.60f;
 static constexpr float TH_OFF = 0.50f;
 
 Sensors read_sensors() {
+    HW::sensor_transistor = 1;
+
     Sensors s{};
     s.a[0] = HW::left_sensor_2.read();
     s.a[1] = HW::left_sensor_1.read();
@@ -23,6 +24,7 @@ Sensors read_sensors() {
         if ( prev[i] && s.a[i] <= TH_OFF) prev[i] = false;
         s.on[i] = prev[i];
     }
+
     return s;
 }
 

@@ -74,10 +74,10 @@ static constexpr int   RED_REACQUIRE_TICKS       = 2;
 static constexpr int   STOP_BRAKE_MS             = 350;
 
 // Manual BT
-static constexpr float BT_DUTY_FWD  = 0.6f;
+static constexpr float BT_DUTY_FWD  = 0.75f;
 static constexpr float BT_DUTY_FWD_SLOW  = 0.4f;
-static constexpr float BT_DUTY_REV  = 0.6f;
+static constexpr float BT_DUTY_REV  = 0.75f;
 static constexpr float BT_DUTY_REV_SLOW  = 0.4f;
-static constexpr float BT_DUTY_TURN = 0.75f;
+static constexpr float BT_DUTY_TURN = 0.8f;
 
 } // namespace Config
