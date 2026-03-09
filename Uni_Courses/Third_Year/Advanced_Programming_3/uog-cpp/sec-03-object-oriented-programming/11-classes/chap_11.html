@@ -204,8 +204,11 @@
 <ul>
 <li><a href="#/member-access" id="/toc-member-access">Member access</a></li>
 <li><a href="#/a-detour-back-to-pointers-class-type-struct-and-class" id="/toc-a-detour-back-to-pointers-class-type-struct-and-class">A detour back to pointers &amp; class type (<code>struct</code> and <code>class</code>)</a></li>
+<li><a href="#/member-selection-with-references-and-pointers" id="/toc-member-selection-with-references-and-pointers">Member selection with references and pointers</a></li>
 <li><a href="#/introduction-to-constructors" id="/toc-introduction-to-constructors">Introduction to constructors</a></li>
 <li><a href="#/constructor-member-initializer-lists" id="/toc-constructor-member-initializer-lists">Constructor member initializer lists</a></li>
+<li><a href="#/default-constructors-and-default-arguments" id="/toc-default-constructors-and-default-arguments">Default constructors and default arguments</a></li>
+<li><a href="#/intro-to-the-copy-constructor" id="/toc-intro-to-the-copy-constructor">Intro to the copy constructor</a></li>
 </ul>
 </nav>
 </section>
@@ -231,6 +234,7 @@
 <li>The park with all the screaming kids. Not want to hear all the screamings. It is <code>public</code>, you <span style="color:green">can access</span>.</li>
 <li>The private residential house with warm and TV. Want to sit in silence. It is <code>private</code>, you <span style="color:red">cannot access</span>.</li>
 </ul>
+<p><em>It is not about what you want, but about what you can.</em></p>
 </section>
 <section id="member-access-2" class="slide level2">
 <h2>Member access</h2>
@@ -327,14 +331,14 @@ Listing&nbsp;2: All the members of a class are <code>private</code> by default. 
 <span id="cb2-3"><a href=""></a><span class="kw">class</span> Date <span class="co">// now a class instead of a struct</span></span>
 <span id="cb2-4"><a href=""></a><span class="op">{</span></span>
 <span id="cb2-5"><a href=""></a>    <span class="co">// class members are private by default, can only be accessed by other members</span></span>
-<span id="cb2-6"><a href=""></a>    <span class="dt">int</span> <span class="va">m_year</span> <span class="op">{};</span>     <span class="co">// private by default</span></span>
-<span id="cb2-7"><a href=""></a>    <span class="dt">int</span> <span class="va">m_month</span> <span class="op">{};</span>    <span class="co">// private by default</span></span>
-<span id="cb2-8"><a href=""></a>    <span class="dt">int</span> <span class="va">m_day</span> <span class="op">{};</span>      <span class="co">// private by default</span></span>
+<span id="cb2-6"><a href=""></a>    <span class="dt">int</span> year <span class="op">{};</span>     <span class="co">// private by default</span></span>
+<span id="cb2-7"><a href=""></a>    <span class="dt">int</span> month <span class="op">{};</span>    <span class="co">// private by default</span></span>
+<span id="cb2-8"><a href=""></a>    <span class="dt">int</span> day <span class="op">{};</span>      <span class="co">// private by default</span></span>
 <span id="cb2-9"><a href=""></a></span>
 <span id="cb2-10"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span> <span class="co">// private by default</span></span>
 <span id="cb2-11"><a href=""></a>    <span class="op">{</span></span>
 <span id="cb2-12"><a href=""></a>        <span class="co">// private members can be accessed in member functions</span></span>
-<span id="cb2-13"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="va">m_year</span> <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> <span class="va">m_month</span> <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> <span class="va">m_day</span><span class="op">;</span></span>
+<span id="cb2-13"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
 <span id="cb2-14"><a href=""></a>    <span class="op">}</span></span>
 <span id="cb2-15"><a href=""></a><span class="op">};</span></span>
 <span id="cb2-16"><a href=""></a></span>
@@ -416,9 +420,9 @@ Listing&nbsp;2: All the members of a class are <code>private</code> by default. 
 <ul>
 <li><p><strong>Google</strong>: trailing underscore <code>variable_</code></p></li>
 <li><p><strong>PyTorch</strong> (famous Machine Learning framework): no prefix, no suffix</p>
-<p><a href="https://github.com/pytorch/pytorch/blob/main/torch/csrc/api/include/torch/nn/modules/linear.h"><span style="color:navy">Link to one example</span></a>, Lines 68 – 75</p></li>
+<p><a href="https://github.com/pytorch/pytorch/blob/main/torch/csrc/api/include/torch/nn/modules/linear.h"><span style="color:navy"><strong>Link to one example</strong></span></a>, Lines 68 – 75</p></li>
 <li><p><strong>deal.II</strong> (famous finite element library): no prefix, no suffix</p>
-<p><a href="https://github.com/dealii/dealii/blob/master/include/deal.II/fe/fe.h"><span style="color:navy">Link to one example</span></a>, Lines 2522 – 2721</p></li>
+<p><a href="https://github.com/dealii/dealii/blob/master/include/deal.II/fe/fe.h"><span style="color:navy"><strong>Link to one example</strong></span></a>, Lines 2522 – 2721</p></li>
 </ul>
 <div class="fragmnet">
 <p><span style="color:magenta"><strong>Morale of the story</strong></span></p>
@@ -646,12 +650,14 @@ Listing&nbsp;5: We can initialize aggregate by using copy-list initialization or
 <div class="my-box">
 <p><strong>Best practice</strong>: Prefer the (non-copy) braced list form when initializing aggregates.</p>
 </div>
+</section></section>
+<section>
+<section id="member-selection-with-references-and-pointers" class="title-slide slide level1 center">
+<h1>Member selection with references and pointers</h1>
+
 </section>
-<section id="member-selection-with-pointers-and-references" class="slide level2">
-<h2>Member selection with pointers and references</h2>
-</section>
-<section id="member-selection-for-references-to-structs" class="slide level2">
-<h2>Member selection for references to structs</h2>
+<section id="member-selection-for-references" class="slide level2">
+<h2>Member selection for references</h2>
 <p>✎&nbsp; Because references to an object act just like the object itself, we can also use the member selection operator (<code>.</code>) to select a member from a reference to a struct</p>
 <div id="lst-reference-selects-members" class="listing quarto-float quarto-figure quarto-figure-left">
 <figure class="quarto-float quarto-float-lst">
@@ -688,8 +694,8 @@ Listing&nbsp;6: Reference to a struct object can selects members by using select
 </figure>
 </div>
 </section>
-<section id="member-selection-for-pointers-to-structs" class="slide level2">
-<h2>Member selection for pointers to structs</h2>
+<section id="member-selection-for-pointers" class="slide level2">
+<h2>Member selection for pointers</h2>
 <p>We know that this code is wrong – <strong>Question</strong>: What is wrong here?</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb9-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
 <span id="cb9-2"><a href=""></a></span>
@@ -709,8 +715,8 @@ Listing&nbsp;6: Reference to a struct object can selects members by using select
 <span id="cb9-16"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>➥&nbsp; My salary is correct. It is not the error!</p>
 </section>
-<section id="member-selection-for-pointers-to-structs-1" class="slide level2">
-<h2>Member selection for pointers to structs</h2>
+<section id="member-selection-for-pointers-1" class="slide level2">
+<h2>Member selection for pointers</h2>
 <p>➥&nbsp; To fix this, we just need to dereference first to retrieve the struct object.</p>
 <div id="lst-pointer-selects-members" class="listing quarto-float quarto-figure quarto-figure-left">
 <figure class="quarto-float quarto-float-lst">
@@ -741,8 +747,8 @@ Listing&nbsp;7: Pointer to a struct object can selects members by using derefere
 </div>
 <p>➥&nbsp; Now, both my salary and code are fine.</p>
 </section>
-<section id="member-selection-for-pointers-to-structs-2" class="slide level2">
-<h2>Member selection for pointers to structs</h2>
+<section id="member-selection-for-pointers-2" class="slide level2">
+<h2>Member selection for pointers</h2>
 <p>✎&nbsp; C++ offers a <span style="color:red"><strong>member selection from pointer operator</strong></span> (<code>-&gt;</code>) (also sometimes called the <span style="color:red"><strong>arrow operator</strong></span>) that can be used to select members from a pointer to an object.</p>
 <div id="lst-pointer-selects-members" class="listing quarto-float quarto-figure quarto-figure-left">
 <figure class="quarto-float quarto-float-lst">
@@ -886,25 +892,27 @@ Listing&nbsp;9: Constructor must have the same name as class. Filename=<code>bas
 <span id="cb15-2"><a href=""></a><span class="kw">class</span> Vector2D</span>
 <span id="cb15-3"><a href=""></a><span class="op">{</span></span>
 <span id="cb15-4"><a href=""></a><span class="kw">private</span><span class="op">:</span></span>
-<span id="cb15-5"><a href=""></a>    <span class="dt">double</span> x <span class="op">{};</span> <span class="co">// let remove {} to illustrate non-initialized members for students</span></span>
+<span id="cb15-5"><a href=""></a>    <span class="dt">double</span> x <span class="op">{</span> <span class="dv">24</span> <span class="op">};</span> <span class="co">// let remove {} to illustrate non-initialized members for students</span></span>
 <span id="cb15-6"><a href=""></a>    <span class="dt">double</span> y <span class="op">{};</span></span>
 <span id="cb15-7"><a href=""></a>    </span>
 <span id="cb15-8"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
 <span id="cb15-9"><a href=""></a>    Vector2D<span class="op">(</span><span class="dt">double</span> x<span class="op">,</span> <span class="dt">double</span> y<span class="op">)</span> </span>
 <span id="cb15-10"><a href=""></a>    <span class="op">{</span></span>
-<span id="cb15-11"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Vector2D("</span> <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="st">", "</span> <span class="op">&lt;&lt;</span> y <span class="op">&lt;&lt;</span> <span class="st">") constructed</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span> </span>
-<span id="cb15-12"><a href=""></a>    <span class="op">}</span></span>
-<span id="cb15-13"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span> <span class="op">{</span></span>
-<span id="cb15-14"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Vector2D("</span> <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="st">", "</span> <span class="op">&lt;&lt;</span> y <span class="op">&lt;&lt;</span> <span class="st">")</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
-<span id="cb15-15"><a href=""></a>    <span class="op">}</span></span>
-<span id="cb15-16"><a href=""></a><span class="op">};</span></span>
-<span id="cb15-17"><a href=""></a></span>
-<span id="cb15-18"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
-<span id="cb15-19"><a href=""></a><span class="op">{</span></span>
-<span id="cb15-20"><a href=""></a>    Vector2D v <span class="op">{</span><span class="dv">42</span><span class="op">,</span> <span class="dv">24</span><span class="op">};</span>    <span class="co">// call Vector2D(double, double)</span></span>
-<span id="cb15-21"><a href=""></a>    v<span class="op">.</span>print<span class="op">();</span></span>
-<span id="cb15-22"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb15-23"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb15-11"><a href=""></a>        <span class="kw">this</span><span class="op">-&gt;</span>x <span class="op">=</span> x<span class="op">;</span></span>
+<span id="cb15-12"><a href=""></a>        <span class="kw">this</span><span class="op">-&gt;</span>y <span class="op">=</span> y<span class="op">;</span></span>
+<span id="cb15-13"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Vector2D("</span> <span class="op">&lt;&lt;</span> <span class="kw">this</span><span class="op">-&gt;</span>x <span class="op">&lt;&lt;</span> <span class="st">", "</span> <span class="op">&lt;&lt;</span> <span class="kw">this</span><span class="op">-&gt;</span>y <span class="op">&lt;&lt;</span> <span class="st">") constructed</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb15-14"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb15-15"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span> <span class="op">{</span></span>
+<span id="cb15-16"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Vector2D("</span> <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="st">", "</span> <span class="op">&lt;&lt;</span> y <span class="op">&lt;&lt;</span> <span class="st">")</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb15-17"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb15-18"><a href=""></a><span class="op">};</span></span>
+<span id="cb15-19"><a href=""></a></span>
+<span id="cb15-20"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb15-21"><a href=""></a><span class="op">{</span></span>
+<span id="cb15-22"><a href=""></a>    Vector2D v <span class="op">{</span><span class="dv">42</span><span class="op">,</span> <span class="dv">24</span><span class="op">};</span>    <span class="co">// call Vector2D(double, double)</span></span>
+<span id="cb15-23"><a href=""></a>    v<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb15-24"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb15-25"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </figure>
 </div>
@@ -999,7 +1007,769 @@ Listing&nbsp;11: Let us mimic Python constructor we have learned. Filename=<code
 </div>
 </figure>
 </div>
+</section>
+<section id="member-initialization-via-a-member-initialization-list" class="slide level2">
+<h2>Member initialization via a member initialization list</h2>
+<p>✎&nbsp; Modern C++ provides a mechanism even better than writing <code>this-&gt;variable = variable</code> in the constructor body: <span style="color:red"><strong>member initializer list</strong></span>.</p>
+<div id="lst-member-initializer-list" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-member-initializer-list-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;12: An example of member initializer list. Filename=<code>member_initializer_list.cpp</code>
+</figcaption>
+<div aria-describedby="lst-member-initializer-list-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb18-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb18-2"><a href=""></a></span>
+<span id="cb18-3"><a href=""></a><span class="kw">class</span> Foo</span>
+<span id="cb18-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb18-5"><a href=""></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb18-6"><a href=""></a>    <span class="dt">int</span> x <span class="op">{};</span></span>
+<span id="cb18-7"><a href=""></a>    <span class="dt">int</span> y <span class="op">{};</span></span>
+<span id="cb18-8"><a href=""></a></span>
+<span id="cb18-9"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb18-10"><a href=""></a>    Foo<span class="op">(</span><span class="dt">int</span> x<span class="op">,</span> <span class="dt">int</span> y<span class="op">)</span></span>
+<span id="cb18-11"><a href=""></a>        <span class="op">:</span> x <span class="op">{</span> x <span class="op">},</span> y <span class="op">{</span> y <span class="op">}</span> <span class="co">// here's our member initialization list</span></span>
+<span id="cb18-12"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb18-13"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Foo("</span> <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="st">", "</span> <span class="op">&lt;&lt;</span> y <span class="op">&lt;&lt;</span> <span class="st">") constructed</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb18-14"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb18-15"><a href=""></a></span>
+<span id="cb18-16"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span></span>
+<span id="cb18-17"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb18-18"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Foo("</span> <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="st">", "</span> <span class="op">&lt;&lt;</span> y <span class="op">&lt;&lt;</span> <span class="st">")</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb18-19"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb18-20"><a href=""></a><span class="op">};</span></span>
+<span id="cb18-21"><a href=""></a></span>
+<span id="cb18-22"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb18-23"><a href=""></a><span class="op">{</span></span>
+<span id="cb18-24"><a href=""></a>    Foo foo<span class="op">{</span> <span class="dv">6</span><span class="op">,</span> <span class="dv">7</span> <span class="op">};</span></span>
+<span id="cb18-25"><a href=""></a>    foo<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb18-26"><a href=""></a></span>
+<span id="cb18-27"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb18-28"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="member-initialization-via-a-member-initialization-list-1" class="slide level2">
+<h2>Member initialization via a member initialization list</h2>
+<p>Member initializer list</p>
+<ul>
+<li>is defined <span style="color:blue">after the constructor parameters</span>.</li>
+<li><span style="color:red">begins with a colon</span> <code>:</code></li>
+<li><span style="color:blue">lists each member to initialize along with the initialization value</span> for that variable, <span style="color:blue">separated by comma</span></li>
+<li>uses a <span style="color:blue">direct form of initialization</span> – <em>preferably braces, but parentheses work as well</em></li>
+</ul>
+<p><strong>Example</strong> (again)</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb19-1"><a href=""></a><span class="kw">class</span> Vector2D</span>
+<span id="cb19-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb19-3"><a href=""></a>    <span class="dt">double</span> x <span class="op">{},</span> </span>
+<span id="cb19-4"><a href=""></a>    <span class="dt">double</span> y <span class="op">{};</span></span>
+<span id="cb19-5"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb19-6"><a href=""></a>    Vector2D<span class="op">(</span><span class="dt">double</span> x<span class="op">,</span> <span class="dt">double</span> y<span class="op">):</span> x <span class="op">{</span> x <span class="op">},</span> y <span class="op">{</span> y <span class="op">}</span> <span class="op">{}</span></span>
+<span id="cb19-7"><a href=""></a><span class="op">};</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="member-initialization-list-why-better-than-this-x-x" class="slide level2">
+<h2>Member initialization list: why better than <code>this-&gt;x = x</code></h2>
+<p>✎&nbsp; <span style="color:red"><strong>Member Initalizer List</strong></span>: <code>x { x }</code></p>
+<p>Why it’s better:</p>
+<ul>
+<li><strong>initialization, not assignment</strong>: created and given value in one single step</li>
+<li><strong>required for</strong> <code>const</code> <strong>and references</strong>: if class has <code>const</code> members or reference variables (e.g.&nbsp;<code>double&amp; ref</code>), we must use this method. These teypes cannot be left unintialized and assigned to later.</li>
+<li><strong>performance</strong>: avoid calling default constructor followed by an assignment operator, goes straight to the copy/move constructor (discussed later)</li>
+</ul>
+<p>✎&nbsp; <span style="color:red"><strong>Assignment in the Body</strong></span>: <code>this-&gt;x = x</code></p>
+<p>Sequence of events (you see it is worse than above)</p>
+<ul>
+<li><strong>implicit initialization</strong>: initializes <code>x</code> with garbage value (if defined <code>double x</code>), or to default value (if defined <code>double x { }</code>)</li>
+<li><strong>execution</strong>: constructor body starts</li>
+<li><strong>assignment</strong>: value of the parameter <code>x</code> is copied into <code>this-&gt;</code>.</li>
+</ul>
+</section>
+<section id="x-x-versus-this-x-x-key-differences" class="slide level2">
+<h2><code>: x { x}</code> versus <code>this-&gt;x = x</code>: Key differences</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 50%">
+<col style="width: 38%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Member Initialization List <code>: x { x }</code></th>
+<th style="text-align: left;">Body Assignment <code>this-&gt;x = x</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Action</td>
+<td style="text-align: left;">direct initialization</td>
+<td style="text-align: left;">Default init + assignment</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Efficiency</td>
+<td style="text-align: left;">Faster (no double-work)</td>
+<td style="text-align: left;">Slower for complex objects</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Const/Refs</td>
+<td style="text-align: left;">Works perfectly</td>
+<td style="text-align: left;">Fails to compile</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ordering</td>
+<td style="text-align: left;">Follows declaration order in class</td>
+<td style="text-align: left;">Follows code order in body</td>
+</tr>
+</tbody>
+</table>
+<div class="my-box">
+<p><strong>Best practice</strong></p>
+<p>Prefer using the member initializer list to initialize your members over assigning values in the body of the constructor.</p>
+</div>
+</section>
+<section id="member-initializer-list-formatting-note-c-does-not-care-space" class="slide level2">
+<h2>Member initializer list formatting – Note C++ does not care space</h2>
+<!-- &#9998;&nbsp; C++ does not care space and tab. So you see different formats: -->
+<ul>
+<li>One line</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb20-1"><a href=""></a>Foo<span class="op">(</span><span class="dt">int</span> x<span class="op">,</span> <span class="dt">int</span> y<span class="op">)</span> <span class="op">:</span> x <span class="op">{</span> x <span class="op">},</span> y <span class="op">{</span> y <span class="op">}</span></span>
+<span id="cb20-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb20-3"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>Multiple lines with colon <code>:</code> after class name</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb21-1"><a href=""></a>Foo<span class="op">(</span><span class="dt">int</span> x<span class="op">,</span> <span class="dt">int</span> y<span class="op">)</span> <span class="op">:</span></span>
+<span id="cb21-2"><a href=""></a>    x <span class="op">{</span> x <span class="op">},</span></span>
+<span id="cb21-3"><a href=""></a>    y <span class="op">{</span> y <span class="op">}</span></span>
+<span id="cb21-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb21-5"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>Multiple lines with colon <code>:</code> before the first initializer</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb22-1"><a href=""></a>Foo<span class="op">(</span><span class="dt">int</span> x<span class="op">,</span> <span class="dt">int</span> y<span class="op">)</span></span>
+<span id="cb22-2"><a href=""></a>    <span class="op">:</span> x <span class="op">{</span> x <span class="op">}</span></span>
+<span id="cb22-3"><a href=""></a>    <span class="op">,</span> y <span class="op">{</span> y <span class="op">}</span></span>
+<span id="cb22-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb22-5"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>✎&nbsp; If member initialization list is trivial, all initializers can go one line. Otherwise, third style is preferable</p>
+</section>
+<section id="member-initializer-list-vs-default-member-initializers" class="slide level2">
+<h2>Member initializer list vs default member initializers</h2>
+<p>➥&nbsp; Let us consider the following examples</p>
+<div id="lst-different-initializers" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-different-initializers-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;13: Different initializers in classes. Filename=<code>different_initializers.cpp</code>
+</figcaption>
+<div aria-describedby="lst-different-initializers-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb23-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb23-2"><a href=""></a></span>
+<span id="cb23-3"><a href=""></a><span class="co">// This function "pollutes" the stack memory with non-zero values</span></span>
+<span id="cb23-4"><a href=""></a><span class="dt">void</span> do_dirty_stack<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb23-5"><a href=""></a>    <span class="dt">int</span> a<span class="op">[</span><span class="dv">100</span><span class="op">];</span></span>
+<span id="cb23-6"><a href=""></a>    <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">100</span><span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb23-7"><a href=""></a>        a<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="bn">0xDEADBEEF</span><span class="op">;</span> <span class="co">// A recognizable "garbage" hex value</span></span>
+<span id="cb23-8"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb23-9"><a href=""></a><span class="op">}</span></span>
+<span id="cb23-10"><a href=""></a></span>
+<span id="cb23-11"><a href=""></a><span class="kw">class</span> Foo</span>
+<span id="cb23-12"><a href=""></a><span class="op">{</span></span>
+<span id="cb23-13"><a href=""></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb23-14"><a href=""></a>    <span class="dt">int</span> x <span class="op">{};</span>       <span class="co">// default member initializer (will be ignored)</span></span>
+<span id="cb23-15"><a href=""></a>    <span class="dt">int</span> y <span class="op">{</span> <span class="dv">42</span> <span class="op">};</span>    <span class="co">// default member initializer (will be used)</span></span>
+<span id="cb23-16"><a href=""></a>    <span class="dt">int</span> z<span class="op">;</span>      <span class="co">// no initializer, you see "0" in the output due to Compiler, </span></span>
+<span id="cb23-17"><a href=""></a>                <span class="co">// not real initialzation value. It may contain garbage value</span></span>
+<span id="cb23-18"><a href=""></a>                <span class="co">// on other computers/compilers.</span></span>
+<span id="cb23-19"><a href=""></a></span>
+<span id="cb23-20"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb23-21"><a href=""></a>    Foo<span class="op">(</span><span class="dt">int</span> x<span class="op">)</span> </span>
+<span id="cb23-22"><a href=""></a>        <span class="op">:</span> x <span class="op">{</span> x <span class="op">}</span> <span class="co">// member initializer list</span></span>
+<span id="cb23-23"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb23-24"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Foo constructed</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb23-25"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb23-26"><a href=""></a></span>
+<span id="cb23-27"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span></span>
+<span id="cb23-28"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb23-29"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Foo("</span> <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="st">", "</span> <span class="op">&lt;&lt;</span> y <span class="op">&lt;&lt;</span> <span class="st">", "</span> <span class="op">&lt;&lt;</span> z <span class="op">&lt;&lt;</span> <span class="st">")</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb23-30"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb23-31"><a href=""></a><span class="op">};</span></span>
+<span id="cb23-32"><a href=""></a></span>
+<span id="cb23-33"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb23-34"><a href=""></a><span class="op">{</span></span>
+<span id="cb23-35"><a href=""></a>    do_dirty_stack<span class="op">();</span>       <span class="co">// fill the stack with garbage first</span></span>
+<span id="cb23-36"><a href=""></a>    Foo foo <span class="op">{</span> <span class="dv">6</span> <span class="op">};</span></span>
+<span id="cb23-37"><a href=""></a>    foo<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb23-38"><a href=""></a></span>
+<span id="cb23-39"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb23-40"><a href=""></a><span class="op">}</span> <span class="co">// Compile with warning: g++ -Wall -Wextra -Wuninitialized different_initializers.cpp</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="member-initializer-list-vs-default-member-initializers-1" class="slide level2">
+<h2>Member initializer list vs default member initializers</h2>
+<p>Members are initialized in a few different ways:</p>
+<ul>
+<li>If a member is listed in the member initializer list, that initialization value is used.</li>
+<li>Otherwise, if the member has a default member initializer, that initialization value is used.</li>
+<li>Otherwise, the member is default-initialized.</li>
+</ul>
+</section>
+<section id="constructor-function-bodies" class="slide level2">
+<h2>Constructor function bodies</h2>
+<ul>
+<li>The bodies of constructors functions are most often left empty – because we primarily use constructor for initialization, which is done via member initializer list (if that’s all we need to do).</li>
+<li>We can add statements to constructor function bodies to do any other setup tasks required (e.g.&nbsp;open a file or databa, allocate memory, check invariant <span class="math inline">\(\ldots\)</span>)</li>
+</ul>
+<p>➥&nbsp; Consider the following example</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb24-1"><a href=""></a><span class="kw">class</span> Fraction</span>
+<span id="cb24-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb24-3"><a href=""></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb24-4"><a href=""></a>    <span class="dt">int</span> numerator <span class="op">{};</span></span>
+<span id="cb24-5"><a href=""></a>    <span class="dt">int</span> denominator <span class="op">{};</span></span>
+<span id="cb24-6"><a href=""></a></span>
+<span id="cb24-7"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb24-8"><a href=""></a>    Fraction<span class="op">(</span><span class="dt">int</span> numerator<span class="op">,</span> <span class="dt">int</span> denominator<span class="op">):</span></span>
+<span id="cb24-9"><a href=""></a>        numerator <span class="op">{</span> numerator <span class="op">},</span> denominator <span class="op">{</span> denominator <span class="op">}</span> <span class="op">{</span></span>
+<span id="cb24-10"><a href=""></a>        <span class="co">// Invariant: Fraction should have non-zero denominator</span></span>
+<span id="cb24-11"><a href=""></a>        <span class="co">// How about denominator is zero?</span></span>
+<span id="cb24-12"><a href=""></a>        <span class="co">// We can do something about this invariant in the ocnstructor body.</span></span>
+<span id="cb24-13"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb24-14"><a href=""></a><span class="op">};</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section></section>
+<section>
+<section id="default-constructors-and-default-arguments" class="title-slide slide level1 center">
+<h1>Default constructors and default arguments</h1>
 
+</section>
+<section id="default-constructor" class="slide level2">
+<h2>Default constructor</h2>
+<p>[<strong>Default constructor</strong>] is a constructor that accepts no arguments.</p>
+<div id="lst-default-constructor-example" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-default-constructor-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;14: A very simple default constructor example. Filename=<code>default_constructor_example.cpp</code>
+</figcaption>
+<div aria-describedby="lst-default-constructor-example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb25-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb25-2"><a href=""></a></span>
+<span id="cb25-3"><a href=""></a><span class="kw">class</span> Foo</span>
+<span id="cb25-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb25-5"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb25-6"><a href=""></a>    Foo<span class="op">()</span> <span class="op">{</span> <span class="co">// default constructor</span></span>
+<span id="cb25-7"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Foo default constructed</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb25-8"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb25-9"><a href=""></a><span class="op">};</span></span>
+<span id="cb25-10"><a href=""></a></span>
+<span id="cb25-11"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb25-12"><a href=""></a><span class="op">{</span></span>
+<span id="cb25-13"><a href=""></a>    Foo foo<span class="op">{};</span> <span class="co">// No initialization values, calls Foo's default constructor</span></span>
+<span id="cb25-14"><a href=""></a></span>
+<span id="cb25-15"><a href=""></a>    <span class="co">// With default constructor, value initialization and default initialization will</span></span>
+<span id="cb25-16"><a href=""></a>    <span class="co">// call the default constructor.</span></span>
+<span id="cb25-17"><a href=""></a>    Foo foo1<span class="op">{};</span> <span class="co">// value initialization, calls Foo() default constructor</span></span>
+<span id="cb25-18"><a href=""></a>    Foo foo2<span class="op">;</span>   <span class="co">// default initialization, calls Foo() default constructor</span></span>
+<span id="cb25-19"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb25-20"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="value-initialization-vs-default-initialization-for-class-types" class="slide level2">
+<h2>Value initialization vs default initialization for class types</h2>
+<p>✎&nbsp; If a class type has a default constructor, both value initialization and default initialization will call the default constructor.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb26-1"><a href=""></a><span class="co">// With default constructor, value initialization and default initialization will</span></span>
+<span id="cb26-2"><a href=""></a><span class="co">// call the default constructor.</span></span>
+<span id="cb26-3"><a href=""></a>Foo foo1<span class="op">{};</span> <span class="co">// value initialization, calls Foo() default constructor</span></span>
+<span id="cb26-4"><a href=""></a>Foo foo2<span class="op">;</span>   <span class="co">// default initialization, calls Foo() default constructor</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="contructors-with-default-argument" class="slide level2">
+<h2>Contructors with default argument</h2>
+<p>✎&nbsp; As with all functions, the rightmost parameters of constructors can have default arguments.</p>
+<p>✎&nbsp; If all the params in a constructor have default args, the constructor is a default constructor – as it can be called with no args.</p>
+<div id="lst-constructor-with-default-args" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-constructor-with-default-args-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;15: An example of constructor with default arguments. Filename=<code>constructor_with_default_arguments.cpp</code>
+</figcaption>
+<div aria-describedby="lst-constructor-with-default-args-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb27-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb27-2"><a href=""></a></span>
+<span id="cb27-3"><a href=""></a><span class="kw">class</span> Foo</span>
+<span id="cb27-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb27-5"><a href=""></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb27-6"><a href=""></a>    <span class="dt">int</span> x <span class="op">{</span> <span class="op">};</span></span>
+<span id="cb27-7"><a href=""></a>    <span class="dt">int</span> y <span class="op">{</span> <span class="op">};</span></span>
+<span id="cb27-8"><a href=""></a></span>
+<span id="cb27-9"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb27-10"><a href=""></a>    Foo<span class="op">(</span><span class="dt">int</span> x<span class="op">=</span><span class="dv">0</span><span class="op">,</span> <span class="dt">int</span> y<span class="op">=</span><span class="dv">0</span><span class="op">)</span> <span class="co">// has default arguments</span></span>
+<span id="cb27-11"><a href=""></a>        <span class="op">:</span> x <span class="op">{</span> x <span class="op">}</span></span>
+<span id="cb27-12"><a href=""></a>        <span class="op">,</span> y <span class="op">{</span> y <span class="op">}</span></span>
+<span id="cb27-13"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb27-14"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Foo("</span> <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="st">", "</span> <span class="op">&lt;&lt;</span> y <span class="op">&lt;&lt;</span> <span class="st">") constructed</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb27-15"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb27-16"><a href=""></a><span class="op">};</span></span>
+<span id="cb27-17"><a href=""></a></span>
+<span id="cb27-18"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb27-19"><a href=""></a><span class="op">{</span></span>
+<span id="cb27-20"><a href=""></a>    Foo foo1<span class="op">{};</span>     <span class="co">// calls Foo(int, int) constructor using default arguments</span></span>
+<span id="cb27-21"><a href=""></a>    Foo foo2<span class="op">{</span><span class="dv">6</span><span class="op">,</span> <span class="dv">7</span><span class="op">};</span> <span class="co">// calls Foo(int, int) constructor</span></span>
+<span id="cb27-22"><a href=""></a></span>
+<span id="cb27-23"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb27-24"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="overloaded-constructors" class="slide level2">
+<h2>Overloaded constructors</h2>
+<p>✎&nbsp; Because constructors are functions, they can be overloaded.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb28-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb28-2"><a href=""></a></span>
+<span id="cb28-3"><a href=""></a><span class="kw">class</span> Foo</span>
+<span id="cb28-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb28-5"><a href=""></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb28-6"><a href=""></a>    <span class="dt">int</span> x <span class="op">{};</span></span>
+<span id="cb28-7"><a href=""></a>    <span class="dt">int</span> y <span class="op">{};</span></span>
+<span id="cb28-8"><a href=""></a></span>
+<span id="cb28-9"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb28-10"><a href=""></a>    Foo<span class="op">()</span> <span class="co">// default constructor</span></span>
+<span id="cb28-11"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb28-12"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Foo constructed</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb28-13"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb28-14"><a href=""></a></span>
+<span id="cb28-15"><a href=""></a>    Foo<span class="op">(</span><span class="dt">int</span> x<span class="op">=</span><span class="dv">1</span><span class="op">,</span> <span class="dt">int</span> y<span class="op">=</span><span class="dv">2</span><span class="op">)</span> <span class="co">// default constructor</span></span>
+<span id="cb28-16"><a href=""></a>        <span class="op">:</span> x <span class="op">{</span> x <span class="op">},</span> y <span class="op">{</span> y <span class="op">}</span></span>
+<span id="cb28-17"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb28-18"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Foo("</span> <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="st">", "</span> <span class="op">&lt;&lt;</span> y <span class="op">&lt;&lt;</span> <span class="st">") constructed</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb28-19"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb28-20"><a href=""></a><span class="op">};</span></span>
+<span id="cb28-21"><a href=""></a></span>
+<span id="cb28-22"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb28-23"><a href=""></a><span class="op">{</span></span>
+<span id="cb28-24"><a href=""></a>    Foo foo<span class="op">{};</span> <span class="co">// compile error: ambiguous constructor function call</span></span>
+<span id="cb28-25"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb28-26"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>➜&nbsp; The compiler will look for a default constructor &amp; and will find two, leading to ambiguity.</p>
+</section>
+<section id="an-implicit-default-constructor" class="slide level2">
+<h2>An implicit default constructor</h2>
+<ul>
+<li>If a non-aggregate class type (e.g.&nbsp;private data members) object has no user-declared constructors, the compiler will generate a public default constructor.</li>
+<li>This constructor is called an <span style="color:red"><strong>implicit default constructor</strong></span></li>
+</ul>
+<div id="lst-implicit-default-constructor" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-implicit-default-constructor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;16: Implicit default constructor is used when no default constructor is defined. Filename=<code>implicit_default_constructor.cpp</code>
+</figcaption>
+<div aria-describedby="lst-implicit-default-constructor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb29-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb29-2"><a href=""></a></span>
+<span id="cb29-3"><a href=""></a><span class="kw">class</span> Foo <span class="op">{</span></span>
+<span id="cb29-4"><a href=""></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb29-5"><a href=""></a>    <span class="dt">int</span> x<span class="op">{};</span></span>
+<span id="cb29-6"><a href=""></a>    <span class="dt">int</span> y<span class="op">{};</span></span>
+<span id="cb29-7"><a href=""></a>    <span class="co">// Note: no constructors declared</span></span>
+<span id="cb29-8"><a href=""></a><span class="op">};</span></span>
+<span id="cb29-9"><a href=""></a></span>
+<span id="cb29-10"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb29-11"><a href=""></a><span class="op">{</span></span>
+<span id="cb29-12"><a href=""></a>    Foo foo<span class="op">{};</span>  <span class="co">// implicit default constructor is used</span></span>
+<span id="cb29-13"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb29-14"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="an-implicit-default-constructor-1" class="slide level2">
+<h2>An implicit default constructor</h2>
+<p>✎&nbsp; The implicit default constructor is equivalent to a constructor that has</p>
+<ul>
+<li>no parameters</li>
+<li>no member initializer list</li>
+<li>no statements in the constructor body</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb30-1"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb30-2"><a href=""></a>    Foo<span class="op">()</span> <span class="co">// implicitly generated default constructor</span></span>
+<span id="cb30-3"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb30-4"><a href=""></a>    <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="killing-implicit-default-constructor" class="slide level2">
+<h2>Killing implicit default constructor</h2>
+<p>✎&nbsp; If we define <span style="color:blue">any other constructor</span> which is not a default constructor, the compiler <span style="color:blue">automatically deletes the implicit default constructor</span>.</p>
+<div id="lst-killing-default-constructor" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-killing-default-constructor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;17: User-defined constructor which is not default constructor would kill the implicit default constructor. Filename=<code>kiling_implicit_default_constructor.cpp</code>
+</figcaption>
+<div aria-describedby="lst-killing-default-constructor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb31-1"><a href=""></a><span class="kw">class</span> Foo <span class="op">{</span></span>
+<span id="cb31-2"><a href=""></a></span>
+<span id="cb31-3"><a href=""></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb31-4"><a href=""></a>    <span class="dt">int</span> x <span class="op">{};</span></span>
+<span id="cb31-5"><a href=""></a>    <span class="dt">int</span> y <span class="op">{};</span></span>
+<span id="cb31-6"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb31-7"><a href=""></a>    Foo<span class="op">(</span><span class="dt">int</span> x<span class="op">,</span> <span class="dt">int</span> y<span class="op">)</span> <span class="op">:</span> x<span class="op">{</span>x<span class="op">},</span> y <span class="op">{</span>y<span class="op">}</span> <span class="op">{}</span>  <span class="co">// "kills" the implicit default constructor</span></span>
+<span id="cb31-8"><a href=""></a><span class="op">};</span></span>
+<span id="cb31-9"><a href=""></a></span>
+<span id="cb31-10"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb31-11"><a href=""></a><span class="op">{</span>   </span>
+<span id="cb31-12"><a href=""></a>    Foo foo1 <span class="op">{</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">2</span> <span class="op">};</span>  <span class="co">// Fine. the compiler uses Foo(int, int).</span></span>
+<span id="cb31-13"><a href=""></a>    Foo foo2 <span class="op">{};</span>    <span class="co">// error: there is no default constructor</span></span>
+<span id="cb31-14"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+<p>➥&nbsp; Consequently, we need to write a default constructor if we need one. Instead of writing implicit default constructor “explicitly”, we can use <code>= default</code>.</p>
+</section>
+<section id="using-default-to-generate-an-explicitly-defaulted-default-constructor" class="slide level2">
+<h2>Using <code>= default</code> to generate an explicitly defaulted default constructor</h2>
+<p>➥&nbsp; Look at this example</p>
+<div id="lst-explicit-default-constructor" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-explicit-default-constructor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;18: Using <code>= default</code> to write a default constructor explicitly. Filename=<code>explicit_default_constructor.cpp</code>
+</figcaption>
+<div aria-describedby="lst-explicit-default-constructor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb32-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb32-2"><a href=""></a></span>
+<span id="cb32-3"><a href=""></a><span class="kw">class</span> Foo</span>
+<span id="cb32-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb32-5"><a href=""></a>    <span class="dt">int</span> x <span class="op">{};</span></span>
+<span id="cb32-6"><a href=""></a>    <span class="dt">int</span> y <span class="op">{};</span></span>
+<span id="cb32-7"><a href=""></a></span>
+<span id="cb32-8"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb32-9"><a href=""></a>    <span class="co">// If we don't have this default constructor, Foo foo{} leads to error.</span></span>
+<span id="cb32-10"><a href=""></a>    <span class="co">// Remove this line of code to see the error.</span></span>
+<span id="cb32-11"><a href=""></a>    Foo<span class="op">()</span> <span class="op">=</span> <span class="cf">default</span><span class="op">;</span> <span class="co">// generates an explicitly defaulted default constructor</span></span>
+<span id="cb32-12"><a href=""></a></span>
+<span id="cb32-13"><a href=""></a>    Foo<span class="op">(</span><span class="dt">int</span> x<span class="op">,</span> <span class="dt">int</span> y<span class="op">)</span> <span class="op">:</span> x <span class="op">{</span> x <span class="op">},</span> y <span class="op">{</span> y <span class="op">}</span> <span class="op">{</span></span>
+<span id="cb32-14"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Foo("</span> <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="st">", "</span> <span class="op">&lt;&lt;</span> y <span class="op">&lt;&lt;</span> <span class="st">") constructed</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb32-15"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb32-16"><a href=""></a><span class="op">};</span></span>
+<span id="cb32-17"><a href=""></a></span>
+<span id="cb32-18"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb32-19"><a href=""></a><span class="op">{</span></span>
+<span id="cb32-20"><a href=""></a>    Foo foo<span class="op">{};</span> <span class="co">// calls Foo() default constructor</span></span>
+<span id="cb32-21"><a href=""></a></span>
+<span id="cb32-22"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb32-23"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="using-default-to-generate-an-explicitly-defaulted-default-constructor-1" class="slide level2">
+<h2>Using <code>= default</code> to generate an explicitly defaulted default constructor</h2>
+<p>✎&nbsp; In cases where we would write a <em>default constructor that is equivalent to the implicitly generated default constructor</em>:</p>
+<ul>
+<li>We can tell the compiler to generate a default constructor for us by using the <code>= default</code> syntax.</li>
+<li>This constructor is called an <span style="color:red"><strong>explicitly defaulted default constructor</strong></span>.</li>
+</ul>
+</section></section>
+<section>
+<section id="intro-to-the-copy-constructor" class="title-slide slide level1 center">
+<h1>Intro to the copy constructor</h1>
+<p>We can write code like this (try this in your assignment)</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb33-1"><a href=""></a><span class="co">// Original vector</span></span>
+<span id="cb33-2"><a href=""></a><span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> original <span class="op">=</span> <span class="op">{</span><span class="fl">1.1</span><span class="op">,</span> <span class="fl">2.2</span><span class="op">,</span> <span class="fl">3.3</span><span class="op">,</span> <span class="fl">4.4</span><span class="op">};</span></span>
+<span id="cb33-3"><a href=""></a><span class="co">// List initialization (calling the copy constructor) - modern way</span></span>
+<span id="cb33-4"><a href=""></a><span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> copy1<span class="op">{</span>original<span class="op">};</span></span>
+<span id="cb33-5"><a href=""></a><span class="co">// Direct initialization (Calling the copy constructor) - old school</span></span>
+<span id="cb33-6"><a href=""></a><span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> copy2<span class="op">(</span>original<span class="op">);</span></span>
+<span id="cb33-7"><a href=""></a><span class="co">// Using the assignment syntax (Also calls copy constructor here)</span></span>
+<span id="cb33-8"><a href=""></a><span class="bu">std::</span>vector<span class="op">&lt;</span><span class="dt">double</span><span class="op">&gt;</span> copy3 <span class="op">=</span> original<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This section explains what happens behind the scene.</p>
+</section>
+<section id="intro-to-the-copy-constructor-1" class="slide level2">
+<h2>Intro to the copy constructor</h2>
+<p>➥&nbsp; Let us look at this code snippet. How can <code>Fraction f_copy { f }</code> run?</p>
+<div id="lst-intro-copy-constructor" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-intro-copy-constructor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;19: An intro to copy constructor: Look at the statement <code>Fraction f_copy { f }</code>. Filename=<code>copy_constructor_intro.cpp</code>
+</figcaption>
+<div aria-describedby="lst-intro-copy-constructor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb34-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb34-2"><a href=""></a></span>
+<span id="cb34-3"><a href=""></a><span class="kw">class</span> Fraction</span>
+<span id="cb34-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb34-5"><a href=""></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb34-6"><a href=""></a>    <span class="dt">int</span> numerator<span class="op">{</span> <span class="dv">0</span> <span class="op">};</span></span>
+<span id="cb34-7"><a href=""></a>    <span class="dt">int</span> denominator<span class="op">{</span> <span class="dv">1</span> <span class="op">};</span></span>
+<span id="cb34-8"><a href=""></a></span>
+<span id="cb34-9"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb34-10"><a href=""></a>    <span class="co">// Default constructor</span></span>
+<span id="cb34-11"><a href=""></a>    Fraction<span class="op">(</span><span class="dt">int</span> numerator<span class="op">=</span><span class="dv">0</span><span class="op">,</span> <span class="dt">int</span> denominator<span class="op">=</span><span class="dv">1</span><span class="op">)</span></span>
+<span id="cb34-12"><a href=""></a>        <span class="op">:</span> numerator<span class="op">{</span>numerator<span class="op">},</span> denominator<span class="op">{</span>denominator<span class="op">}</span></span>
+<span id="cb34-13"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb34-14"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb34-15"><a href=""></a></span>
+<span id="cb34-16"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span></span>
+<span id="cb34-17"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb34-18"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Fraction("</span> <span class="op">&lt;&lt;</span> numerator <span class="op">&lt;&lt;</span> <span class="st">", "</span> <span class="op">&lt;&lt;</span> denominator <span class="op">&lt;&lt;</span> <span class="st">")</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb34-19"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb34-20"><a href=""></a><span class="op">};</span></span>
+<span id="cb34-21"><a href=""></a></span>
+<span id="cb34-22"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb34-23"><a href=""></a><span class="op">{</span></span>
+<span id="cb34-24"><a href=""></a>    Fraction f <span class="op">{</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">3</span> <span class="op">};</span>    <span class="co">// Calls Fraction(int, int) constructor</span></span>
+<span id="cb34-25"><a href=""></a>    Fraction f_copy <span class="op">{</span> f <span class="op">};</span>  <span class="co">// What constructor is used here?</span></span>
+<span id="cb34-26"><a href=""></a>    f<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb34-27"><a href=""></a>    f_copy<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb34-28"><a href=""></a></span>
+<span id="cb34-29"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb34-30"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+<div class="fragment">
+<p>➥&nbsp; The answer is: <span style="color:red"><strong>copy constructor</strong></span></p>
+</div>
+</section>
+<section id="intro-to-the-copy-instructor" class="slide level2">
+<h2>Intro to the copy instructor</h2>
+<h3 id="copy-constructor">Copy constructor</h3>
+<p>✎&nbsp; A <span style="color:red"><strong>copy constructor</strong></span> is a constructor that is used to initialize an object with an existing object of the same type.</p>
+<p>✎&nbsp; After the copy constructor executes, the newly created object should be a copy of the object passed in as the initializer.</p>
+<div class="fragment">
+<h3 id="an-implicit-copy-constructor">An implicit copy constructor</h3>
+<p>✎&nbsp; If we <span style="color:red">do not provide a copy constructor for our classes</span>, C++ will <span style="color:blue">create a public implicit copy constructor for you</span>.</p>
+</div>
+</section>
+<section id="copy-constructor-1" class="slide level2">
+<h2>Copy constructor</h2>
+<p>✎&nbsp; We can explicitly define our own copy constructor.</p>
+<div id="lst-copy-constructor-fraction" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-copy-constructor-fraction-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;20: We can explicitly define our own copy constructor. Note the pass by reference. Filename=<code>copy_constructor_fraction.cpp</code>
+</figcaption>
+<div aria-describedby="lst-copy-constructor-fraction-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb35-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb35-2"><a href=""></a></span>
+<span id="cb35-3"><a href=""></a><span class="kw">class</span> Fraction</span>
+<span id="cb35-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb35-5"><a href=""></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb35-6"><a href=""></a>    <span class="dt">int</span> numerator<span class="op">{</span> <span class="dv">0</span> <span class="op">};</span></span>
+<span id="cb35-7"><a href=""></a>    <span class="dt">int</span> denominator<span class="op">{</span> <span class="dv">1</span> <span class="op">};</span></span>
+<span id="cb35-8"><a href=""></a></span>
+<span id="cb35-9"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb35-10"><a href=""></a>    <span class="co">// Default constructor</span></span>
+<span id="cb35-11"><a href=""></a>    Fraction<span class="op">(</span><span class="dt">int</span> numerator<span class="op">=</span><span class="dv">0</span><span class="op">,</span> <span class="dt">int</span> denominator<span class="op">=</span><span class="dv">1</span><span class="op">)</span></span>
+<span id="cb35-12"><a href=""></a>        <span class="op">:</span> numerator<span class="op">{</span>numerator<span class="op">},</span> denominator<span class="op">{</span>denominator<span class="op">}</span></span>
+<span id="cb35-13"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb35-14"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb35-15"><a href=""></a></span>
+<span id="cb35-16"><a href=""></a>    <span class="co">// Copy constructor</span></span>
+<span id="cb35-17"><a href=""></a>    Fraction<span class="op">(</span><span class="at">const</span> Fraction<span class="op">&amp;</span> fraction<span class="op">)</span></span>
+<span id="cb35-18"><a href=""></a>        <span class="co">// Initialize our members using the corresponding member of the parameter</span></span>
+<span id="cb35-19"><a href=""></a>        <span class="op">:</span> numerator<span class="op">{</span> fraction<span class="op">.</span>numerator <span class="op">}</span></span>
+<span id="cb35-20"><a href=""></a>        <span class="op">,</span> denominator<span class="op">{</span> fraction<span class="op">.</span>denominator <span class="op">}</span></span>
+<span id="cb35-21"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb35-22"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Copy constructor called</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span> <span class="co">// just to prove it works</span></span>
+<span id="cb35-23"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb35-24"><a href=""></a></span>
+<span id="cb35-25"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span></span>
+<span id="cb35-26"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb35-27"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Fraction("</span> <span class="op">&lt;&lt;</span> numerator <span class="op">&lt;&lt;</span> <span class="st">", "</span> <span class="op">&lt;&lt;</span> denominator <span class="op">&lt;&lt;</span> <span class="st">")</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb35-28"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb35-29"><a href=""></a><span class="op">};</span></span>
+<span id="cb35-30"><a href=""></a></span>
+<span id="cb35-31"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb35-32"><a href=""></a><span class="op">{</span></span>
+<span id="cb35-33"><a href=""></a>    Fraction f <span class="op">{</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">3</span> <span class="op">};</span>  <span class="co">// Calls Fraction(int, int) constructor</span></span>
+<span id="cb35-34"><a href=""></a>    Fraction f_copy <span class="op">{</span> f <span class="op">};</span> <span class="co">// Calls Fraction(const Fraction&amp;) copy constructor</span></span>
+<span id="cb35-35"><a href=""></a></span>
+<span id="cb35-36"><a href=""></a>    f<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb35-37"><a href=""></a>    f_copy<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb35-38"><a href=""></a></span>
+<span id="cb35-39"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb35-40"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="copy-constructor-best-practices" class="slide level2">
+<h2>Copy constructor: Best practices</h2>
+<ul>
+<li>A copy constructor should not do anything other than copy an object.</li>
+<li>This is because the compiler may optimize the copy constructor out in certain cases.</li>
+</ul>
+<div class="fragment">
+<div class="my-box">
+<p><strong>Best practice</strong></p>
+<p>Copy constructors should have no side effects beyond copying.</p>
+</div>
+</div>
+<div class="fragment">
+<div class="my-box">
+<p><strong>Best practice</strong></p>
+<p>Prefer the implicit copy constructor, unless you have a specific reason to create your own.</p>
+</div>
+</div>
+</section>
+<section id="the-copy-constructors-parameter-must-be-a-reference" class="slide level2">
+<h2>The copy constructor’s parameter must be a reference</h2>
+<ul>
+<li>It is a requirement that the parameter of a copy constructor must be <span style="color:red">an lvalue reference or const lvalue reference</span>.</li>
+<li>The copy constructor should not be modifying the parameter, using <span style="color:red">a const lvalue reference is preferred</span>.</li>
+</ul>
+<div class="my-box">
+<p><strong>Best practice</strong></p>
+<p>If you write your own copy constructor, <span style="color:red">the parameter should be a const lvalue reference</span>.</p>
+</div>
+</section>
+<section id="pass-by-value-and-the-copy-constructor" class="slide level2">
+<h2>Pass by value and the copy constructor</h2>
+<p>✎&nbsp; When an object is passed by value, the argument is copied into the parameter.</p>
+<div id="lst-copy-constructor-pass-by-value" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-copy-constructor-pass-by-value-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;21: When an object is passed by value, the argument is copied into the parameter. Filename=<code>copy_constructor_pass_by_value.cpp</code>
+</figcaption>
+<div aria-describedby="lst-copy-constructor-pass-by-value-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb36-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb36-2"><a href=""></a></span>
+<span id="cb36-3"><a href=""></a><span class="kw">class</span> Fraction</span>
+<span id="cb36-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb36-5"><a href=""></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb36-6"><a href=""></a>    <span class="dt">int</span> numerator<span class="op">{</span> <span class="dv">0</span> <span class="op">};</span></span>
+<span id="cb36-7"><a href=""></a>    <span class="dt">int</span> denominator<span class="op">{</span> <span class="dv">1</span> <span class="op">};</span></span>
+<span id="cb36-8"><a href=""></a></span>
+<span id="cb36-9"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb36-10"><a href=""></a>    <span class="co">// Default constructor</span></span>
+<span id="cb36-11"><a href=""></a>    Fraction<span class="op">(</span><span class="dt">int</span> numerator <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">int</span> denominator <span class="op">=</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb36-12"><a href=""></a>        <span class="op">:</span> numerator<span class="op">{</span> numerator <span class="op">},</span> denominator<span class="op">{</span> denominator <span class="op">}</span></span>
+<span id="cb36-13"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb36-14"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb36-15"><a href=""></a></span>
+<span id="cb36-16"><a href=""></a>    <span class="co">// Copy constructor</span></span>
+<span id="cb36-17"><a href=""></a>    Fraction<span class="op">(</span><span class="at">const</span> Fraction<span class="op">&amp;</span> fraction<span class="op">)</span></span>
+<span id="cb36-18"><a href=""></a>        <span class="op">:</span> numerator<span class="op">{</span> fraction<span class="op">.</span>numerator <span class="op">}</span></span>
+<span id="cb36-19"><a href=""></a>        <span class="op">,</span> denominator<span class="op">{</span> fraction<span class="op">.</span>denominator <span class="op">}</span></span>
+<span id="cb36-20"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb36-21"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Copy constructor called</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb36-22"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb36-23"><a href=""></a></span>
+<span id="cb36-24"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span></span>
+<span id="cb36-25"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb36-26"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Fraction("</span> <span class="op">&lt;&lt;</span> numerator <span class="op">&lt;&lt;</span> <span class="st">", "</span> <span class="op">&lt;&lt;</span> denominator <span class="op">&lt;&lt;</span> <span class="st">")</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb36-27"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb36-28"><a href=""></a><span class="op">};</span></span>
+<span id="cb36-29"><a href=""></a></span>
+<span id="cb36-30"><a href=""></a><span class="dt">void</span> print_fraction<span class="op">(</span>Fraction f<span class="op">)</span> <span class="co">// f is pass by value</span></span>
+<span id="cb36-31"><a href=""></a><span class="op">{</span></span>
+<span id="cb36-32"><a href=""></a>    f<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb36-33"><a href=""></a><span class="op">}</span></span>
+<span id="cb36-34"><a href=""></a></span>
+<span id="cb36-35"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb36-36"><a href=""></a><span class="op">{</span></span>
+<span id="cb36-37"><a href=""></a>    Fraction f<span class="op">{</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">3</span> <span class="op">};</span></span>
+<span id="cb36-38"><a href=""></a></span>
+<span id="cb36-39"><a href=""></a>    print_fraction<span class="op">(</span>f<span class="op">);</span> <span class="co">// f is copied into the function parameter using copy constructor</span></span>
+<span id="cb36-40"><a href=""></a></span>
+<span id="cb36-41"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb36-42"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+<p>➥&nbsp; Let us run this program.</p>
+</section>
+<section id="return-by-value-and-the-copy-constructor" class="slide level2">
+<h2>Return by value and the copy constructor</h2>
+<p>✎&nbsp; Return by value creates a temporary object (holding a copy of the return value) that is passed back to the caller.</p>
+<p>✎&nbsp; The temporary object is initialized by implicitly invoking the copy constructor.</p>
+</section>
+<section id="return-by-value-and-the-copy-constructor-1" class="slide level2">
+<h2>Return by value and the copy constructor</h2>
+<p>✎&nbsp; The compiler has optimized the process of making copy and eliminates unnecessary copying of objects. There should be <span class="math inline">\(4\)</span> copy constructors invoked.</p>
+<p>✎&nbsp; This is called <span style="color:red"><strong>copy elision</strong></span>.</p>
+<div id="lst-copy-constructor-pass-by-value" class="listing quarto-float quarto-figure quarto-figure-left">
+<figure class="quarto-float quarto-float-lst">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-copy-constructor-pass-by-value-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Listing&nbsp;22: When a function returns by value, a temporary object is initialized by implicitly invoking the copy constructor and is returned to the caller. Filename=<code>copy_constructor_return_by_value.cpp</code>
+</figcaption>
+<div aria-describedby="lst-copy-constructor-pass-by-value-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb37-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb37-2"><a href=""></a></span>
+<span id="cb37-3"><a href=""></a><span class="kw">class</span> Fraction</span>
+<span id="cb37-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb37-5"><a href=""></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb37-6"><a href=""></a>    <span class="dt">int</span> numerator<span class="op">{</span> <span class="dv">0</span> <span class="op">};</span></span>
+<span id="cb37-7"><a href=""></a>    <span class="dt">int</span> denominator<span class="op">{</span> <span class="dv">1</span> <span class="op">};</span></span>
+<span id="cb37-8"><a href=""></a></span>
+<span id="cb37-9"><a href=""></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb37-10"><a href=""></a>    <span class="co">// Default constructor</span></span>
+<span id="cb37-11"><a href=""></a>    Fraction<span class="op">(</span><span class="dt">int</span> numerator <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> <span class="dt">int</span> denominator <span class="op">=</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb37-12"><a href=""></a>        <span class="op">:</span> numerator<span class="op">{</span> numerator <span class="op">},</span> denominator<span class="op">{</span> denominator <span class="op">}</span></span>
+<span id="cb37-13"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb37-14"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb37-15"><a href=""></a></span>
+<span id="cb37-16"><a href=""></a>    <span class="co">// Copy constructor</span></span>
+<span id="cb37-17"><a href=""></a>    Fraction<span class="op">(</span><span class="at">const</span> Fraction<span class="op">&amp;</span> fraction<span class="op">)</span></span>
+<span id="cb37-18"><a href=""></a>        <span class="op">:</span> numerator<span class="op">{</span> fraction<span class="op">.</span>numerator <span class="op">}</span></span>
+<span id="cb37-19"><a href=""></a>        <span class="op">,</span> denominator<span class="op">{</span> fraction<span class="op">.</span>denominator <span class="op">}</span></span>
+<span id="cb37-20"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb37-21"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Copy constructor called</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb37-22"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb37-23"><a href=""></a></span>
+<span id="cb37-24"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span></span>
+<span id="cb37-25"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb37-26"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">"Fraction("</span> <span class="op">&lt;&lt;</span> numerator <span class="op">&lt;&lt;</span> <span class="st">", "</span> <span class="op">&lt;&lt;</span> denominator <span class="op">&lt;&lt;</span> <span class="st">")</span><span class="sc">\n</span><span class="st">"</span><span class="op">;</span></span>
+<span id="cb37-27"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb37-28"><a href=""></a><span class="op">};</span></span>
+<span id="cb37-29"><a href=""></a></span>
+<span id="cb37-30"><a href=""></a><span class="dt">void</span> print_fraction<span class="op">(</span>Fraction f<span class="op">)</span> <span class="co">// f is pass by value</span></span>
+<span id="cb37-31"><a href=""></a><span class="op">{</span></span>
+<span id="cb37-32"><a href=""></a>    f<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb37-33"><a href=""></a><span class="op">}</span></span>
+<span id="cb37-34"><a href=""></a></span>
+<span id="cb37-35"><a href=""></a>Fraction generate_fraction<span class="op">(</span><span class="dt">int</span> n<span class="op">,</span> <span class="dt">int</span> d<span class="op">)</span></span>
+<span id="cb37-36"><a href=""></a><span class="op">{</span></span>
+<span id="cb37-37"><a href=""></a>    Fraction f<span class="op">{</span> n<span class="op">,</span> d <span class="op">};</span></span>
+<span id="cb37-38"><a href=""></a>    <span class="cf">return</span> f<span class="op">;</span>       <span class="co">// one copy constructor invoked</span></span>
+<span id="cb37-39"><a href=""></a><span class="op">}</span></span>
+<span id="cb37-40"><a href=""></a></span>
+<span id="cb37-41"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb37-42"><a href=""></a><span class="op">{</span></span>
+<span id="cb37-43"><a href=""></a>    Fraction f1 <span class="op">{};</span></span>
+<span id="cb37-44"><a href=""></a>    print_fraction<span class="op">(</span>f1<span class="op">);</span> <span class="co">// one copy constructor invoked</span></span>
+<span id="cb37-45"><a href=""></a>    Fraction f2 <span class="op">{</span> generate_fraction<span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">};</span> <span class="co">// Fraction is returned using copy constructor</span></span>
+<span id="cb37-46"><a href=""></a></span>
+<span id="cb37-47"><a href=""></a>    print_fraction<span class="op">(</span>f2<span class="op">);</span> <span class="co">// f is copied into the function parameter using copy constructor</span></span>
+<span id="cb37-48"><a href=""></a>    print_fraction<span class="op">(</span>f2<span class="op">);</span></span>
+<span id="cb37-49"><a href=""></a></span>
+<span id="cb37-50"><a href=""></a>    Fraction f3 <span class="op">{</span> generate_fraction<span class="op">(</span><span class="dv">4</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span> <span class="op">};</span></span>
+<span id="cb37-51"><a href=""></a>    print_fraction<span class="op">(</span>f3<span class="op">);</span></span>
+<span id="cb37-52"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb37-53"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</figure>
+</div>
+</section>
+<section id="using-default-to-generate-a-default-copy-constructor" class="slide level2">
+<h2>Using <code>= default</code> to generate a default copy constructor</h2>
+<p>✎&nbsp; If a class has no copy constructor, the compiler will implicitly generate one for us.</p>
+<p>✎&nbsp; We can explicitly request the compiler create a default copy constructor for us using the <code>= default</code> syntax:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb38-1"><a href=""></a><span class="co">// Explicitly request default copy constructor</span></span>
+<span id="cb38-2"><a href=""></a>    Fraction<span class="op">(</span><span class="at">const</span> Fraction<span class="op">&amp;</span> fraction<span class="op">)</span> <span class="op">=</span> <span class="cf">default</span><span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="fragment">
+<p>➥&nbsp; Write your own example to understand this.</p>
+<p>I provided the code already: <code>default_copy_constructor_using_default.cpp</code>; you see on GitHub &amp; Moodle.</p>
+</div>
+</section>
+<section id="using-delete-to-generate-a-default-copy-constructor" class="slide level2">
+<h2>Using <code>= delete</code> to generate a default copy constructor</h2>
+<p>✎&nbsp; We can prevent copy by marking the copy constructor function as deleted, using the <code>= delete</code> syntax:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb39-1"><a href=""></a><span class="co">// Delete the copy constructor so no copies can be made</span></span>
+<span id="cb39-2"><a href=""></a>Fraction<span class="op">(</span><span class="at">const</span> Fraction<span class="op">&amp;</span> fraction<span class="op">)</span> <span class="op">=</span> <span class="kw">delete</span><span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="fragment">
+<p>➥&nbsp; Write your own example to understand this.</p>
+<p>I provided the code already: <code>remove_copy_constructor_using_delete.cpp</code>; you see on GitHub &amp; Moodle.</p>
+
+</div>
 </section></section>
 
     </div>

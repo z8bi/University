@@ -193,6 +193,7 @@
             case 'S': leds_set(true,  false, true ); break; // MAGENTA
             case 'A': leds_set(false, false, true ); break; // BLUE
             case 'D': leds_set(true,  false, false); break; // RED
+            case 'Z': leds_set(true,  true, false); break; // YELLOW
             default:  break;
         }
     }
@@ -804,6 +805,14 @@
         turn_right_break_inner(0.9, 0.82); 
         return;
     }
+    if (c == 'z' || c == 'Z') {
+        manual_mode = true;
+        cancel_obstacle_mode();
+        enter_state(CtrlState::MANUAL_BT, 0);
+        leds_for_manual_cmd('Z');
+        motors_coast();
+        return;
+    }
 
     // ---- EXISTING BEHAVIOR (unchanged) ----
     if (c == 'W' || c == 'A' || c == 'S' || c == 'D') {
@@ -841,7 +850,7 @@
     //======================================================
     //========================== MAIN ======================
     //======================================================
-
+    
     int main() {
 
         Debug::init(true, true, HW::BT_TX, HW::BT_RX, HW::BT_BAUD);
@@ -857,7 +866,6 @@
         if (!tcs_ok) Debug::log("TCS3472 init failed");
 
         // START BEHAVIOR!!!! MAKE FULL STOPPED FOR BLUETOOTH -> SEEK FOR QUICK TESTS
-        //enter_state(CtrlState::SEEK_LEFT, 0);
         enter_state(CtrlState::FULLY_STOPPED, 0);
 
         Flags::colorTick.attach(&Flags::color_isr,   std::chrono::milliseconds(Config::COLOR_PERIOD_MS));
@@ -887,4 +895,6 @@
         }
 
         return 0;
+        
     }
+    

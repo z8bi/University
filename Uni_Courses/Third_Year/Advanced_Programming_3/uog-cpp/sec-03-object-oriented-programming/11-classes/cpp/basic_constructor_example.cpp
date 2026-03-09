@@ -2,13 +2,15 @@
 class Vector2D
 {
 private:
-    double x {}; // let remove {} to illustrate non-initialized members for students
+    double x { 24 }; // let remove {} to illustrate non-initialized members for students
     double y {};
     
 public:
     Vector2D(double x, double y) 
     {
-        std::cout << "Vector2D(" << x << ", " << y << ") constructed\n"; 
+        this->x = x;
+        this->y = y;
+        std::cout << "Vector2D(" << this->x << ", " << this->y << ") constructed\n";
     }
     void print() const {
         std::cout << "Vector2D(" << x << ", " << y << ")\n";

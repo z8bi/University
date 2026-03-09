@@ -8,7 +8,7 @@ struct Date
     }
 };
 
-void doSomething(const Date& date)
+void do_something(const Date& date)
 {
     date.print();
 }
@@ -18,7 +18,7 @@ int main()
     Date today { 2020, 10, 14 }; // non-const
     today.print();
 
-    doSomething(today);
+    do_something(today);
 
     return 0;
 }

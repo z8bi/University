@@ -683,7 +683,8 @@ Listing&nbsp;3: An example of member function. Filename=<code>member_function_ex
 </section>
 <section id="a-comparison-to-oop-in-python" class="slide level2">
 <h2>A comparison to OOP in Python</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href=""></a><span class="kw">class</span> Date:</span>
+<div id="34dea808" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href=""></a><span class="kw">class</span> Date:</span>
 <span id="cb12-2"><a href=""></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, year<span class="op">=</span><span class="dv">2026</span>, month<span class="op">=</span><span class="dv">2</span>, date<span class="op">=</span><span class="dv">28</span>): <span class="co"># we learn constructor in C++ soon</span></span>
 <span id="cb12-3"><a href=""></a>    <span class="va">self</span>.year <span class="op">=</span> year        </span>
 <span id="cb12-4"><a href=""></a>    <span class="va">self</span>.month <span class="op">=</span> month</span>
@@ -697,18 +698,23 @@ Listing&nbsp;3: An example of member function. Filename=<code>member_function_ex
 <span id="cb12-12"><a href=""></a><span class="co"># How about this: I know that many of you did not learn it in </span></span>
 <span id="cb12-13"><a href=""></a><span class="co"># Introductory Programming 2. I am cooler :D</span></span>
 <span id="cb12-14"><a href=""></a>Date.<span class="bu">print</span>(today) <span class="co"># exposes the implicit object in the statement today.print()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2026/2/26
+2026/2/26</code></pre>
+</div>
+</div>
 </section>
 <section id="a-comparison-to-oop-in-python-repeat-last-slide" class="slide level2">
 <h2>A comparison to OOP in Python: Repeat last slide</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href=""></a><span class="kw">class</span> Date:</span>
-<span id="cb13-2"><a href=""></a>  <span class="co"># blah blah</span></span>
-<span id="cb13-3"><a href=""></a>  </span>
-<span id="cb13-4"><a href=""></a>  <span class="kw">def</span> <span class="bu">print</span>(<span class="va">self</span>):</span>
-<span id="cb13-5"><a href=""></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>year<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>month<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>date<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># we don't have self. in C++</span></span>
-<span id="cb13-6"><a href=""></a><span class="co"># Use this class in global scope</span></span>
-<span id="cb13-7"><a href=""></a>today <span class="op">=</span> Date(<span class="dv">2026</span>,<span class="dv">2</span>,<span class="dv">26</span>) <span class="co"># when this lecture first took place</span></span>
-<span id="cb13-8"><a href=""></a>today.<span class="bu">print</span>()</span>
-<span id="cb13-9"><a href=""></a>Date.<span class="bu">print</span>(today)   <span class="co"># this exposes the implicit object in the statement today.print()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href=""></a><span class="kw">class</span> Date:</span>
+<span id="cb14-2"><a href=""></a>  <span class="co"># blah blah</span></span>
+<span id="cb14-3"><a href=""></a>  </span>
+<span id="cb14-4"><a href=""></a>  <span class="kw">def</span> <span class="bu">print</span>(<span class="va">self</span>):</span>
+<span id="cb14-5"><a href=""></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>year<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>month<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>date<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># we don't have self. in C++</span></span>
+<span id="cb14-6"><a href=""></a><span class="co"># Use this class in global scope</span></span>
+<span id="cb14-7"><a href=""></a>today <span class="op">=</span> Date(<span class="dv">2026</span>,<span class="dv">2</span>,<span class="dv">26</span>) <span class="co"># when this lecture first took place</span></span>
+<span id="cb14-8"><a href=""></a>today.<span class="bu">print</span>()</span>
+<span id="cb14-9"><a href=""></a>Date.<span class="bu">print</span>(today)   <span class="co"># this exposes the implicit object in the statement today.print()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li>What we have just learned in C++ looks different from Python you know. We don’t have <code>self</code>: <code>self.year</code>, <code>self.month</code>, <code>self.day</code>.</li>
 <li>We shall learn an equivalence of <code>self</code> of Python in C++.</li>
@@ -717,38 +723,59 @@ Listing&nbsp;3: An example of member function. Filename=<code>member_function_ex
 </section>
 <section id="a-comparison-to-oop-in-python-but-python-is-not-as-serious-as-c" class="slide level2">
 <h2>A comparison to OOP in Python: But Python is not as serious as C++</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href=""></a><span class="co">#| error: true</span></span>
-<span id="cb14-2"><a href=""></a><span class="kw">class</span> Date:</span>
-<span id="cb14-3"><a href=""></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, year<span class="op">=</span><span class="dv">2026</span>, month<span class="op">=</span><span class="dv">2</span>, date<span class="op">=</span><span class="dv">28</span>): <span class="co"># we learn constructor in C++ soon</span></span>
-<span id="cb14-4"><a href=""></a>    <span class="va">self</span>.year <span class="op">=</span> year        </span>
-<span id="cb14-5"><a href=""></a>    <span class="va">self</span>.month <span class="op">=</span> month</span>
-<span id="cb14-6"><a href=""></a>    <span class="va">self</span>.date <span class="op">=</span> date</span>
-<span id="cb14-7"><a href=""></a>  </span>
-<span id="cb14-8"><a href=""></a>  <span class="kw">def</span> <span class="bu">print</span>(<span class="va">self</span>):</span>
-<span id="cb14-9"><a href=""></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>year<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>month<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>date<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># we don't have self. in C++</span></span>
-<span id="cb14-10"><a href=""></a><span class="co"># Use this class in global scope</span></span>
-<span id="cb14-11"><a href=""></a>today <span class="op">=</span> Date(<span class="dv">2026</span>,<span class="dv">2</span>,<span class="dv">26</span>) <span class="co"># when this lecture first took place</span></span>
-<span id="cb14-12"><a href=""></a>my_name <span class="op">=</span> <span class="st">"khiem"</span></span>
-<span id="cb14-13"><a href=""></a>Date.<span class="bu">print</span>(my_name) <span class="co"># SYNTAX Correct, but run time error. my_name.year does not exist</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="e1e49af5" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href=""></a><span class="kw">class</span> Date:</span>
+<span id="cb15-2"><a href=""></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, year<span class="op">=</span><span class="dv">2026</span>, month<span class="op">=</span><span class="dv">2</span>, date<span class="op">=</span><span class="dv">28</span>): <span class="co"># we learn constructor in C++ soon</span></span>
+<span id="cb15-3"><a href=""></a>    <span class="va">self</span>.year <span class="op">=</span> year        </span>
+<span id="cb15-4"><a href=""></a>    <span class="va">self</span>.month <span class="op">=</span> month</span>
+<span id="cb15-5"><a href=""></a>    <span class="va">self</span>.date <span class="op">=</span> date</span>
+<span id="cb15-6"><a href=""></a>  </span>
+<span id="cb15-7"><a href=""></a>  <span class="kw">def</span> <span class="bu">print</span>(<span class="va">self</span>):</span>
+<span id="cb15-8"><a href=""></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>year<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>month<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>date<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># we don't have self. in C++</span></span>
+<span id="cb15-9"><a href=""></a><span class="co"># Use this class in global scope</span></span>
+<span id="cb15-10"><a href=""></a>today <span class="op">=</span> Date(<span class="dv">2026</span>,<span class="dv">2</span>,<span class="dv">26</span>) <span class="co"># when this lecture first took place</span></span>
+<span id="cb15-11"><a href=""></a>my_name <span class="op">=</span> <span class="st">"khiem"</span></span>
+<span id="cb15-12"><a href=""></a>Date.<span class="bu">print</span>(my_name) <span class="co"># SYNTAX Correct, but run time error. my_name.year does not exist</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">AttributeError</span>                            Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[2]</span><span class="ansi-green-fg">, line 12</span>
+<span class="ansi-green-fg">     10</span> today = Date(<span class="ansi-green-fg">2026</span>,<span class="ansi-green-fg">2</span>,<span class="ansi-green-fg">26</span>) <span style="font-style:italic;color:rgb(95,135,135)"># when this lecture first took place</span>
+<span class="ansi-green-fg">     11</span> my_name = <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">khiem</span><span class="ansi-yellow-fg">"</span>
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">12</span> <span class="ansi-yellow-bg">Date</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">print</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">my_name</span><span class="ansi-yellow-bg">)</span> <span style="font-style:italic;color:rgb(95,135,135)"># SYNTAX Correct, but run time error. my_name.year does not exist</span>
+
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[2]</span><span class="ansi-green-fg">, line 8</span>, in <span class="ansi-cyan-fg">Date.print</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">      7</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">print</span>(<span style="color:rgb(0,135,0)">self</span>):
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">8</span>   <span style="color:rgb(0,135,0)">print</span>(<span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">"</span><span style="font-weight:bold;color:rgb(175,95,135)">{</span><span style="color:rgb(0,135,0)" class="ansi-yellow-bg">self</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">year</span><span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">/</span><span style="font-weight:bold;color:rgb(175,95,135)">{</span><span style="color:rgb(0,135,0)">self</span>.month<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">/</span><span style="font-weight:bold;color:rgb(175,95,135)">{</span><span style="color:rgb(0,135,0)">self</span>.date<span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">"</span>)
+
+<span class="ansi-red-fg">AttributeError</span>: 'str' object has no attribute 'year'</pre>
+</div>
+</div>
+</div>
 </section>
 <section id="a-comparison-to-oop-in-python-but-python-is-not-as-serious-as-c-1" class="slide level2">
 <h2>A comparison to OOP in Python: But Python is not as serious as C++</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href=""></a><span class="co">#| error: true</span></span>
-<span id="cb15-2"><a href=""></a><span class="kw">class</span> Date:</span>
-<span id="cb15-3"><a href=""></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, year<span class="op">=</span><span class="dv">2026</span>, month<span class="op">=</span><span class="dv">2</span>, date<span class="op">=</span><span class="dv">28</span>): <span class="co"># we learn constructor in C++ soon</span></span>
-<span id="cb15-4"><a href=""></a>    <span class="va">self</span>.year, <span class="va">self</span>.month, <span class="va">self</span>.date <span class="op">=</span> year, month, date</span>
-<span id="cb15-5"><a href=""></a>  <span class="kw">def</span> <span class="bu">print</span>(<span class="va">self</span>):</span>
-<span id="cb15-6"><a href=""></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>year<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>month<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>date<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># we don't have self. in C++</span></span>
-<span id="cb15-7"><a href=""></a></span>
-<span id="cb15-8"><a href=""></a><span class="kw">class</span> Foo:</span>
-<span id="cb15-9"><a href=""></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
-<span id="cb15-10"><a href=""></a>    <span class="va">self</span>.year, <span class="va">self</span>.month, <span class="va">self</span>.date <span class="op">=</span> <span class="st">"one"</span>, <span class="st">"two"</span>, <span class="dv">3</span></span>
-<span id="cb15-11"><a href=""></a><span class="co"># Use this class in global scope</span></span>
-<span id="cb15-12"><a href=""></a>today <span class="op">=</span> Date(<span class="dv">2026</span>,<span class="dv">2</span>,<span class="dv">26</span>) <span class="co"># when this lecture first took place</span></span>
-<span id="cb15-13"><a href=""></a>foo_object <span class="op">=</span> Foo()</span>
-<span id="cb15-14"><a href=""></a></span>
-<span id="cb15-15"><a href=""></a><span class="co"># SYNTAX correct, and Code run fine too. But it is just nonsense</span></span>
-<span id="cb15-16"><a href=""></a>Date.<span class="bu">print</span>(foo_object) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="0fec3ce2" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href=""></a><span class="kw">class</span> Date:</span>
+<span id="cb16-2"><a href=""></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, year<span class="op">=</span><span class="dv">2026</span>, month<span class="op">=</span><span class="dv">2</span>, date<span class="op">=</span><span class="dv">28</span>): <span class="co"># we learn constructor in C++ soon</span></span>
+<span id="cb16-3"><a href=""></a>    <span class="va">self</span>.year, <span class="va">self</span>.month, <span class="va">self</span>.date <span class="op">=</span> year, month, date</span>
+<span id="cb16-4"><a href=""></a>  <span class="kw">def</span> <span class="bu">print</span>(<span class="va">self</span>):</span>
+<span id="cb16-5"><a href=""></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>year<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>month<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>date<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># we don't have self. in C++</span></span>
+<span id="cb16-6"><a href=""></a></span>
+<span id="cb16-7"><a href=""></a><span class="kw">class</span> Foo:</span>
+<span id="cb16-8"><a href=""></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb16-9"><a href=""></a>    <span class="va">self</span>.year, <span class="va">self</span>.month, <span class="va">self</span>.date <span class="op">=</span> <span class="st">"one"</span>, <span class="st">"two"</span>, <span class="dv">3</span></span>
+<span id="cb16-10"><a href=""></a><span class="co"># Use this class in global scope</span></span>
+<span id="cb16-11"><a href=""></a>today <span class="op">=</span> Date(<span class="dv">2026</span>,<span class="dv">2</span>,<span class="dv">26</span>) <span class="co"># when this lecture first took place</span></span>
+<span id="cb16-12"><a href=""></a>foo_object <span class="op">=</span> Foo()</span>
+<span id="cb16-13"><a href=""></a></span>
+<span id="cb16-14"><a href=""></a><span class="co"># SYNTAX correct, and Code run fine too. But it is just nonsense</span></span>
+<span id="cb16-15"><a href=""></a>Date.<span class="bu">print</span>(foo_object) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>one/two/3</code></pre>
+</div>
+</div>
 </section>
 <section id="member-functions-can-be-overloaded" class="slide level2">
 <h2>Member functions can be overloaded</h2>
@@ -759,30 +786,30 @@ Listing&nbsp;3: An example of member function. Filename=<code>member_function_ex
 Listing&nbsp;4: Member functions can be overloaded. Filename=<code>overload_member_functions.cpp</code>
 </figcaption>
 <div aria-describedby="lst-overload-member-function-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb16-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb16-2"><a href=""></a><span class="pp">#include </span><span class="im">&lt;string_view&gt;</span></span>
-<span id="cb16-3"><a href=""></a></span>
-<span id="cb16-4"><a href=""></a><span class="kw">struct</span> Date</span>
-<span id="cb16-5"><a href=""></a><span class="op">{</span></span>
-<span id="cb16-6"><a href=""></a>    <span class="dt">int</span> year <span class="op">{};</span> <span class="dt">int</span> month <span class="op">{};</span> <span class="dt">int</span> day <span class="op">{};</span>  <span class="co">// Do not write like this! Save space for slide</span></span>
-<span id="cb16-7"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb16-8"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
-<span id="cb16-9"><a href=""></a>    <span class="op">}</span></span>
-<span id="cb16-10"><a href=""></a>    <span class="dt">void</span> print<span class="op">(</span><span class="bu">std::</span>string_view prefix<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb16-11"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> prefix <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
-<span id="cb16-12"><a href=""></a>    <span class="op">}</span></span>
-<span id="cb16-13"><a href=""></a><span class="op">};</span></span>
-<span id="cb16-14"><a href=""></a></span>
-<span id="cb16-15"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
-<span id="cb16-16"><a href=""></a><span class="op">{</span></span>
-<span id="cb16-17"><a href=""></a>    Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span></span>
-<span id="cb16-18"><a href=""></a>    today<span class="op">.</span>print<span class="op">();</span> <span class="co">// calls Date::print()</span></span>
-<span id="cb16-19"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
-<span id="cb16-20"><a href=""></a>    today<span class="op">.</span>print<span class="op">(</span><span class="st">"The date is: "</span><span class="op">);</span> <span class="co">// calls Date::print(std::string_view)</span></span>
-<span id="cb16-21"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
-<span id="cb16-22"><a href=""></a></span>
-<span id="cb16-23"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb16-24"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb18-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb18-2"><a href=""></a><span class="pp">#include </span><span class="im">&lt;string_view&gt;</span></span>
+<span id="cb18-3"><a href=""></a></span>
+<span id="cb18-4"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb18-5"><a href=""></a><span class="op">{</span></span>
+<span id="cb18-6"><a href=""></a>    <span class="dt">int</span> year <span class="op">{};</span> <span class="dt">int</span> month <span class="op">{};</span> <span class="dt">int</span> day <span class="op">{};</span>  <span class="co">// Do not write like this! Save space for slide</span></span>
+<span id="cb18-7"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb18-8"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
+<span id="cb18-9"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb18-10"><a href=""></a>    <span class="dt">void</span> print<span class="op">(</span><span class="bu">std::</span>string_view prefix<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb18-11"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> prefix <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
+<span id="cb18-12"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb18-13"><a href=""></a><span class="op">};</span></span>
+<span id="cb18-14"><a href=""></a></span>
+<span id="cb18-15"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb18-16"><a href=""></a><span class="op">{</span></span>
+<span id="cb18-17"><a href=""></a>    Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span></span>
+<span id="cb18-18"><a href=""></a>    today<span class="op">.</span>print<span class="op">();</span> <span class="co">// calls Date::print()</span></span>
+<span id="cb18-19"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb18-20"><a href=""></a>    today<span class="op">.</span>print<span class="op">(</span><span class="st">"The date is: "</span><span class="op">);</span> <span class="co">// calls Date::print(std::string_view)</span></span>
+<span id="cb18-21"><a href=""></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="ch">'</span><span class="sc">\n</span><span class="ch">'</span><span class="op">;</span></span>
+<span id="cb18-22"><a href=""></a></span>
+<span id="cb18-23"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb18-24"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </figure>
 </div>
@@ -808,21 +835,21 @@ Listing&nbsp;4: Member functions can be overloaded. Filename=<code>overload_memb
 <h2>Const variables: A quick revisit</h2>
 <ul>
 <li><p>We learn: All const variables must be initialized at time of creation</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb17-1"><a href=""></a><span class="at">const</span> <span class="dt">int</span> x <span class="op">{</span> <span class="dv">42</span> <span class="op">};</span> </span>
-<span id="cb17-2"><a href=""></a><span class="at">const</span> <span class="dt">double</span> <span class="dt">double</span> z <span class="op">{};</span>    <span class="co">// initialze to zero.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb19-1"><a href=""></a><span class="at">const</span> <span class="dt">int</span> x <span class="op">{</span> <span class="dv">42</span> <span class="op">};</span> </span>
+<span id="cb19-2"><a href=""></a><span class="at">const</span> <span class="dt">double</span> <span class="dt">double</span> z <span class="op">{};</span>    <span class="co">// initialze to zero.</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
 <li><p>Similarly, class type objects can be made const using <code>const</code> keyword</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb18-1"><a href=""></a><span class="kw">struct</span> Date</span>
-<span id="cb18-2"><a href=""></a><span class="op">{</span></span>
-<span id="cb18-3"><a href=""></a>    <span class="dt">int</span> year <span class="op">{};</span></span>
-<span id="cb18-4"><a href=""></a>    <span class="dt">int</span> month <span class="op">{};</span></span>
-<span id="cb18-5"><a href=""></a>    <span class="dt">int</span> day <span class="op">{};</span></span>
-<span id="cb18-6"><a href=""></a><span class="op">};</span></span>
-<span id="cb18-7"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
-<span id="cb18-8"><a href=""></a><span class="op">{</span></span>
-<span id="cb18-9"><a href=""></a>    <span class="co">// const class type object</span></span>
-<span id="cb18-10"><a href=""></a>    <span class="at">const</span> Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span></span>
-<span id="cb18-11"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb18-12"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb20-1"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb20-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb20-3"><a href=""></a>    <span class="dt">int</span> year <span class="op">{};</span></span>
+<span id="cb20-4"><a href=""></a>    <span class="dt">int</span> month <span class="op">{};</span></span>
+<span id="cb20-5"><a href=""></a>    <span class="dt">int</span> day <span class="op">{};</span></span>
+<span id="cb20-6"><a href=""></a><span class="op">};</span></span>
+<span id="cb20-7"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb20-8"><a href=""></a><span class="op">{</span></span>
+<span id="cb20-9"><a href=""></a>    <span class="co">// const class type object</span></span>
+<span id="cb20-10"><a href=""></a>    <span class="at">const</span> Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span></span>
+<span id="cb20-11"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb20-12"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
 </ul>
 </section>
 <section id="modifying-the-data-members-of-const-objects-is-disallowed" class="slide level2">
@@ -834,23 +861,23 @@ Listing&nbsp;4: Member functions can be overloaded. Filename=<code>overload_memb
 Listing&nbsp;5: Modifying the data members of const objects is disallowed. Filename=<code>modify_members_of_const_objects.cpp</code>
 </figcaption>
 <div aria-describedby="lst-modify-const-objects-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb19-1"><a href=""></a><span class="kw">struct</span> Date</span>
-<span id="cb19-2"><a href=""></a><span class="op">{</span></span>
-<span id="cb19-3"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
-<span id="cb19-4"><a href=""></a></span>
-<span id="cb19-5"><a href=""></a>    <span class="dt">void</span> increment_day<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb19-6"><a href=""></a>        <span class="op">++</span>day<span class="op">;</span></span>
-<span id="cb19-7"><a href=""></a>    <span class="op">}</span></span>
-<span id="cb19-8"><a href=""></a><span class="op">};</span></span>
-<span id="cb19-9"><a href=""></a></span>
-<span id="cb19-10"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
-<span id="cb19-11"><a href=""></a><span class="op">{</span></span>
-<span id="cb19-12"><a href=""></a>    <span class="at">const</span> Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// const</span></span>
-<span id="cb19-13"><a href=""></a>    <span class="co">// today.day += 1;        // compile error: can't modify member of const object</span></span>
-<span id="cb19-14"><a href=""></a>    <span class="co">// today.increment_day();  // compile error: can't call member function that modifies member of const object</span></span>
-<span id="cb19-15"><a href=""></a></span>
-<span id="cb19-16"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb19-17"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb21-1"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb21-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb21-3"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
+<span id="cb21-4"><a href=""></a></span>
+<span id="cb21-5"><a href=""></a>    <span class="dt">void</span> increment_day<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb21-6"><a href=""></a>        <span class="op">++</span>day<span class="op">;</span></span>
+<span id="cb21-7"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb21-8"><a href=""></a><span class="op">};</span></span>
+<span id="cb21-9"><a href=""></a></span>
+<span id="cb21-10"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb21-11"><a href=""></a><span class="op">{</span></span>
+<span id="cb21-12"><a href=""></a>    <span class="at">const</span> Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// const</span></span>
+<span id="cb21-13"><a href=""></a>    today<span class="op">.</span>day <span class="op">+=</span> <span class="dv">1</span><span class="op">;</span>        <span class="co">// compile error: can't modify member of const object</span></span>
+<span id="cb21-14"><a href=""></a>    today<span class="op">.</span>increment_day<span class="op">();</span>  <span class="co">// compile error: can't call member function that modifies member of const object</span></span>
+<span id="cb21-15"><a href=""></a></span>
+<span id="cb21-16"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb21-17"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </figure>
 </div>
@@ -865,22 +892,22 @@ Listing&nbsp;5: Modifying the data members of const objects is disallowed. Filen
 Listing&nbsp;6: const object calling the non-const member functions will create compilation error.
 </figcaption>
 <div aria-describedby="lst-modify-const-objects-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb20-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb20-2"><a href=""></a></span>
-<span id="cb20-3"><a href=""></a><span class="kw">struct</span> Date</span>
-<span id="cb20-4"><a href=""></a><span class="op">{</span></span>
-<span id="cb20-5"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
-<span id="cb20-6"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span>     <span class="op">{</span></span>
-<span id="cb20-7"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
-<span id="cb20-8"><a href=""></a>    <span class="op">}</span></span>
-<span id="cb20-9"><a href=""></a><span class="op">};</span></span>
-<span id="cb20-10"><a href=""></a></span>
-<span id="cb20-11"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
-<span id="cb20-12"><a href=""></a><span class="op">{</span></span>
-<span id="cb20-13"><a href=""></a>    <span class="at">const</span> Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// const</span></span>
-<span id="cb20-14"><a href=""></a>    <span class="co">// today.print();  // compile error: can't call non-const member function</span></span>
-<span id="cb20-15"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb20-16"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb22-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb22-2"><a href=""></a></span>
+<span id="cb22-3"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb22-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb22-5"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
+<span id="cb22-6"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span>     <span class="op">{</span></span>
+<span id="cb22-7"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
+<span id="cb22-8"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb22-9"><a href=""></a><span class="op">};</span></span>
+<span id="cb22-10"><a href=""></a></span>
+<span id="cb22-11"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb22-12"><a href=""></a><span class="op">{</span></span>
+<span id="cb22-13"><a href=""></a>    <span class="at">const</span> Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// const</span></span>
+<span id="cb22-14"><a href=""></a>    <span class="co">// today.print();  // compile error: can't call non-const member function</span></span>
+<span id="cb22-15"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb22-16"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </figure>
 </div>
@@ -895,24 +922,26 @@ Listing&nbsp;6: const object calling the non-const member functions will create 
 Listing&nbsp;7: const member function can be called by const objects. Filename=<code>const_member_functions.cpp</code>
 </figcaption>
 <div aria-describedby="lst-const-member-functions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb21-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb21-2"><a href=""></a></span>
-<span id="cb21-3"><a href=""></a><span class="kw">struct</span> Date</span>
-<span id="cb21-4"><a href=""></a><span class="op">{</span></span>
-<span id="cb21-5"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
-<span id="cb21-6"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span> <span class="co">// now a const member function</span></span>
-<span id="cb21-7"><a href=""></a>    <span class="op">{</span></span>
-<span id="cb21-8"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
-<span id="cb21-9"><a href=""></a>    <span class="op">}</span></span>
-<span id="cb21-10"><a href=""></a><span class="op">};</span></span>
-<span id="cb21-11"><a href=""></a></span>
-<span id="cb21-12"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
-<span id="cb21-13"><a href=""></a><span class="op">{</span></span>
-<span id="cb21-14"><a href=""></a>    <span class="at">const</span> Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// const</span></span>
-<span id="cb21-15"><a href=""></a>    today<span class="op">.</span>print<span class="op">();</span>  <span class="co">// ok: const object can call const member function</span></span>
-<span id="cb21-16"><a href=""></a></span>
-<span id="cb21-17"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb21-18"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb23-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb23-2"><a href=""></a></span>
+<span id="cb23-3"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb23-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb23-5"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
+<span id="cb23-6"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span> <span class="co">// now a const member function</span></span>
+<span id="cb23-7"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb23-8"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
+<span id="cb23-9"><a href=""></a>        <span class="dt">double</span> another_year <span class="op">{</span><span class="dv">42</span><span class="op">};</span></span>
+<span id="cb23-10"><a href=""></a>        another_year <span class="op">+=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb23-11"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb23-12"><a href=""></a><span class="op">};</span></span>
+<span id="cb23-13"><a href=""></a></span>
+<span id="cb23-14"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb23-15"><a href=""></a><span class="op">{</span></span>
+<span id="cb23-16"><a href=""></a>    <span class="at">const</span> Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// const</span></span>
+<span id="cb23-17"><a href=""></a>    today<span class="op">.</span>print<span class="op">();</span>  <span class="co">// ok: const object can call const member function</span></span>
+<span id="cb23-18"><a href=""></a></span>
+<span id="cb23-19"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb23-20"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </figure>
 </div>
@@ -926,24 +955,24 @@ Listing&nbsp;7: const member function can be called by const objects. Filename=<
 Listing&nbsp;8: A const member function cannot change data members. Filename=<code>const_member_functions_change_data_members.cpp</code>
 </figcaption>
 <div aria-describedby="lst-const-mem-function-change-mem-data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb22-1"><a href=""></a><span class="kw">struct</span> Date</span>
-<span id="cb22-2"><a href=""></a><span class="op">{</span></span>
-<span id="cb22-3"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
-<span id="cb22-4"><a href=""></a></span>
-<span id="cb22-5"><a href=""></a>    <span class="dt">void</span> increment_day<span class="op">(</span><span class="dt">int</span> val<span class="op">)</span> <span class="at">const</span> <span class="co">// made const</span></span>
-<span id="cb22-6"><a href=""></a>    <span class="op">{</span></span>
-<span id="cb22-7"><a href=""></a>        <span class="co">// day += val; // compile error: const function can't modify member</span></span>
-<span id="cb22-8"><a href=""></a>    <span class="op">}</span></span>
-<span id="cb22-9"><a href=""></a><span class="op">};</span></span>
-<span id="cb22-10"><a href=""></a></span>
-<span id="cb22-11"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
-<span id="cb22-12"><a href=""></a><span class="op">{</span></span>
-<span id="cb22-13"><a href=""></a>    <span class="at">const</span> Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// const</span></span>
-<span id="cb22-14"><a href=""></a></span>
-<span id="cb22-15"><a href=""></a>    today<span class="op">.</span>increment_day<span class="op">(</span><span class="dv">4</span><span class="op">);</span></span>
-<span id="cb22-16"><a href=""></a></span>
-<span id="cb22-17"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb22-18"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb24-1"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb24-2"><a href=""></a><span class="op">{</span></span>
+<span id="cb24-3"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
+<span id="cb24-4"><a href=""></a></span>
+<span id="cb24-5"><a href=""></a>    <span class="dt">void</span> increment_day<span class="op">(</span><span class="dt">int</span> val<span class="op">)</span> <span class="at">const</span> <span class="co">// made const</span></span>
+<span id="cb24-6"><a href=""></a>    <span class="op">{</span></span>
+<span id="cb24-7"><a href=""></a>        <span class="co">// day += val; // compile error: const function can't modify member</span></span>
+<span id="cb24-8"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb24-9"><a href=""></a><span class="op">};</span></span>
+<span id="cb24-10"><a href=""></a></span>
+<span id="cb24-11"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb24-12"><a href=""></a><span class="op">{</span></span>
+<span id="cb24-13"><a href=""></a>    <span class="at">const</span> Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// const</span></span>
+<span id="cb24-14"><a href=""></a></span>
+<span id="cb24-15"><a href=""></a>    today<span class="op">.</span>increment_day<span class="op">(</span><span class="dv">4</span><span class="op">);</span></span>
+<span id="cb24-16"><a href=""></a></span>
+<span id="cb24-17"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb24-18"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </figure>
 </div>
@@ -964,22 +993,22 @@ Listing&nbsp;8: A const member function cannot change data members. Filename=<co
 Listing&nbsp;9: A non-const object can call const member functions because it cannot break the promise of constant-ness. Filename=<code>nonconst_objects_call_const_mem_functions.cpp</code>
 </figcaption>
 <div aria-describedby="lst-nonconst-obj-call-const-memfunc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb23-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb23-2"><a href=""></a></span>
-<span id="cb23-3"><a href=""></a><span class="kw">struct</span> Date</span>
-<span id="cb23-4"><a href=""></a><span class="op">{</span></span>
-<span id="cb23-5"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
-<span id="cb23-6"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span> <span class="op">{</span><span class="co">// const</span></span>
-<span id="cb23-7"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
-<span id="cb23-8"><a href=""></a>    <span class="op">}</span></span>
-<span id="cb23-9"><a href=""></a><span class="op">};</span></span>
-<span id="cb23-10"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
-<span id="cb23-11"><a href=""></a><span class="op">{</span></span>
-<span id="cb23-12"><a href=""></a>    Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// non-const</span></span>
-<span id="cb23-13"><a href=""></a>    today<span class="op">.</span>print<span class="op">();</span>  <span class="co">// ok: can call const member function on non-const object</span></span>
-<span id="cb23-14"><a href=""></a></span>
-<span id="cb23-15"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb23-16"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb25-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb25-2"><a href=""></a></span>
+<span id="cb25-3"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb25-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb25-5"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
+<span id="cb25-6"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span> <span class="op">{</span><span class="co">// const</span></span>
+<span id="cb25-7"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
+<span id="cb25-8"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb25-9"><a href=""></a><span class="op">};</span></span>
+<span id="cb25-10"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb25-11"><a href=""></a><span class="op">{</span></span>
+<span id="cb25-12"><a href=""></a>    Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// non-const</span></span>
+<span id="cb25-13"><a href=""></a>    today<span class="op">.</span>print<span class="op">();</span>  <span class="co">// ok: can call const member function on non-const object</span></span>
+<span id="cb25-14"><a href=""></a></span>
+<span id="cb25-15"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb25-16"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </figure>
 </div>
@@ -1047,28 +1076,28 @@ Listing&nbsp;9: A non-const object can call const member functions because it ca
 Listing&nbsp;10: Passing an object by const reference make the object const in the perspective of the function. Filename=<code>const_objects_via_pass_by_const_ref_01.cpp</code>
 </figcaption>
 <div aria-describedby="lst-const-objects-via-pass-by-const-ref-01-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb24-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb24-2"><a href=""></a></span>
-<span id="cb24-3"><a href=""></a><span class="kw">struct</span> Date</span>
-<span id="cb24-4"><a href=""></a><span class="op">{</span></span>
-<span id="cb24-5"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
-<span id="cb24-6"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="op">{</span>  <span class="co">// non-const</span></span>
-<span id="cb24-7"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
-<span id="cb24-8"><a href=""></a>    <span class="op">}</span></span>
-<span id="cb24-9"><a href=""></a><span class="op">};</span></span>
-<span id="cb24-10"><a href=""></a></span>
-<span id="cb24-11"><a href=""></a><span class="dt">void</span> do_something<span class="op">(</span><span class="at">const</span> Date<span class="op">&amp;</span> date<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb24-12"><a href=""></a>    date<span class="op">.</span>print<span class="op">();</span></span>
-<span id="cb24-13"><a href=""></a><span class="op">}</span></span>
-<span id="cb24-14"><a href=""></a></span>
-<span id="cb24-15"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
-<span id="cb24-16"><a href=""></a><span class="op">{</span></span>
-<span id="cb24-17"><a href=""></a>    Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// non-const</span></span>
-<span id="cb24-18"><a href=""></a>    today<span class="op">.</span>print<span class="op">();</span></span>
-<span id="cb24-19"><a href=""></a>    do_something<span class="op">(</span>today<span class="op">);</span></span>
-<span id="cb24-20"><a href=""></a></span>
-<span id="cb24-21"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb24-22"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb26-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb26-2"><a href=""></a></span>
+<span id="cb26-3"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb26-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb26-5"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
+<span id="cb26-6"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="op">{</span>  <span class="co">// non-const</span></span>
+<span id="cb26-7"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
+<span id="cb26-8"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb26-9"><a href=""></a><span class="op">};</span></span>
+<span id="cb26-10"><a href=""></a></span>
+<span id="cb26-11"><a href=""></a><span class="dt">void</span> do_something<span class="op">(</span><span class="at">const</span> Date<span class="op">&amp;</span> date<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb26-12"><a href=""></a>    date<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb26-13"><a href=""></a><span class="op">}</span></span>
+<span id="cb26-14"><a href=""></a></span>
+<span id="cb26-15"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb26-16"><a href=""></a><span class="op">{</span></span>
+<span id="cb26-17"><a href=""></a>    Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// non-const</span></span>
+<span id="cb26-18"><a href=""></a>    today<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb26-19"><a href=""></a>    do_something<span class="op">(</span>today<span class="op">);</span></span>
+<span id="cb26-20"><a href=""></a></span>
+<span id="cb26-21"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb26-22"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </figure>
 </div>
@@ -1083,30 +1112,30 @@ Listing&nbsp;10: Passing an object by const reference make the object const in t
 Listing&nbsp;11: Fix the above code listing by making <code>print()</code> const. Filename=<code>const_objects_via_pass_by_const_ref_01.cpp</code>
 </figcaption>
 <div aria-describedby="lst-const-objects-via-pass-by-const-ref-02-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb25-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
-<span id="cb25-2"><a href=""></a></span>
-<span id="cb25-3"><a href=""></a><span class="kw">struct</span> Date</span>
-<span id="cb25-4"><a href=""></a><span class="op">{</span></span>
-<span id="cb25-5"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
-<span id="cb25-6"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span> <span class="op">{</span>  <span class="co">// non-const</span></span>
-<span id="cb25-7"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
-<span id="cb25-8"><a href=""></a>    <span class="op">}</span></span>
-<span id="cb25-9"><a href=""></a><span class="op">};</span></span>
-<span id="cb25-10"><a href=""></a></span>
-<span id="cb25-11"><a href=""></a><span class="dt">void</span> doSomething<span class="op">(</span><span class="at">const</span> Date<span class="op">&amp;</span> date<span class="op">)</span></span>
-<span id="cb25-12"><a href=""></a><span class="op">{</span></span>
-<span id="cb25-13"><a href=""></a>    date<span class="op">.</span>print<span class="op">();</span></span>
-<span id="cb25-14"><a href=""></a><span class="op">}</span></span>
-<span id="cb25-15"><a href=""></a></span>
-<span id="cb25-16"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
-<span id="cb25-17"><a href=""></a><span class="op">{</span></span>
-<span id="cb25-18"><a href=""></a>    Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// non-const</span></span>
-<span id="cb25-19"><a href=""></a>    today<span class="op">.</span>print<span class="op">();</span></span>
-<span id="cb25-20"><a href=""></a></span>
-<span id="cb25-21"><a href=""></a>    doSomething<span class="op">(</span>today<span class="op">);</span></span>
-<span id="cb25-22"><a href=""></a></span>
-<span id="cb25-23"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb25-24"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode numberSource cpp number-lines code-with-copy"><code class="sourceCode cpp"><span id="cb27-1"><a href=""></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb27-2"><a href=""></a></span>
+<span id="cb27-3"><a href=""></a><span class="kw">struct</span> Date</span>
+<span id="cb27-4"><a href=""></a><span class="op">{</span></span>
+<span id="cb27-5"><a href=""></a>    <span class="dt">int</span> year <span class="op">{},</span> month <span class="op">{},</span> day <span class="op">{};</span></span>
+<span id="cb27-6"><a href=""></a>    <span class="dt">void</span> print<span class="op">()</span> <span class="at">const</span> <span class="op">{</span>  <span class="co">// non-const</span></span>
+<span id="cb27-7"><a href=""></a>        <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> year <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> month <span class="op">&lt;&lt;</span> <span class="ch">'/'</span> <span class="op">&lt;&lt;</span> day<span class="op">;</span></span>
+<span id="cb27-8"><a href=""></a>    <span class="op">}</span></span>
+<span id="cb27-9"><a href=""></a><span class="op">};</span></span>
+<span id="cb27-10"><a href=""></a></span>
+<span id="cb27-11"><a href=""></a><span class="dt">void</span> do_something<span class="op">(</span><span class="at">const</span> Date<span class="op">&amp;</span> date<span class="op">)</span></span>
+<span id="cb27-12"><a href=""></a><span class="op">{</span></span>
+<span id="cb27-13"><a href=""></a>    date<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb27-14"><a href=""></a><span class="op">}</span></span>
+<span id="cb27-15"><a href=""></a></span>
+<span id="cb27-16"><a href=""></a><span class="dt">int</span> main<span class="op">()</span></span>
+<span id="cb27-17"><a href=""></a><span class="op">{</span></span>
+<span id="cb27-18"><a href=""></a>    Date today <span class="op">{</span> <span class="dv">2020</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">14</span> <span class="op">};</span> <span class="co">// non-const</span></span>
+<span id="cb27-19"><a href=""></a>    today<span class="op">.</span>print<span class="op">();</span></span>
+<span id="cb27-20"><a href=""></a></span>
+<span id="cb27-21"><a href=""></a>    do_something<span class="op">(</span>today<span class="op">);</span></span>
+<span id="cb27-22"><a href=""></a></span>
+<span id="cb27-23"><a href=""></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb27-24"><a href=""></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </figure>
 </div>
