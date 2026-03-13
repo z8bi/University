@@ -82,3 +82,34 @@ void gfx_draw_line(int x0, int y0, int x1, int y1, uint16_t color)
         if (e2 <= dx) { err += dx; y0 += sy; }
     }
 }
+
+//better transparency function with cropping (for blitting large icons in pieces)
+void gfx_blit565_key_crop(int dst_x, int dst_y,
+                                 int src_w, int src_h,
+                                 const uint16_t *src,
+                                 int crop_x, int crop_y, int crop_w, int crop_h,
+                                 uint16_t key)
+{
+    if (!src || crop_w <= 0 || crop_h <= 0) return;
+
+    for (int j = 0; j < crop_h; j++) {
+        int sy = crop_y + j;
+        int dy = dst_y + j;
+
+        if (sy < 0 || sy >= src_h) continue;
+        if (dy < 0 || dy >= 480) continue;
+
+        for (int i = 0; i < crop_w; i++) {
+            int sx = crop_x + i;
+            int dx = dst_x + i;
+
+            if (sx < 0 || sx >= src_w) continue;
+            if (dx < 0 || dx >= 800) continue;
+
+            uint16_t p = src[sy * src_w + sx];
+            if (p != key) {
+                SSD1963_DrawPixel((uint16_t)dx, (uint16_t)dy, p);
+            }
+        }
+    }
+}

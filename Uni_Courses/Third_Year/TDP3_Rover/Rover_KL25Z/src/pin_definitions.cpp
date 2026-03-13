@@ -12,9 +12,9 @@ DigitalOut sensor_transistor(PTC11);
 // Motors
 DigitalOut right_in1(D7);
 DigitalOut right_in2(D6);
-PwmOut     right_pwm(D5);
-DigitalOut left_in2(D4);
-DigitalOut left_in1(D3);
+DigitalOut left_in2(D5);
+DigitalOut left_in1(D4);
+PwmOut     right_pwm(D3);
 PwmOut     left_pwm(D2);
 
 // RGB LEDs (KL25Z active-low)

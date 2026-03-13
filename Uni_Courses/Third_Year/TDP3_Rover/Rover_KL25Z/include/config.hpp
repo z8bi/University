@@ -48,7 +48,7 @@ static constexpr float FRONT_MAX_CM     = 40.0f;
 static constexpr float RIGHT_MAX_CM     = 40.0f;
 
 // Obstacle avoid
-static constexpr float OB_FRONT_TRIG_CM      = 30.0f;
+static constexpr float OB_FRONT_TRIG_CM      = 32.0f;
 static constexpr float OB_RIGHT_TRIG_CM      = 45.0f;
 
 static constexpr float OB_FRONT_CLOSE_CM     = 20.0f; 
@@ -58,7 +58,7 @@ static constexpr int   OB_PHASE_MIN_MS       = 2000;
 static constexpr int   OB_SEEK_DURATION      = 350;
 static constexpr int   OB_CONFIRM_CTRL_TICKS = 1;
 static constexpr int   OB_BRAKE_MS           = 700;
-static constexpr int   TURN_45_MS            = 1050;
+static constexpr int   TURN_45_MS            = 900;
 static constexpr float DUTY_OB_TURN          = 0.73f;
 static constexpr float DUTY_OB_FWD           = 0.35f;
 static constexpr float DUTY_OB_RIGHT         = 0.68f;
@@ -74,10 +74,10 @@ static constexpr int   RED_REACQUIRE_TICKS       = 2;
 static constexpr int   STOP_BRAKE_MS             = 350;
 
 // Manual BT
-static constexpr float BT_DUTY_FWD  = 0.6f;
-static constexpr float BT_DUTY_FWD_SLOW  = 0.4f;
-static constexpr float BT_DUTY_REV  = 0.6f;
-static constexpr float BT_DUTY_REV_SLOW  = 0.4f;
+static constexpr float BT_DUTY_FWD  = 0.4f;
+static constexpr float BT_DUTY_FWD_SLOW  = 0.3f;
+static constexpr float BT_DUTY_REV  = 0.4f;
+static constexpr float BT_DUTY_REV_SLOW  = 0.3f;
 static constexpr float BT_DUTY_TURN = 0.75f;
 
 } // namespace Config

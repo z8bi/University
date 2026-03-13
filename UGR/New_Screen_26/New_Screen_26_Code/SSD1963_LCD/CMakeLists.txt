@@ -67,12 +67,18 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     # Add user defined libraries
 )
 
+
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
+    Core/Src/dashboard.c
     Core/Src/ssd1963.c
+    Core/Src/logos/icons.c
+    Core/Src/logos/ugr_logo.c
+    Core/Src/gfx.c
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Inc
+    Core/Inc/logos
 )
 
 add_custom_command(TARGET SSD1963_LCD POST_BUILD

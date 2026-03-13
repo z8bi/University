@@ -2,6 +2,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#define COL_TRANSPARENT RGB565(0,0,0)
+
 typedef struct {
     uint16_t w, h;
     const uint16_t *px;   // RGB565, row-major
@@ -21,3 +23,9 @@ void gfx_blit565_key(int x, int y, int w, int h, const uint16_t *src, uint16_t k
 
 // Needle primitive
 void gfx_draw_line(int x0, int y0, int x1, int y1, uint16_t color);
+
+void gfx_blit565_key_crop(int dst_x, int dst_y,
+                                 int src_w, int src_h,
+                                 const uint16_t *src,
+                                 int crop_x, int crop_y, int crop_w, int crop_h,
+                                 uint16_t key);

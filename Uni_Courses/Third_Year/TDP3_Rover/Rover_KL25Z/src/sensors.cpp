@@ -46,7 +46,7 @@ LineInfo interpret(const Sensors& s) {
     //centered if the middle sensor is on the line and the two adjacent aren't
     li.centered = s.on[2] && !(s.on[1] || s.on[3]);
 
-    li.middle = s.on[2] || s.on[1] || s.on[3];
+    li.middle = s.on[2];
 
     // used to check for right degree turns
     li.right_turn_sig = (s.on[3] && s.on[4]) || (s.on[2] && s.on[4]);

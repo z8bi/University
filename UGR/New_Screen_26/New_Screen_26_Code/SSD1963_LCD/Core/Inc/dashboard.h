@@ -10,3 +10,5 @@ typedef struct {
 
 void dash_init(void);
 void dash_update(const Dashboard *d);
+void draw_UGR_logo();
+void draw_big_UGR_logo();
