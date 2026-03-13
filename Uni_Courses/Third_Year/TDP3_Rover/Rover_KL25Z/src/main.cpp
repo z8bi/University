@@ -193,6 +193,7 @@
             case 'S': leds_set(true,  false, true ); break; // MAGENTA
             case 'A': leds_set(false, false, true ); break; // BLUE
             case 'D': leds_set(true,  false, false); break; // RED
+            case 'Z': leds_set(true,  true, false); break; // YELLOW
             default:  break;
         }
     }
@@ -804,6 +805,14 @@
         turn_right_break_inner(0.9, 0.82); 
         return;
     }
+    if (c == 'z' || c == 'Z') {
+        manual_mode = true;
+        cancel_obstacle_mode();
+        enter_state(CtrlState::MANUAL_BT, 0);
+        leds_for_manual_cmd('Z');
+        motors_coast();
+        return;
+    }
 
     // ---- EXISTING BEHAVIOR (unchanged) ----
     if (c == 'W' || c == 'A' || c == 'S' || c == 'D') {
@@ -816,15 +825,6 @@
         if (c == 'S') move_backward(Config::BT_DUTY_REV);               
         if (c == 'A') turn_left_skid_reverse_inner(Config::BT_DUTY_TURN);  
         if (c == 'D') turn_right_skid_reverse_inner(Config::BT_DUTY_TURN); 
-        return;
-    }
-
-    if (c == 'z' || c == 'Z') {
-        manual_mode = true;
-        cancel_obstacle_mode();
-        enter_state(CtrlState::MANUAL_BT, 0);
-        leds_for_manual_cmd('Z');
-        motors_coast();
         return;
     }
 
@@ -850,10 +850,8 @@
     //======================================================
     //========================== MAIN ======================
     //======================================================
-
+    
     int main() {
-        
-        HW::sensor_transistor = 1;
 
         Debug::init(true, true, HW::BT_TX, HW::BT_RX, HW::BT_BAUD);
         manual_mode = false;
@@ -897,4 +895,6 @@
         }
 
         return 0;
+        
     }
+    

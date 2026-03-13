@@ -6,6 +6,8 @@ struct Date
     void print() const // now a const member function
     {
         std::cout << year << '/' << month << '/' << day;
+        double another_year {42};
+        another_year += 1;
     }
 };
 

@@ -5,8 +5,6 @@ author: |
     <br>Lecturer in Multiscale Materials
     <br><khiem.nguyen@glasgow.ac.uk>
 author-meta: "Lecturer in Multiscale Materials"
-filters:
-  - pencil.lua
 format: 
     revealjs:
         theme: simple   # other themes: beige, blood, dark, dracula, league, moon, night, serif, simple, sky, solarized
@@ -413,7 +411,7 @@ void print() // defines a member function named print()
 
 ## A comparison to OOP in Python
 
-```{.python}
+```{python}
 class Date:
   def __init__(self, year=2026, month=2, date=28): # we learn constructor in C++ soon
     self.year = year        
@@ -448,7 +446,7 @@ Date.print(today)   # this exposes the implicit object in the statement today.pr
 - Statement `Date.print(today)` exposes the implicit object in statement `today.print()`
 
 ## A comparison to OOP in Python: But Python is not as serious as C++
-```{.python}
+```{python}
 #| error: true
 class Date:
   def __init__(self, year=2026, month=2, date=28): # we learn constructor in C++ soon
@@ -466,7 +464,7 @@ Date.print(my_name) # SYNTAX Correct, but run time error. my_name.year does not 
 
 ## A comparison to OOP in Python: But Python is not as serious as C++
 
-```{.python}
+```{python}
 #| error: true
 class Date:
   def __init__(self, year=2026, month=2, date=28): # we learn constructor in C++ soon
@@ -677,4 +675,3 @@ Yup, the fix is simple: make `print()` const
 {{< include ./cpp/const_objects_via_pass_by_const_ref_02.cpp >}}
 ```
 :::
-

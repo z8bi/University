@@ -3,14 +3,14 @@
 class Date // now a class instead of a struct
 {
     // class members are private by default, can only be accessed by other members
-    int m_year {};     // private by default
-    int m_month {};    // private by default
-    int m_day {};      // private by default
+    int year {};     // private by default
+    int month {};    // private by default
+    int day {};      // private by default
 
     void print() const // private by default
     {
         // private members can be accessed in member functions
-        std::cout << m_year << '/' << m_month << '/' << m_day;
+        std::cout << year << '/' << month << '/' << day;
     }
 };
 
