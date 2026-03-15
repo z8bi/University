@@ -1,6 +1,6 @@
-/Users/danielborkovec/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/build/Release/CMakeFiles/SSD1963_LCD.dir
-/Users/danielborkovec/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/build/Release/CMakeFiles/edit_cache.dir
-/Users/danielborkovec/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/build/Release/CMakeFiles/rebuild_cache.dir
-/Users/danielborkovec/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/build/Release/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir
-/Users/danielborkovec/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/build/Release/cmake/stm32cubemx/CMakeFiles/edit_cache.dir
-/Users/danielborkovec/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/build/Release/cmake/stm32cubemx/CMakeFiles/rebuild_cache.dir
+C:/Users/emaba/Desktop/Danda_Banda/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/build/Release/CMakeFiles/SSD1963_LCD.dir
+C:/Users/emaba/Desktop/Danda_Banda/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/build/Release/CMakeFiles/edit_cache.dir
+C:/Users/emaba/Desktop/Danda_Banda/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/build/Release/CMakeFiles/rebuild_cache.dir
+C:/Users/emaba/Desktop/Danda_Banda/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/build/Release/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir
+C:/Users/emaba/Desktop/Danda_Banda/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/build/Release/cmake/stm32cubemx/CMakeFiles/edit_cache.dir
+C:/Users/emaba/Desktop/Danda_Banda/University/UGR/New_Screen_26/New_Screen_26_Code/SSD1963_LCD/build/Release/cmake/stm32cubemx/CMakeFiles/rebuild_cache.dir
