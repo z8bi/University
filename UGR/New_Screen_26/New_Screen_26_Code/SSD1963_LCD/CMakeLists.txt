@@ -74,6 +74,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Src/logos/icons.c
     Core/Src/logos/ugr_logo.c
     Core/Src/gfx.c
+    Core/Src/gt911.c
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE

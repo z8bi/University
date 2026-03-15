@@ -32,6 +32,7 @@
   #include "dashboard.h"
   #include "gfx.h"
   #include "ssd1963.h"
+  #include "gt911.h" //touchscreen
 
   //Logos
   #include "logos/ugr_logo.h"
@@ -62,11 +63,37 @@
 
   #define CAN2_RX_QUEUE_SIZE 16
 
+  #define LCD_BRIGHTNESS 10 // adjust as needed (0-100%)
+
+  #define TOUCH_COOLDOWN_MS 500
+
   typedef struct
   {
       CAN_RxHeaderTypeDef hdr;
       uint8_t data[8];
   } CAN2_RxMessage;
+
+static Dashboard d = {
+    .battery_charge = 50,
+    .cell_temperature = 25,
+    .water_temperature = 20,
+    .speed = 0
+};
+
+enum Screen_State {
+    DASHBOARD,
+    LOGO
+};
+
+static enum Screen_State screen_state = LOGO;
+static volatile uint8_t screen_updated = 0;
+static volatile uint8_t updated = 0;
+
+
+static uint8_t last_touch = 0;
+static uint32_t next_touch_allowed = 0;
+static GT911_State touch;
+static uint8_t touch_ok = 0;
 
   /*
   CAN message formats:
@@ -173,37 +200,102 @@
     MX_USB_OTG_FS_PCD_Init();
     /* USER CODE BEGIN 2 */
 
-    __enable_irq();
-
-    // Start backlight PWM (your external brightness control on PB15)
-    HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_2);
-    LCD_SetBrightness(10); // adjust as needed (0-100%)
-    SSD1963_Init();
-    SSD1963_Fill(RGB565(0, 0, 0));
-
-    draw_big_UGR_logo();
-    HAL_Delay(4000);
-    dash_init();
+    // Initialize GT911 touchscreen
+    touch_ok = (GT911_Init(&hi2c1) == HAL_OK) ? 1 : 0;
 
     //CAN INIT
     CAN2_StartNormal();
-    
+    __enable_irq(); 
 
-    //TEST: update dashboard with some values; replace with CAN loopback later
-    static Dashboard d;
-    d.battery_charge = 50;
-    d.cell_temperature = 25;
-    d.water_temperature = 20;
-    d.speed = 0;
+    // Start backlight PWM (your external brightness control on PB15)
+    HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_2);
+    LCD_SetBrightness(LCD_BRIGHTNESS); // adjust as needed (0-100%)
+    
+    //Main LOGO screen initialization
+    SSD1963_Init();
+    SSD1963_Fill(RGB565(0, 0, 0));
+    draw_big_UGR_logo();
+
+    /* --use if touch not wanted to switch screens--
+    HAL_Delay(4000);
+    dash_init(d.battery_charge, d.cell_temperature, d.water_temperature, d.speed);
+    */
 
     /* USER CODE END 2 */
-
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
 
     while (1)
     {
+
+        if (touch_ok)
+        {
+            if (GT911_ReadState(&touch) == HAL_OK)
+            {
+                if (touch.touched && !last_touch)
+                {
+                    uint32_t now = HAL_GetTick();
+
+                    if (now >= next_touch_allowed)
+                    {
+                        UI_Area a = (screen_state == DASHBOARD)
+                                ? dash_get_area(DASH_AREA_SMALL_LOGO)
+                                : dash_get_area(DASH_AREA_BIG_LOGO);
+
+                        uint16_t tx = touch.x;
+                        uint16_t ty = touch.y;
+
+                        if (tx >= a.x1 && tx <= a.x2 &&
+                            ty >= a.y1 && ty <= a.y2)
+                        {
+                            screen_state = (screen_state == DASHBOARD) ? LOGO : DASHBOARD;
+                            SSD1963_Fill(RGB565(0, 0, 0));
+
+                            if (screen_state == DASHBOARD)
+                            {
+                                dash_init(d.battery_charge,
+                                        d.cell_temperature,
+                                        d.water_temperature,
+                                        d.speed);
+                            }
+                            else
+                            {
+                                draw_big_UGR_logo();
+                            }
+
+                            screen_updated = 1;
+                            next_touch_allowed = now + TOUCH_COOLDOWN_MS;
+                        }
+                    }
+                }
+
+                last_touch = touch.touched;
+            }
+        }
+        
+        //State machine for screen updates
+        switch(screen_state)
+        {
+            case DASHBOARD:
+
+                if (updated) {
+                    updated = 0;
+                    dash_update(&d);
+                }
+
+                break;
+
+            case LOGO:
+                if (screen_updated) {
+                    screen_updated = 0;
+                    draw_big_UGR_logo();
+                }
+                
+                break;
+        }
+        
+        //CAN TEST
         static uint32_t last_tx = 0;
 
         if (HAL_GetTick() - last_tx >= 50)
@@ -238,7 +330,6 @@
         }
 
         CAN2_RxMessage msg;
-        uint8_t updated = 0;
 
         __disable_irq();
         while (CAN2_RxQueue_Pop(&msg))
@@ -278,10 +369,6 @@
         }
         __enable_irq();
 
-        if (updated) {
-            dash_update(&d);
-        }
-
         HAL_Delay(1);
     }
 
@@ -298,53 +385,50 @@
     * @brief System Clock Configuration
     * @retval None
     */
-  void SystemClock_Config(void)
+void SystemClock_Config(void)
+{
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+
+  __HAL_RCC_PWR_CLK_ENABLE();
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.HSIState = RCC_HSI_OFF;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 4;
+  RCC_OscInitStruct.PLL.PLLN = 216;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 9;
+  RCC_OscInitStruct.PLL.PLLR = 2;
+
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
-    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+    Error_Handler();
+  }
 
-    /** Configure the main internal regulator output voltage
-    */
-    __HAL_RCC_PWR_CLK_ENABLE();
-    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+  if (HAL_PWREx_EnableOverDrive() != HAL_OK)
+  {
+    Error_Handler();
+  }
 
-    /** Initializes the RCC Oscillators according to the specified parameters
-    * in the RCC_OscInitTypeDef structure.
-    */
-    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSE;
-    RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-    RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-    RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-    RCC_OscInitStruct.PLL.PLLM = 4;
-    RCC_OscInitStruct.PLL.PLLN = 96;
-    RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-    RCC_OscInitStruct.PLL.PLLQ = 4;
-    RCC_OscInitStruct.PLL.PLLR = 2;
-    if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-    {
-      Error_Handler();
-    }
-
-    /** Initializes the CPU, AHB and APB buses clocks
-    */
-    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK |
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK |
                                 RCC_CLOCKTYPE_SYSCLK |
                                 RCC_CLOCKTYPE_PCLK1 |
                                 RCC_CLOCKTYPE_PCLK2;
 
-    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-    RCC_ClkInitStruct.AHBCLKDivider  = RCC_SYSCLK_DIV1;
-    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-
-    if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
-    {
-        Error_Handler();
-    }
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_7) != HAL_OK)
+  {
+    Error_Handler();
   }
+}
 
   /* USER CODE BEGIN 4 */
 

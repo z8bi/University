@@ -12,6 +12,19 @@
 #define W 800
 #define H 480
 
+//=== Touch areas for toggling screens ===
+
+#define SMALL_LOGO_X   380
+#define SMALL_LOGO_Y   5
+
+#define BIG_LOGO_X     50
+#define BIG_LOGO_Y     85
+
+#define LOGO_BACK_BTN_X   300
+#define LOGO_BACK_BTN_Y   410
+#define LOGO_BACK_BTN_W   200
+#define LOGO_BACK_BTN_H   50
+
 // Battery color thresholds
 #define BATT_RED_MAX        20
 #define BATT_ORANGE_MAX     50
@@ -950,29 +963,29 @@ static void draw_watertemp_panel_static(void)
 }
 
 // ---------- public API ----------
-void dash_init(void)
+void dash_init(double initial_battery_charge, double initial_cell_temperature, double initial_water_temperature, int initial_speed)
 {
     init_needle_lut();
     SSD1963_Fill(COL_BG);
 
-    prev.speed = 0;
-    prev.battery_charge = 0;
-    prev.cell_temperature = 0;
-    prev.water_temperature = 0;
+    prev.speed = initial_speed;
+    prev.battery_charge = initial_battery_charge;
+    prev.cell_temperature = initial_cell_temperature;
+    prev.water_temperature = initial_water_temperature;
     prev_needle_tip = (Pt){ -1, -1 };
 
     draw_gauge_static();
-    update_needle(0);
-    draw_speed_number(0);
+    update_needle(clampi(initial_speed, 0, SPEED_MAX));
+    draw_speed_number(clampi(initial_speed, 0, SPEED_MAX));
 
     draw_battery_panel_static();
     draw_celltemp_panel_static();
     draw_watertemp_panel_static();
 
-    // initial values
-    draw_battery_panel_value_full(0);
-    draw_celltemp_panel_value_full(0);
-    draw_watertemp_panel_value_full(0);
+    // draw real initial values, not zeros
+    draw_battery_panel_value_full((int)initial_battery_charge);
+    draw_celltemp_panel_value_full((int)initial_cell_temperature);
+    draw_watertemp_panel_value_full((int)initial_water_temperature);
 
     draw_UGR_logo();
 
@@ -981,7 +994,7 @@ void dash_init(void)
 
 void dash_update(const Dashboard *d)
 {
-    if (!inited) dash_init();
+    if (!inited) dash_init(0, 0, 0, 0);
     if (!d) return;
 
     if (d->battery_charge != prev.battery_charge) {
@@ -1006,19 +1019,50 @@ void dash_update(const Dashboard *d)
     }
 }
 
-void draw_UGR_logo() {
+void draw_UGR_logo(void)
+{
     gfx_blit565_key(
-        440, 5,
+        SMALL_LOGO_X, SMALL_LOGO_Y,
         UGR_LOGO_W, UGR_LOGO_H,
         (const uint16_t*)ugr_logo,
         RGB565(0,0,0)
     );
 }
 
-void draw_big_UGR_logo() {
+void draw_big_UGR_logo(void)
+{
     gfx_blit565(
-        50, 85,
+        BIG_LOGO_X, BIG_LOGO_Y,
         BIG_UGR_LOGO_W, BIG_UGR_LOGO_H,
         (const uint16_t*)big_ugr_logo
     );
+}
+
+//TOUCH AREA CALCULATIONS
+
+UI_Area dash_get_area(DashAreaId id)
+{
+    UI_Area a = {0, 0, 0, 0};
+
+    switch (id)
+    {
+        case DASH_AREA_SMALL_LOGO:
+            a.x1 = SMALL_LOGO_X;
+            a.y1 = SMALL_LOGO_Y;
+            a.x2 = SMALL_LOGO_X + UGR_LOGO_W - 1;
+            a.y2 = SMALL_LOGO_Y + UGR_LOGO_H - 1;
+            break;
+
+        case DASH_AREA_BIG_LOGO:
+            a.x1 = BIG_LOGO_X;
+            a.y1 = BIG_LOGO_Y;
+            a.x2 = BIG_LOGO_X + BIG_UGR_LOGO_W - 1;
+            a.y2 = BIG_LOGO_Y + BIG_UGR_LOGO_H - 1;
+            break;
+
+        default:
+            break;
+    }
+
+    return a;
 }

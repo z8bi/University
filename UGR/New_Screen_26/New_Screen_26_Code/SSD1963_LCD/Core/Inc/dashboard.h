@@ -1,14 +1,37 @@
-#pragma once
+#ifndef DASHBOARD_H
+#define DASHBOARD_H
+
 #include <stdint.h>
 
 typedef struct {
-    int16_t speed;            // km/h
-    int16_t battery_charge;   // %
-    int16_t cell_temperature; // °C
-    int16_t water_temperature;// °C
+    double battery_charge;
+    double cell_temperature;
+    double water_temperature;
+    int speed;
 } Dashboard;
 
-void dash_init(void);
+typedef struct {
+    uint16_t x1;
+    uint16_t y1;
+    uint16_t x2;
+    uint16_t y2;
+} UI_Area;
+
+typedef enum {
+    DASH_AREA_SMALL_LOGO = 0,
+    DASH_AREA_BIG_LOGO
+} DashAreaId;
+
+void dash_init(double initial_battery_charge,
+               double initial_cell_temperature,
+               double initial_water_temperature,
+               int initial_speed);
+
 void dash_update(const Dashboard *d);
-void draw_UGR_logo();
-void draw_big_UGR_logo();
+
+void draw_UGR_logo(void);
+void draw_big_UGR_logo(void);
+
+UI_Area dash_get_area(DashAreaId id);
+
+#endif

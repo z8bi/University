@@ -30,10 +30,10 @@ CAN_HandleTypeDef hcan2;
 void MX_CAN2_Init(void)
 {
   hcan2.Instance = CAN2;
-  hcan2.Init.Prescaler = 6;
-  hcan2.Init.Mode = CAN_MODE_SILENT_LOOPBACK;
+  hcan2.Init.Prescaler = 9;
+  hcan2.Init.Mode = CAN_MODE_SILENT_LOOPBACK;   // or CAN_MODE_NORMAL if using a real bus
   hcan2.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan2.Init.TimeSeg1 = CAN_BS1_13TQ;
+  hcan2.Init.TimeSeg1 = CAN_BS1_9TQ;
   hcan2.Init.TimeSeg2 = CAN_BS2_2TQ;
   hcan2.Init.TimeTriggeredMode = DISABLE;
   hcan2.Init.AutoBusOff = DISABLE;
