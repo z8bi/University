@@ -89,3 +89,6 @@ add_custom_command(TARGET SSD1963_LCD POST_BUILD
   COMMENT "Generating .bin"
 )
 
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
+    -Wl,-Map=${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.map,--cref
+)
