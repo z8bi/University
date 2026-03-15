@@ -72,6 +72,8 @@
         int   line_found_cnt   = 0;
         float target_right_distance = Config::RIGHT_MAX_CM;
         int right_counter = 0;
+        bool ob_left_break_active = false;
+        Kernel::Clock::time_point ob_left_break_until{};
 
         // STOPPED sub-state
         enum class StopPhase { HOLD_ON_RED, BACKUP_FIND_RED };
@@ -393,6 +395,17 @@
             }
 
             case CtrlState::SEEK_LEFT: {
+                // Special obstacle-avoid handoff:
+                // after finding the line, do a short left brake-inner turn first
+                if (rt.ob_left_break_active) {
+                    if (Kernel::Clock::now() < rt.ob_left_break_until) {
+                        turn_left_break_inner(Config::TURN_BRAKE_STRENGTH, Config::ALIGN_DUTY_TURN);
+                        break;
+                    } else {
+                        rt.ob_left_break_active = false;
+                    }
+                }
+
                 if (rt.seek_lock_active && rt.seek_lock_dir != -1) { rt.seek_lock_active = false; rt.seek_lock_dir = 0; }
 
                 if (!rt.seek_lock_active && s.on[0]) {
@@ -497,6 +510,8 @@
                     rt.forward_min_until = {};
                     rt.right_counter = 0;
                     rt.ob_seek_force_full_duration = false;
+                    rt.ob_left_break_active = false;
+                    rt.ob_left_break_until  = {};
                     leds_for_ob_phase(rt.phase);
                 }
 
@@ -522,16 +537,17 @@
 
                 if (rt.line_found_cnt >= 2) {
                     rt.ob_active = false;
-                    rt.found_cnt = 0; 
-                    
-                    // Force a clockwise re-orient: turn LEFT for a short time
-                    rt.seek_lock_active = true;
-                    rt.seek_lock_dir    = -1;
-                    rt.seek_lock_until  = Kernel::Clock::now() + std::chrono::milliseconds(Config::OB_SEEK_DURATION);
+                    rt.found_cnt = 0;
 
-                    // NEW: do not allow centered to cancel this seek early
-                    rt.ob_seek_force_full_duration = true;
-                    
+                    // Run a short left brake-inner turn after reacquiring the line
+                    rt.ob_left_break_active = true;
+                    rt.ob_left_break_until  = Kernel::Clock::now() + 350ms;
+
+                    // Clear any old seek lock state
+                    rt.seek_lock_active = false;
+                    rt.seek_lock_dir    = 0;
+                    rt.ob_seek_force_full_duration = false;
+
                     enter_state(CtrlState::SEEK_LEFT, 0);
                     break;
                 }

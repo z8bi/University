@@ -5497,8 +5497,6 @@ Discarded input sections
  .rodata.PANEL_BOTTOM_PAD
                 0x00000000        0x4 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .rodata.PH     0x00000000        0x4 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
- .text.needle_triangle
-                0x00000000       0x2a CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .debug_macro   0x00000000      0xaf0 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .debug_macro   0x00000000       0x22 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .debug_macro   0x00000000       0x8e CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
@@ -5677,8 +5675,6 @@ Discarded input sections
  .text          0x00000000        0x0 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
  .data          0x00000000        0x0 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
  .bss           0x00000000        0x0 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
- .text.gfx_blit565_key
-                0x00000000       0xb4 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
  .text.gfx_blit565_key_crop
                 0x00000000       0xea CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
  .debug_macro   0x00000000      0xaf0 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
@@ -6020,7 +6016,7 @@ LOAD /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x
                 0x08000000                g_pfnVectors
                 0x080001f8                        . = ALIGN (0x4)
 
-.text           0x080001f8     0xab20
+.text           0x080001f8     0xaea8
                 0x080001f8                        . = ALIGN (0x4)
  *(.text)
  .text          0x080001f8      0x378 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/libgcc.a(_arm_addsubdf3.o)
@@ -6543,241 +6539,265 @@ LOAD /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x
                 0x08008aac       0xac CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .text.seg_h    0x08008b58       0x26 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .text.seg_v    0x08008b7e       0x26 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .text.split_3digits
+                0x08008ba4       0x9c CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .text.redraw_changed_digits_3
+                0x08008c40       0xae CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .text.redraw_digits_3
+                0x08008cee       0x82 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .text.draw_digit7
-                0x08008ba4      0x17c CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+                0x08008d70      0x17c CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .text.draw_label
-                0x08008d20      0x604 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
- .text.update_int7
-                0x08009324       0xec CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+                0x08008eec      0x5c8 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .text.draw_battery_panel_value_full
+                0x080094b4       0x96 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .text.draw_celltemp_panel_value_full
+                0x0800954a       0x78 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .text.draw_watertemp_panel_value_full
+                0x080095c2       0x7a CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .text.redraw_celltemp_panel_value_delta
+                0x0800963c       0xb2 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .text.redraw_watertemp_panel_value_delta
+                0x080096ee       0xb4 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .text.redraw_battery_panel_value_delta
+                0x080097a2       0xd0 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .text.redraw_speed_number_delta
+                0x08009872       0x58 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ *fill*         0x080098ca        0x2 
  .text.draw_int7
-                0x08009410       0xa4 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+                0x080098cc       0xa4 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .text.draw_percent
-                0x080094b4       0x6a CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
- .text.draw_C   0x0800951e       0x60 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+                0x08009970       0x6a CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .text.draw_C   0x080099da       0x60 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .text.draw_value_box
-                0x0800957e       0xa8 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+                0x08009a3a       0xa8 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .text.get_value_layout
-                0x08009626       0x96 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+                0x08009ae2       0x96 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .text.icon_battery
-                0x080096bc      0x16c CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+                0x08009b78      0x168 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .text.draw_gauge_static
-                0x08009828       0x2c CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+                0x08009ce0       0x44 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .text.battery_color_for_percent
+                0x08009d24       0x38 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .text.temp_color_for_value
+                0x08009d5c       0x38 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .text.draw_speed_number
-                0x08009854       0x4a CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
- *fill*         0x0800989e        0x2 
+                0x08009d94       0x4a CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ *fill*         0x08009dde        0x2 
  .text.draw_battery_panel_static
-                0x080098a0       0x64 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+                0x08009de0       0x68 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .text.draw_celltemp_panel_static
-                0x08009904       0x68 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+                0x08009e48       0x6c CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .text.draw_watertemp_panel_static
-                0x0800996c       0x6c CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
- .text.update_battery_icon_fill
-                0x080099d8       0xd4 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+                0x08009eb4       0x70 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .text.dash_init
-                0x08009aac      0x13c CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
-                0x08009aac                dash_init
+                0x08009f24       0x84 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+                0x08009f24                dash_init
  .text.dash_update
-                0x08009be8      0x1e8 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
-                0x08009be8                dash_update
+                0x08009fa8       0xf8 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+                0x08009fa8                dash_update
  .text.draw_UGR_logo
-                0x08009dd0       0x24 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
-                0x08009dd0                draw_UGR_logo
+                0x0800a0a0       0x28 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+                0x0800a0a0                draw_UGR_logo
  .text.draw_big_UGR_logo
-                0x08009df4       0x24 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
-                0x08009df4                draw_big_UGR_logo
- .text.lcd_cmd  0x08009e18       0x1e CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
- *fill*         0x08009e36        0x2 
- .text.lcd_dat  0x08009e38       0x20 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+                0x0800a0c8       0x24 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+                0x0800a0c8                draw_big_UGR_logo
+ .text.lcd_cmd  0x0800a0ec       0x1e CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+ *fill*         0x0800a10a        0x2 
+ .text.lcd_dat  0x0800a10c       0x20 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
  .text.ssd_write_reg8
-                0x08009e58       0x2a CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+                0x0800a12c       0x2a CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
  .text.ssd_write_reg
-                0x08009e82       0x42 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+                0x0800a156       0x42 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
  .text.ssd_soft_reset
-                0x08009ec4       0x14 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+                0x0800a198       0x14 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
  .text.SSD1963_SetWindow
-                0x08009ed8       0x98 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
-                0x08009ed8                SSD1963_SetWindow
+                0x0800a1ac       0x98 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+                0x0800a1ac                SSD1963_SetWindow
  .text.SSD1963_Fill
-                0x08009f70       0x4c CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
-                0x08009f70                SSD1963_Fill
+                0x0800a244       0x4c CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+                0x0800a244                SSD1963_Fill
  .text.SSD1963_DrawPixel
-                0x08009fbc       0x44 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
-                0x08009fbc                SSD1963_DrawPixel
+                0x0800a290       0x44 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+                0x0800a290                SSD1963_DrawPixel
  .text.SSD1963_FillRect
-                0x0800a000       0xbc CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
-                0x0800a000                SSD1963_FillRect
+                0x0800a2d4       0xbc CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+                0x0800a2d4                SSD1963_FillRect
  .text.SSD1963_WritePixels
-                0x0800a0bc       0x44 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
-                0x0800a0bc                SSD1963_WritePixels
+                0x0800a390       0x44 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+                0x0800a390                SSD1963_WritePixels
  .text.ssd_set_madctl_landscape
-                0x0800a100       0x1c CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+                0x0800a3d4       0x1c CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
  .text.SSD1963_Init
-                0x0800a11c      0x140 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
-                0x0800a11c                SSD1963_Init
- .text.clampi   0x0800a25c       0x2e CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
+                0x0800a3f0      0x140 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+                0x0800a3f0                SSD1963_Init
+ .text.clampi   0x0800a530       0x2e CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
  .text.gfx_fill_rect
-                0x0800a28a       0x72 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
-                0x0800a28a                gfx_fill_rect
+                0x0800a55e       0x72 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
+                0x0800a55e                gfx_fill_rect
  .text.gfx_blit565
-                0x0800a2fc      0x134 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
-                0x0800a2fc                gfx_blit565
+                0x0800a5d0      0x134 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
+                0x0800a5d0                gfx_blit565
+ .text.gfx_blit565_key
+                0x0800a704       0xb4 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
+                0x0800a704                gfx_blit565_key
  .text.gfx_draw_line
-                0x0800a430       0xdc CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
-                0x0800a430                gfx_draw_line
- *fill*         0x0800a50c        0x4 
- .text.sinf     0x0800a510      0x1ec /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-sinf.o)
-                0x0800a510                sinf
- *fill*         0x0800a6fc        0x4 
- .text.cosf     0x0800a700      0x1b4 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-cosf.o)
-                0x0800a700                cosf
+                0x0800a7b8       0xdc CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
+                0x0800a7b8                gfx_draw_line
+ *fill*         0x0800a894        0x4 
+ .text.sinf     0x0800a898      0x1ec /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-sinf.o)
+                0x0800a898                sinf
+ *fill*         0x0800aa84        0x4 
+ .text.cosf     0x0800aa88      0x1b4 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-cosf.o)
+                0x0800aa88                cosf
  .text.with_errnof
-                0x0800a8b4       0x1c /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-math_errf.o)
+                0x0800ac3c       0x1c /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-math_errf.o)
  .text.__math_invalidf
-                0x0800a8d0       0x20 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-math_errf.o)
-                0x0800a8d0                __math_invalidf
- .text.sqrtf    0x0800a8f0       0x44 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-wf_sqrt.o)
-                0x0800a8f0                sqrtf
+                0x0800ac58       0x20 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-math_errf.o)
+                0x0800ac58                __math_invalidf
+ .text.sqrtf    0x0800ac78       0x44 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-wf_sqrt.o)
+                0x0800ac78                sqrtf
  .text.__ieee754_sqrtf
-                0x0800a934        0x8 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-ef_sqrt.o)
-                0x0800a934                __ieee754_sqrtf
- .text.lroundf  0x0800a93c       0x68 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-sf_lround.o)
-                0x0800a93c                lroundf
+                0x0800acbc        0x8 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-ef_sqrt.o)
+                0x0800acbc                __ieee754_sqrtf
+ .text.lroundf  0x0800acc4       0x68 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-sf_lround.o)
+                0x0800acc4                lroundf
  .text.__udivmoddi4
-                0x0800a9a4      0x2f8 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/libgcc.a(_udivmoddi4.o)
-                0x0800a9a4                __udivmoddi4
- .text.memset   0x0800ac9c       0x10 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libg_nano.a(libc_a-memset.o)
-                0x0800ac9c                memset
- .text.__errno  0x0800acac        0xc /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libg_nano.a(libc_a-errno.o)
-                0x0800acac                __errno
+                0x0800ad2c      0x2f8 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/libgcc.a(_udivmoddi4.o)
+                0x0800ad2c                __udivmoddi4
+ .text.memset   0x0800b024       0x10 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libg_nano.a(libc_a-memset.o)
+                0x0800b024                memset
+ .text.__errno  0x0800b034        0xc /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libg_nano.a(libc_a-errno.o)
+                0x0800b034                __errno
  .text.__libc_init_array
-                0x0800acb8       0x48 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libg_nano.a(libc_a-init.o)
-                0x0800acb8                __libc_init_array
+                0x0800b040       0x48 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libg_nano.a(libc_a-init.o)
+                0x0800b040                __libc_init_array
  *(.glue_7)
- .glue_7        0x0800ad00        0x0 linker stubs
+ .glue_7        0x0800b088        0x0 linker stubs
  *(.glue_7t)
- .glue_7t       0x0800ad00        0x0 linker stubs
+ .glue_7t       0x0800b088        0x0 linker stubs
  *(.eh_frame)
- .eh_frame      0x0800ad00        0x0 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crtbegin.o
+ .eh_frame      0x0800b088        0x0 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crtbegin.o
  *(.init)
- .init          0x0800ad00        0x4 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crti.o
-                0x0800ad00                _init
- .init          0x0800ad04        0x8 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crtn.o
+ .init          0x0800b088        0x4 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crti.o
+                0x0800b088                _init
+ .init          0x0800b08c        0x8 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crtn.o
  *(.fini)
- .fini          0x0800ad0c        0x4 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crti.o
-                0x0800ad0c                _fini
- .fini          0x0800ad10        0x8 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crtn.o
-                0x0800ad18                        . = ALIGN (0x4)
-                0x0800ad18                        _etext = .
+ .fini          0x0800b094        0x4 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crti.o
+                0x0800b094                _fini
+ .fini          0x0800b098        0x8 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crtn.o
+                0x0800b0a0                        . = ALIGN (0x4)
+                0x0800b0a0                        _etext = .
 
-.vfp11_veneer   0x0800ad18        0x0
- .vfp11_veneer  0x0800ad18        0x0 linker stubs
+.vfp11_veneer   0x0800b0a0        0x0
+ .vfp11_veneer  0x0800b0a0        0x0 linker stubs
 
-.v4_bx          0x0800ad18        0x0
- .v4_bx         0x0800ad18        0x0 linker stubs
+.v4_bx          0x0800b0a0        0x0
+ .v4_bx         0x0800b0a0        0x0 linker stubs
 
-.iplt           0x0800ad18        0x0
- .iplt          0x0800ad18        0x0 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crtbegin.o
+.iplt           0x0800b0a0        0x0
+ .iplt          0x0800b0a0        0x0 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crtbegin.o
 
-.rodata         0x0800ad18    0xcc7f0
-                0x0800ad18                        . = ALIGN (0x4)
+.rodata         0x0800b0a0    0xcc7f0
+                0x0800b0a0                        . = ALIGN (0x4)
  *(.rodata)
- .rodata        0x0800ad18       0x87 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_can.c.obj
- *fill*         0x0800ad9f        0x1 
- .rodata        0x0800ada0       0x87 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc.c.obj
- *fill*         0x0800ae27        0x1 
- .rodata        0x0800ae28       0x8a cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc_ex.c.obj
- *fill*         0x0800aeb2        0x2 
- .rodata        0x0800aeb4       0x88 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_gpio.c.obj
- .rodata        0x0800af3c       0x8a cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cortex.c.obj
- *fill*         0x0800afc6        0x2 
- .rodata        0x0800afc8       0x87 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_i2c.c.obj
- *fill*         0x0800b04f        0x1 
- .rodata        0x0800b050       0x8a cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_i2c_ex.c.obj
- *fill*         0x0800b0da        0x2 
- .rodata        0x0800b0dc       0x86 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_ll_fmc.c.obj
- *fill*         0x0800b162        0x2 
- .rodata        0x0800b164       0x87 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_spi.c.obj
- *fill*         0x0800b1eb        0x1 
- .rodata        0x0800b1ec       0x87 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_tim.c.obj
- *fill*         0x0800b273        0x1 
- .rodata        0x0800b274       0x87 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_pcd.c.obj
- *fill*         0x0800b2fb        0x1 
- .rodata        0x0800b2fc       0x28 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
- .rodata        0x0800b324       0x27 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+ .rodata        0x0800b0a0       0x87 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_can.c.obj
+ *fill*         0x0800b127        0x1 
+ .rodata        0x0800b128       0x87 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc.c.obj
+ *fill*         0x0800b1af        0x1 
+ .rodata        0x0800b1b0       0x8a cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc_ex.c.obj
+ *fill*         0x0800b23a        0x2 
+ .rodata        0x0800b23c       0x88 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_gpio.c.obj
+ .rodata        0x0800b2c4       0x8a cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cortex.c.obj
+ *fill*         0x0800b34e        0x2 
+ .rodata        0x0800b350       0x87 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_i2c.c.obj
+ *fill*         0x0800b3d7        0x1 
+ .rodata        0x0800b3d8       0x8a cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_i2c_ex.c.obj
+ *fill*         0x0800b462        0x2 
+ .rodata        0x0800b464       0x86 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_ll_fmc.c.obj
+ *fill*         0x0800b4ea        0x2 
+ .rodata        0x0800b4ec       0x87 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_spi.c.obj
+ *fill*         0x0800b573        0x1 
+ .rodata        0x0800b574       0x87 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_tim.c.obj
+ *fill*         0x0800b5fb        0x1 
+ .rodata        0x0800b5fc       0x87 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_pcd.c.obj
+ *fill*         0x0800b683        0x1 
+ .rodata        0x0800b684       0x28 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .rodata        0x0800b6ac       0x27 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
  *(.rodata*)
- *fill*         0x0800b34b        0x1 
+ *fill*         0x0800b6d3        0x1 
  .rodata.AHBPrescTable
-                0x0800b34c       0x10 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Core/Src/system_stm32f7xx.c.obj
-                0x0800b34c                AHBPrescTable
- .rodata.map.0  0x0800b35c        0xa CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
- *fill*         0x0800b366        0x2 
+                0x0800b6d4       0x10 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Core/Src/system_stm32f7xx.c.obj
+                0x0800b6d4                AHBPrescTable
+ .rodata.map.0  0x0800b6e4        0xa CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ *fill*         0x0800b6ee        0x2 
  .rodata.water_icon
-                0x0800b368     0x1e00 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
-                0x0800b368                water_icon
+                0x0800b6f0     0x1e00 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
+                0x0800b6f0                water_icon
  .rodata.thermometer_icon
-                0x0800d168     0x14a0 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
-                0x0800d168                thermometer_icon
+                0x0800d4f0     0x14a0 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
+                0x0800d4f0                thermometer_icon
  .rodata.speedometer_icon
-                0x0800e608    0x56220 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
-                0x0800e608                speedometer_icon
+                0x0800e990    0x56220 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
+                0x0800e990                speedometer_icon
  .rodata.ugr_logo
-                0x08064828     0x8ebc CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/ugr_logo.c.obj
-                0x08064828                ugr_logo
+                0x08064bb0     0x8ebc CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/ugr_logo.c.obj
+                0x08064bb0                ugr_logo
  .rodata.big_ugr_logo
-                0x0806d6e4    0x69ce4 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/ugr_logo.c.obj
-                0x0806d6e4                big_ugr_logo
+                0x0806da6c    0x69ce4 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/ugr_logo.c.obj
+                0x0806da6c                big_ugr_logo
  .rodata.__inv_pio4
-                0x080d73c8       0x60 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-sincosf_data.o)
-                0x080d73c8                __inv_pio4
+                0x080d7750       0x60 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-sincosf_data.o)
+                0x080d7750                __inv_pio4
  .rodata.__sincosf_table
-                0x080d7428       0xe0 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-sincosf_data.o)
-                0x080d7428                __sincosf_table
-                0x080d7508                        . = ALIGN (0x4)
+                0x080d77b0       0xe0 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-sincosf_data.o)
+                0x080d77b0                __sincosf_table
+                0x080d7890                        . = ALIGN (0x4)
 
-.ARM.extab      0x080d7508        0x0
-                0x080d7508                        . = ALIGN (0x4)
+.ARM.extab      0x080d7890        0x0
+                0x080d7890                        . = ALIGN (0x4)
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x080d7508                        . = ALIGN (0x4)
+                0x080d7890                        . = ALIGN (0x4)
 
-.ARM            0x080d7508        0x8
-                0x080d7508                        . = ALIGN (0x4)
-                0x080d7508                        __exidx_start = .
+.ARM            0x080d7890        0x8
+                0x080d7890                        . = ALIGN (0x4)
+                0x080d7890                        __exidx_start = .
  *(.ARM.exidx*)
  .ARM.exidx.text.__udivmoddi4
-                0x080d7508        0x8 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/libgcc.a(_udivmoddi4.o)
-                0x080d7510                        __exidx_end = .
-                0x080d7510                        . = ALIGN (0x4)
+                0x080d7890        0x8 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/libgcc.a(_udivmoddi4.o)
+                0x080d7898                        __exidx_end = .
+                0x080d7898                        . = ALIGN (0x4)
 
-.preinit_array  0x080d7510        0x0
-                0x080d7510                        . = ALIGN (0x4)
-                0x080d7510                        PROVIDE (__preinit_array_start = .)
+.preinit_array  0x080d7898        0x0
+                0x080d7898                        . = ALIGN (0x4)
+                0x080d7898                        PROVIDE (__preinit_array_start = .)
  *(.preinit_array*)
-                0x080d7510                        PROVIDE (__preinit_array_end = .)
-                0x080d7510                        . = ALIGN (0x4)
+                0x080d7898                        PROVIDE (__preinit_array_end = .)
+                0x080d7898                        . = ALIGN (0x4)
 
-.init_array     0x080d7510        0x4
-                0x080d7510                        . = ALIGN (0x4)
-                0x080d7510                        PROVIDE (__init_array_start = .)
+.init_array     0x080d7898        0x4
+                0x080d7898                        . = ALIGN (0x4)
+                0x080d7898                        PROVIDE (__init_array_start = .)
  *(SORT_BY_NAME(.init_array.*))
  *(.init_array*)
- .init_array    0x080d7510        0x4 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crtbegin.o
-                0x080d7514                        PROVIDE (__init_array_end = .)
-                0x080d7514                        . = ALIGN (0x4)
+ .init_array    0x080d7898        0x4 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crtbegin.o
+                0x080d789c                        PROVIDE (__init_array_end = .)
+                0x080d789c                        . = ALIGN (0x4)
 
-.fini_array     0x080d7514        0x4
-                0x080d7514                        . = ALIGN (0x4)
+.fini_array     0x080d789c        0x4
+                0x080d789c                        . = ALIGN (0x4)
                 [!provide]                        PROVIDE (__fini_array_start = .)
  *(SORT_BY_NAME(.fini_array.*))
  *(.fini_array*)
- .fini_array    0x080d7514        0x4 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crtbegin.o
+ .fini_array    0x080d789c        0x4 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crtbegin.o
                 [!provide]                        PROVIDE (__fini_array_end = .)
-                0x080d7518                        . = ALIGN (0x4)
-                0x080d7518                        _sidata = LOADADDR (.data)
+                0x080d78a0                        . = ALIGN (0x4)
+                0x080d78a0                        _sidata = LOADADDR (.data)
 
-.rel.dyn        0x080d7518        0x0
- .rel.iplt      0x080d7518        0x0 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crtbegin.o
+.rel.dyn        0x080d78a0        0x0
+ .rel.iplt      0x080d78a0        0x0 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crtbegin.o
 
-.data           0x20000000       0x68 load address 0x080d7518
+.data           0x20000000       0x68 load address 0x080d78a0
                 0x20000000                        . = ALIGN (0x4)
                 0x20000000                        _sdata = .
  *(.data)
@@ -6812,16 +6832,16 @@ LOAD /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x
                 0x20000068                        . = ALIGN (0x4)
 
 .tm_clone_table
-                0x20000068        0x0 load address 0x080d7580
+                0x20000068        0x0 load address 0x080d7908
  .tm_clone_table
                 0x20000068        0x0 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crtbegin.o
  .tm_clone_table
                 0x20000068        0x0 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crtend.o
 
-.igot.plt       0x20000068        0x0 load address 0x080d7580
+.igot.plt       0x20000068        0x0 load address 0x080d7908
  .igot.plt      0x20000068        0x0 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/crtbegin.o
 
-.tdata          0x20000068        0x0 load address 0x080d7580
+.tdata          0x20000068        0x0 load address 0x080d7908
  *(.tdata .tdata.* .gnu.linkonce.td.*)
                 0x20000068                        . = ALIGN (0x4)
                 0x20000068                        _edata = .
@@ -6838,7 +6858,7 @@ LOAD /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x
                 [!provide]                        PROVIDE (__data_source_end = __tdata_source_end)
                 [!provide]                        PROVIDE (__data_source_size = (__data_source_end - __data_source))
 
-.tbss           0x20000068        0x0 load address 0x080d7580
+.tbss           0x20000068        0x0 load address 0x080d7908
                 0x20000068                        _sbss = .
                 0x20000068                        __bss_start__ = _sbss
  *(.tbss .tbss.*)
@@ -6855,7 +6875,7 @@ LOAD /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x
                 [!provide]                        PROVIDE (__arm32_tls_tcb_offset = MAX (0x8, __tls_align))
                 [!provide]                        PROVIDE (__arm64_tls_tcb_offset = MAX (0x10, __tls_align))
 
-.bss            0x20000068     0x1508 load address 0x080d7580
+.bss            0x20000068     0x1508 load address 0x080d7908
  *(.bss)
  *(.bss*)
  .bss.completed.1
@@ -6907,7 +6927,7 @@ LOAD /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x
                 [!provide]                        PROVIDE (__bss_size = (__bss_end - __bss_start))
 
 ._user_heap_stack
-                0x20001570     0x4000 load address 0x080d7580
+                0x20001570     0x4000 load address 0x080d7908
                 0x20001570                        . = ALIGN (0x8)
                 [!provide]                        PROVIDE (end = .)
                 0x20001570                        PROVIDE (_end = .)
@@ -7065,7 +7085,7 @@ LOAD linker stubs
  .comment       0x00000045       0x46 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/ugr_logo.c.obj
  .comment       0x00000045       0x46 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
 
-.debug_info     0x00000000    0x19184
+.debug_info     0x00000000    0x1946c
  .debug_info    0x00000000      0x6ed cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Core/Src/system_stm32f7xx.c.obj
  .debug_info    0x000006ed      0xf28 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_can.c.obj
  .debug_info    0x00001615      0x968 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc.c.obj
@@ -7093,13 +7113,13 @@ LOAD linker stubs
  .debug_info    0x0001633d      0x528 CMakeFiles/SSD1963_LCD.dir/Core/Src/stm32f7xx_it.c.obj
  .debug_info    0x00016865      0x28d CMakeFiles/SSD1963_LCD.dir/Core/Src/stm32f7xx_hal_msp.c.obj
  .debug_info    0x00016af2       0x30 CMakeFiles/SSD1963_LCD.dir/startup_stm32f767xx.s.obj
- .debug_info    0x00016b22     0x17ef CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
- .debug_info    0x00018311      0x711 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
- .debug_info    0x00018a22       0xfa CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
- .debug_info    0x00018b1c       0xf8 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/ugr_logo.c.obj
- .debug_info    0x00018c14      0x570 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
+ .debug_info    0x00016b22     0x1ad7 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .debug_info    0x000185f9      0x711 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+ .debug_info    0x00018d0a       0xfa CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
+ .debug_info    0x00018e04       0xf8 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/ugr_logo.c.obj
+ .debug_info    0x00018efc      0x570 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
 
-.debug_abbrev   0x00000000     0x3ebc
+.debug_abbrev   0x00000000     0x3eb8
  .debug_abbrev  0x00000000      0x13b cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Core/Src/system_stm32f7xx.c.obj
  .debug_abbrev  0x0000013b      0x25c cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_can.c.obj
  .debug_abbrev  0x00000397      0x2f3 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc.c.obj
@@ -7127,13 +7147,13 @@ LOAD linker stubs
  .debug_abbrev  0x0000355b      0x1a2 CMakeFiles/SSD1963_LCD.dir/Core/Src/stm32f7xx_it.c.obj
  .debug_abbrev  0x000036fd       0xd8 CMakeFiles/SSD1963_LCD.dir/Core/Src/stm32f7xx_hal_msp.c.obj
  .debug_abbrev  0x000037d5       0x24 CMakeFiles/SSD1963_LCD.dir/startup_stm32f767xx.s.obj
- .debug_abbrev  0x000037f9      0x2ff CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
- .debug_abbrev  0x00003af8      0x1eb CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
- .debug_abbrev  0x00003ce3       0x6e CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
- .debug_abbrev  0x00003d51       0x86 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/ugr_logo.c.obj
- .debug_abbrev  0x00003dd7       0xe5 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
+ .debug_abbrev  0x000037f9      0x2fb CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .debug_abbrev  0x00003af4      0x1eb CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+ .debug_abbrev  0x00003cdf       0x6e CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
+ .debug_abbrev  0x00003d4d       0x86 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/ugr_logo.c.obj
+ .debug_abbrev  0x00003dd3       0xe5 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
 
-.debug_aranges  0x00000000     0x1718
+.debug_aranges  0x00000000     0x1760
  .debug_aranges
                 0x00000000       0x28 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Core/Src/system_stm32f7xx.c.obj
  .debug_aranges
@@ -7189,18 +7209,18 @@ LOAD linker stubs
  .debug_aranges
                 0x00001468       0x28 CMakeFiles/SSD1963_LCD.dir/startup_stm32f767xx.s.obj
  .debug_aranges
-                0x00001490      0x178 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+                0x00001490      0x1c0 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .debug_aranges
-                0x00001608       0x98 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+                0x00001650       0x98 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
  .debug_aranges
-                0x000016a0       0x18 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
+                0x000016e8       0x18 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
  .debug_aranges
-                0x000016b8       0x18 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/ugr_logo.c.obj
+                0x00001700       0x18 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/ugr_logo.c.obj
  .debug_aranges
-                0x000016d0       0x48 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
+                0x00001718       0x48 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
 
 .debug_rnglists
-                0x00000000     0x11bd
+                0x00000000     0x11f8
  .debug_rnglists
                 0x00000000       0x1a cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Core/Src/system_stm32f7xx.c.obj
  .debug_rnglists
@@ -7256,13 +7276,13 @@ LOAD linker stubs
  .debug_rnglists
                 0x00000fc5       0x19 CMakeFiles/SSD1963_LCD.dir/startup_stm32f767xx.s.obj
  .debug_rnglists
-                0x00000fde      0x12b CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+                0x00000fde      0x166 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
  .debug_rnglists
-                0x00001109       0x73 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+                0x00001144       0x73 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
  .debug_rnglists
-                0x0000117c       0x41 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
+                0x000011b7       0x41 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
 
-.debug_macro    0x00000000    0x2aa81
+.debug_macro    0x00000000    0x2aa99
  .debug_macro   0x00000000      0x22c cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Core/Src/system_stm32f7xx.c.obj
  .debug_macro   0x0000022c      0xaf0 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Core/Src/system_stm32f7xx.c.obj
  .debug_macro   0x00000d1c       0x2e cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Core/Src/system_stm32f7xx.c.obj
@@ -7352,15 +7372,15 @@ LOAD linker stubs
  .debug_macro   0x00029c32      0x245 CMakeFiles/SSD1963_LCD.dir/Core/Src/usb_otg.c.obj
  .debug_macro   0x00029e77      0x245 CMakeFiles/SSD1963_LCD.dir/Core/Src/stm32f7xx_it.c.obj
  .debug_macro   0x0002a0bc      0x23b CMakeFiles/SSD1963_LCD.dir/Core/Src/stm32f7xx_hal_msp.c.obj
- .debug_macro   0x0002a2f7      0x1b1 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
- .debug_macro   0x0002a4a8       0x28 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
- .debug_macro   0x0002a4d0      0x19b CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
- .debug_macro   0x0002a66b      0x2c7 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
- .debug_macro   0x0002a932       0x63 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
- .debug_macro   0x0002a995       0x6c CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/ugr_logo.c.obj
- .debug_macro   0x0002aa01       0x80 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
+ .debug_macro   0x0002a2f7      0x1c9 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .debug_macro   0x0002a4c0       0x28 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .debug_macro   0x0002a4e8      0x19b CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .debug_macro   0x0002a683      0x2c7 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+ .debug_macro   0x0002a94a       0x63 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
+ .debug_macro   0x0002a9ad       0x6c CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/ugr_logo.c.obj
+ .debug_macro   0x0002aa19       0x80 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
 
-.debug_line     0x00000000    0x2355e
+.debug_line     0x00000000    0x23667
  .debug_line    0x00000000      0x95a cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Core/Src/system_stm32f7xx.c.obj
  .debug_line    0x0000095a     0x15e3 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_can.c.obj
  .debug_line    0x00001f3d     0x133b cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc.c.obj
@@ -7388,48 +7408,48 @@ LOAD linker stubs
  .debug_line    0x0001f447      0x9c5 CMakeFiles/SSD1963_LCD.dir/Core/Src/stm32f7xx_it.c.obj
  .debug_line    0x0001fe0c      0x8ce CMakeFiles/SSD1963_LCD.dir/Core/Src/stm32f7xx_hal_msp.c.obj
  .debug_line    0x000206da       0x7a CMakeFiles/SSD1963_LCD.dir/startup_stm32f767xx.s.obj
- .debug_line    0x00020754     0x14f4 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
- .debug_line    0x00021c48      0xca8 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
- .debug_line    0x000228f0      0x2e1 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
- .debug_line    0x00022bd1      0x353 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/ugr_logo.c.obj
- .debug_line    0x00022f24      0x63a CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
+ .debug_line    0x00020754     0x15fd CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .debug_line    0x00021d51      0xca8 CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+ .debug_line    0x000229f9      0x2e1 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
+ .debug_line    0x00022cda      0x353 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/ugr_logo.c.obj
+ .debug_line    0x0002302d      0x63a CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
 
-.debug_str      0x00000000   0x102d72
- .debug_str     0x00000000   0x102d72 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Core/Src/system_stm32f7xx.c.obj
+.debug_str      0x00000000   0x102ee5
+ .debug_str     0x00000000   0x102ee5 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Core/Src/system_stm32f7xx.c.obj
                               0xf7acf (size before relaxing)
- .debug_str     0x00102d72    0xf80eb cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_can.c.obj
- .debug_str     0x00102d72    0xf7e58 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc.c.obj
- .debug_str     0x00102d72    0xf7dbb cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc_ex.c.obj
- .debug_str     0x00102d72    0xf7b9b cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_gpio.c.obj
- .debug_str     0x00102d72    0xf8513 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cortex.c.obj
- .debug_str     0x00102d72    0xf852f cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal.c.obj
- .debug_str     0x00102d72    0xf8cf0 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_i2c.c.obj
- .debug_str     0x00102d72    0xf7f6f cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_i2c_ex.c.obj
- .debug_str     0x00102d72    0xf8300 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_ll_fmc.c.obj
- .debug_str     0x00102d72    0xf7fd4 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_sram.c.obj
- .debug_str     0x00102d72    0xf8317 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_spi.c.obj
- .debug_str     0x00102d72    0xf8e12 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_tim.c.obj
- .debug_str     0x00102d72    0xf8516 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_pcd.c.obj
- .debug_str     0x00102d72    0xf7e0a cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_pcd_ex.c.obj
- .debug_str     0x00102d72    0xf83e5 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_ll_usb.c.obj
- .debug_str     0x00102d72    0xfb51d CMakeFiles/SSD1963_LCD.dir/Core/Src/main.c.obj
- .debug_str     0x00102d72    0xf7af3 CMakeFiles/SSD1963_LCD.dir/Core/Src/gpio.c.obj
- .debug_str     0x00102d72    0xf8426 CMakeFiles/SSD1963_LCD.dir/Core/Src/can.c.obj
- .debug_str     0x00102d72    0xf8027 CMakeFiles/SSD1963_LCD.dir/Core/Src/fmc.c.obj
- .debug_str     0x00102d72    0xf833b CMakeFiles/SSD1963_LCD.dir/Core/Src/i2c.c.obj
- .debug_str     0x00102d72    0xf7f9a CMakeFiles/SSD1963_LCD.dir/Core/Src/spi.c.obj
- .debug_str     0x00102d72    0xf8159 CMakeFiles/SSD1963_LCD.dir/Core/Src/tim.c.obj
- .debug_str     0x00102d72    0xf8241 CMakeFiles/SSD1963_LCD.dir/Core/Src/usb_otg.c.obj
- .debug_str     0x00102d72    0xf7c7f CMakeFiles/SSD1963_LCD.dir/Core/Src/stm32f7xx_it.c.obj
- .debug_str     0x00102d72    0xf7a28 CMakeFiles/SSD1963_LCD.dir/Core/Src/stm32f7xx_hal_msp.c.obj
- .debug_str     0x00102d72       0xe2 CMakeFiles/SSD1963_LCD.dir/startup_stm32f767xx.s.obj
- .debug_str     0x00102d72     0x7ea3 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
- .debug_str     0x00102d72    0xf7d3b CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
- .debug_str     0x00102d72     0x3e69 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
- .debug_str     0x00102d72     0x3e98 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/ugr_logo.c.obj
- .debug_str     0x00102d72     0x42f2 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
+ .debug_str     0x00102ee5    0xf80eb cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_can.c.obj
+ .debug_str     0x00102ee5    0xf7e58 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc.c.obj
+ .debug_str     0x00102ee5    0xf7dbb cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc_ex.c.obj
+ .debug_str     0x00102ee5    0xf7b9b cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_gpio.c.obj
+ .debug_str     0x00102ee5    0xf8513 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cortex.c.obj
+ .debug_str     0x00102ee5    0xf852f cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal.c.obj
+ .debug_str     0x00102ee5    0xf8cf0 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_i2c.c.obj
+ .debug_str     0x00102ee5    0xf7f6f cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_i2c_ex.c.obj
+ .debug_str     0x00102ee5    0xf8300 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_ll_fmc.c.obj
+ .debug_str     0x00102ee5    0xf7fd4 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_sram.c.obj
+ .debug_str     0x00102ee5    0xf8317 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_spi.c.obj
+ .debug_str     0x00102ee5    0xf8e12 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_tim.c.obj
+ .debug_str     0x00102ee5    0xf8516 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_pcd.c.obj
+ .debug_str     0x00102ee5    0xf7e0a cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_pcd_ex.c.obj
+ .debug_str     0x00102ee5    0xf83e5 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_ll_usb.c.obj
+ .debug_str     0x00102ee5    0xfb51d CMakeFiles/SSD1963_LCD.dir/Core/Src/main.c.obj
+ .debug_str     0x00102ee5    0xf7af3 CMakeFiles/SSD1963_LCD.dir/Core/Src/gpio.c.obj
+ .debug_str     0x00102ee5    0xf8426 CMakeFiles/SSD1963_LCD.dir/Core/Src/can.c.obj
+ .debug_str     0x00102ee5    0xf8027 CMakeFiles/SSD1963_LCD.dir/Core/Src/fmc.c.obj
+ .debug_str     0x00102ee5    0xf833b CMakeFiles/SSD1963_LCD.dir/Core/Src/i2c.c.obj
+ .debug_str     0x00102ee5    0xf7f9a CMakeFiles/SSD1963_LCD.dir/Core/Src/spi.c.obj
+ .debug_str     0x00102ee5    0xf8159 CMakeFiles/SSD1963_LCD.dir/Core/Src/tim.c.obj
+ .debug_str     0x00102ee5    0xf8241 CMakeFiles/SSD1963_LCD.dir/Core/Src/usb_otg.c.obj
+ .debug_str     0x00102ee5    0xf7c7f CMakeFiles/SSD1963_LCD.dir/Core/Src/stm32f7xx_it.c.obj
+ .debug_str     0x00102ee5    0xf7a28 CMakeFiles/SSD1963_LCD.dir/Core/Src/stm32f7xx_hal_msp.c.obj
+ .debug_str     0x00102ee5       0xe2 CMakeFiles/SSD1963_LCD.dir/startup_stm32f767xx.s.obj
+ .debug_str     0x00102ee5     0x802d CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .debug_str     0x00102ee5    0xf7d3b CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+ .debug_str     0x00102ee5     0x3e69 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/icons.c.obj
+ .debug_str     0x00102ee5     0x3e98 CMakeFiles/SSD1963_LCD.dir/Core/Src/logos/ugr_logo.c.obj
+ .debug_str     0x00102ee5     0x42f2 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
 
-.debug_frame    0x00000000     0x6440
+.debug_frame    0x00000000     0x658c
  .debug_frame   0x00000000       0x58 cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Core/Src/system_stm32f7xx.c.obj
  .debug_frame   0x00000058      0x58c cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_can.c.obj
  .debug_frame   0x000005e4      0x1fc cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc.c.obj
@@ -7456,22 +7476,22 @@ LOAD linker stubs
  .debug_frame   0x000053c8       0x78 CMakeFiles/SSD1963_LCD.dir/Core/Src/usb_otg.c.obj
  .debug_frame   0x00005440      0x158 CMakeFiles/SSD1963_LCD.dir/Core/Src/stm32f7xx_it.c.obj
  .debug_frame   0x00005598       0x38 CMakeFiles/SSD1963_LCD.dir/Core/Src/stm32f7xx_hal_msp.c.obj
- .debug_frame   0x000055d0      0x6b8 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
- .debug_frame   0x00005c88      0x26c CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
- .debug_frame   0x00005ef4       0xf4 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
- .debug_frame   0x00005fe8       0x48 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-sinf.o)
- .debug_frame   0x00006030       0x38 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-cosf.o)
- .debug_frame   0x00006068       0x98 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-math_errf.o)
- .debug_frame   0x00006100       0x44 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-wf_sqrt.o)
- .debug_frame   0x00006144       0x20 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-ef_sqrt.o)
- .debug_frame   0x00006164       0x20 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-sf_lround.o)
- .debug_frame   0x00006184       0xac /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/libgcc.a(_arm_addsubdf3.o)
- .debug_frame   0x00006230       0x2c /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/libgcc.a(_aeabi_uldivmod.o)
- .debug_frame   0x0000625c       0x34 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/libgcc.a(_udivmoddi4.o)
- .debug_frame   0x00006290      0x144 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libg_nano.a(libc_a-findfp.o)
- .debug_frame   0x000063d4       0x20 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libg_nano.a(libc_a-memset.o)
- .debug_frame   0x000063f4       0x20 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libg_nano.a(libc_a-errno.o)
- .debug_frame   0x00006414       0x2c /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libg_nano.a(libc_a-init.o)
+ .debug_frame   0x000055d0      0x804 CMakeFiles/SSD1963_LCD.dir/Core/Src/dashboard.c.obj
+ .debug_frame   0x00005dd4      0x26c CMakeFiles/SSD1963_LCD.dir/Core/Src/ssd1963.c.obj
+ .debug_frame   0x00006040       0xf4 CMakeFiles/SSD1963_LCD.dir/Core/Src/gfx.c.obj
+ .debug_frame   0x00006134       0x48 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-sinf.o)
+ .debug_frame   0x0000617c       0x38 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-cosf.o)
+ .debug_frame   0x000061b4       0x98 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-math_errf.o)
+ .debug_frame   0x0000624c       0x44 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-wf_sqrt.o)
+ .debug_frame   0x00006290       0x20 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-ef_sqrt.o)
+ .debug_frame   0x000062b0       0x20 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libm.a(libm_a-sf_lround.o)
+ .debug_frame   0x000062d0       0xac /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/libgcc.a(_arm_addsubdf3.o)
+ .debug_frame   0x0000637c       0x2c /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/libgcc.a(_aeabi_uldivmod.o)
+ .debug_frame   0x000063a8       0x34 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/libgcc.a(_udivmoddi4.o)
+ .debug_frame   0x000063dc      0x144 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libg_nano.a(libc_a-findfp.o)
+ .debug_frame   0x00006520       0x20 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libg_nano.a(libc_a-memset.o)
+ .debug_frame   0x00006540       0x20 /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libg_nano.a(libc_a-errno.o)
+ .debug_frame   0x00006560       0x2c /Users/danielborkovec/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-darwin-x86_64-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v7e-m+dp/hard/libg_nano.a(libc_a-init.o)
 
 .debug_line_str
                 0x00000000      0x1b1

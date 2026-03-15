@@ -232,8 +232,8 @@
             CAN2_SendStd(CAN_ID_SPEED, msg_speed, 2);
 
             battery    = (battery + 1) % 101;
-            cell_temp  = (cell_temp + 1) % 100;
-            water_temp = (water_temp + 1) % 100;
+            cell_temp  = (cell_temp + 1) % 150;
+            water_temp = (water_temp + 1) % 150;
             speed      = (speed + 1) % (350 + 1);
         }
 

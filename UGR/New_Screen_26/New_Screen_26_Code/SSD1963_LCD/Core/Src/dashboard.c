@@ -12,6 +12,15 @@
 #define W 800
 #define H 480
 
+// Battery color thresholds
+#define BATT_RED_MAX        20
+#define BATT_ORANGE_MAX     50
+
+// Temperature color thresholds
+#define TEMP_GREEN_MAX      60
+#define TEMP_ORANGE_MAX     90
+// above TEMP_ORANGE_MAX => red
+
 #define SPEED_MAX 350
 #define COL_NEEDLE      RGB565(255,0,0)       // bright red
 #define COL_NEEDLE_EDGE RGB565(255,255,255)   // white outline
@@ -40,11 +49,11 @@ static const int SPEED_BOX_X = GAUGE_CX - SPEED_BOX_W / 2;
 static const int SPEED_BOX_Y = 340 + DASH_Y_OFFSET;
 
 // Right-side panels
-static const int PX = 450;
+static const int PX = 480;
 static const int PW = 320;
-static const int P1Y = 130 + DASH_Y_OFFSET;
-static const int P2Y = 255 + DASH_Y_OFFSET;
-static const int P3Y = 380 + DASH_Y_OFFSET;
+static const int P1Y = 115 + DASH_Y_OFFSET;
+static const int P2Y = 240 + DASH_Y_OFFSET;
+static const int P3Y = 365 + DASH_Y_OFFSET;
 
 // Speed number box
 static const int NEEDLE_LEN = GAUGE_R - 28;
@@ -108,6 +117,19 @@ static const int PH = VALUE_BOX_Y_OFF + VALUE_BOX_H + PANEL_BOTTOM_PAD;
 //prototypes
 static void draw_hline_clipped(int x0, int x1, int y, uint16_t col);
 static void swap_int(int *a, int *b);
+static uint16_t battery_color_for_percent(int percent);
+static uint16_t temp_color_for_value(int temp);
+static void draw_value_box(int panel_y);
+static void get_value_layout(int panel_y, int *digits_x, int *digits_y, int *unit_x, int *unit_y);
+static void icon_battery(int x, int y, int w, int h, int percent, int on);
+static void draw_int7(int x, int y, int s, int value, int digits, uint16_t fg, uint16_t bg);
+static void draw_percent(int x, int y, int s, uint16_t col);
+static void draw_C(int x, int y, int s, uint16_t col);
+static void redraw_battery_panel_value_delta(int old_percent, int new_percent);
+static void redraw_celltemp_panel_value_delta(int old_temp, int new_temp);
+static void redraw_watertemp_panel_value_delta(int old_temp, int new_temp);
+static void redraw_speed_number_delta(int old_speed, int new_speed);
+static void draw_digit7(int x, int y, int s, int digit, uint16_t fg, uint16_t bg);
 
 // Internal state
 static Dashboard prev;
@@ -158,11 +180,6 @@ static Tri needle_triangle_ex(Pt tip, float base_half_width, float base_back)
     t.c.y = (int)lroundf(by - py * base_half_width);
 
     return t;
-}
-
-static Tri needle_triangle(Pt tip)
-{
-    return needle_triangle_ex(tip, 5.0f, 12.0f);
 }
 
 static void draw_needle_hub(void)
@@ -432,6 +449,53 @@ Segments:  a
 static void seg_h(int x, int y, int len, int t, uint16_t col) { gfx_fill_rect(x, y, len, t, col); }
 static void seg_v(int x, int y, int len, int t, uint16_t col) { gfx_fill_rect(x, y, t, len, col); }
 
+static void split_3digits(int value, int out[3])
+{
+    value = clampi(value, 0, 999);
+    out[0] = (value / 100) % 10;
+    out[1] = (value / 10) % 10;
+    out[2] = value % 10;
+}
+
+static void redraw_changed_digits_3(
+    int x, int y, int s,
+    int old_value, int new_value,
+    uint16_t fg, uint16_t bg)
+{
+    int oldd[3], newd[3];
+    split_3digits(old_value, oldd);
+    split_3digits(new_value, newd);
+
+    const int t = s;
+    const int L = 6*s;
+    const int w = L + 2*t;
+
+    for (int i = 0; i < 3; i++) {
+        if (oldd[i] != newd[i]) {
+            int dx = x + i*(w + s);
+            draw_digit7(dx, y, s, newd[i], fg, bg);
+        }
+    }
+}
+
+static void redraw_digits_3(
+    int x, int y, int s,
+    int value,
+    uint16_t fg, uint16_t bg)
+{
+    int d[3];
+    split_3digits(value, d);
+
+    const int t = s;
+    const int L = 6*s;
+    const int w = L + 2*t;
+
+    for (int i = 0; i < 3; i++) {
+        int dx = x + i*(w + s);
+        draw_digit7(dx, y, s, d[i], fg, bg);
+    }
+}
+
 static void draw_digit7(int x, int y, int s, int digit, uint16_t fg, uint16_t bg)
 {
     // digit box size
@@ -480,7 +544,7 @@ static void draw_digit7(int x, int y, int s, int digit, uint16_t fg, uint16_t bg
 
 // ---------- tiny label text ----------
 // ---------- scalable label text ----------
-static void draw_label(int x, int y, const char *txt, int s)
+static void draw_label(int x, int y, const char *txt, int s, uint16_t col)
 {
     // s = scale (2 or 3 recommended)
 
@@ -493,75 +557,75 @@ static void draw_label(int x, int y, const char *txt, int s)
         switch (txt[i]) {
 
         case 'A':
-            gfx_fill_rect(px, y, 4*s, s, COL_DIM);
-            gfx_fill_rect(px, y, s, 6*s, COL_DIM);
-            gfx_fill_rect(px+3*s, y, s, 6*s, COL_DIM);
-            gfx_fill_rect(px, y+3*s, 4*s, s, COL_DIM);
+            gfx_fill_rect(px, y, 4*s, s, col);
+            gfx_fill_rect(px, y, s, 6*s, col);
+            gfx_fill_rect(px+3*s, y, s, 6*s, col);
+            gfx_fill_rect(px, y+3*s, 4*s, s, col);
             break;
 
         case 'B':
-            gfx_fill_rect(px, y, s, 6*s, COL_DIM);
-            gfx_fill_rect(px, y, 3*s, s, COL_DIM);
-            gfx_fill_rect(px, y+3*s, 3*s, s, COL_DIM);
-            gfx_fill_rect(px, y+5*s, 3*s, s, COL_DIM);
-            gfx_fill_rect(px+3*s, y+s, s, 2*s, COL_DIM);
-            gfx_fill_rect(px+3*s, y+4*s, s, s, COL_DIM);
+            gfx_fill_rect(px, y, s, 6*s, col);
+            gfx_fill_rect(px, y, 3*s, s, col);
+            gfx_fill_rect(px, y+3*s, 3*s, s, col);
+            gfx_fill_rect(px, y+5*s, 3*s, s, col);
+            gfx_fill_rect(px+3*s, y+s, s, 2*s, col);
+            gfx_fill_rect(px+3*s, y+4*s, s, s, col);
             break;
 
         case 'C':
-            gfx_fill_rect(px, y, 4*s, s, COL_DIM);
-            gfx_fill_rect(px, y, s, 6*s, COL_DIM);
-            gfx_fill_rect(px, y+5*s, 4*s, s, COL_DIM);
+            gfx_fill_rect(px, y, 4*s, s, col);
+            gfx_fill_rect(px, y, s, 6*s, col);
+            gfx_fill_rect(px, y+5*s, 4*s, s, col);
             break;
 
         case 'E':
-            gfx_fill_rect(px, y, 4*s, s, COL_DIM);
-            gfx_fill_rect(px, y, s, 6*s, COL_DIM);
-            gfx_fill_rect(px, y+3*s, 3*s, s, COL_DIM);
-            gfx_fill_rect(px, y+5*s, 4*s, s, COL_DIM);
+            gfx_fill_rect(px, y, 4*s, s, col);
+            gfx_fill_rect(px, y, s, 6*s, col);
+            gfx_fill_rect(px, y+3*s, 3*s, s, col);
+            gfx_fill_rect(px, y+5*s, 4*s, s, col);
             break;
 
         case 'L':
-            gfx_fill_rect(px, y, s, 6*s, COL_DIM);
-            gfx_fill_rect(px, y+5*s, 4*s, s, COL_DIM);
+            gfx_fill_rect(px, y, s, 6*s, col);
+            gfx_fill_rect(px, y+5*s, 4*s, s, col);
             break;
 
         case 'M':
-            gfx_fill_rect(px, y, s, 6*s, COL_DIM);
-            gfx_fill_rect(px+4*s, y, s, 6*s, COL_DIM);
-            gfx_fill_rect(px+2*s, y+2*s, s, 2*s, COL_DIM);
+            gfx_fill_rect(px, y, s, 6*s, col);
+            gfx_fill_rect(px+4*s, y, s, 6*s, col);
+            gfx_fill_rect(px+2*s, y+2*s, s, 2*s, col);
             break;
 
         case 'P':
-            gfx_fill_rect(px, y, s, 6*s, COL_DIM);
-            gfx_fill_rect(px, y, 4*s, s, COL_DIM);
-            gfx_fill_rect(px+4*s, y+s, s, 2*s, COL_DIM);
-            gfx_fill_rect(px, y+3*s, 4*s, s, COL_DIM);
+            gfx_fill_rect(px, y, s, 6*s, col);
+            gfx_fill_rect(px, y, 4*s, s, col);
+            gfx_fill_rect(px+4*s, y+s, s, 2*s, col);
+            gfx_fill_rect(px, y+3*s, 4*s, s, col);
             break;
 
         case 'R':
-            gfx_fill_rect(px, y, s, 6*s, COL_DIM);
-            gfx_fill_rect(px, y, 4*s, s, COL_DIM);
-            gfx_fill_rect(px+4*s, y+s, s, 2*s, COL_DIM);
-            gfx_fill_rect(px, y+3*s, 4*s, s, COL_DIM);
-            gfx_fill_rect(px+3*s, y+3*s, s, 3*s, COL_DIM);
+            gfx_fill_rect(px, y, s, 6*s, col);
+            gfx_fill_rect(px, y, 4*s, s, col);
+            gfx_fill_rect(px+4*s, y+s, s, 2*s, col);
+            gfx_fill_rect(px, y+3*s, 4*s, s, col);
+            gfx_fill_rect(px+3*s, y+3*s, s, 3*s, col);
             break;
 
         case 'T':
-            gfx_fill_rect(px, y, 5*s, s, COL_DIM);
-            gfx_fill_rect(px+2*s, y, s, 6*s, COL_DIM);
+            gfx_fill_rect(px, y, 5*s, s, col);
+            gfx_fill_rect(px+2*s, y, s, 6*s, col);
             break;
 
         case 'W':
-            gfx_fill_rect(px, y, s, 6*s, COL_DIM);
-            gfx_fill_rect(px+4*s, y, s, 6*s, COL_DIM);
-            gfx_fill_rect(px+2*s, y+3*s, s, 3*s, COL_DIM);
+            gfx_fill_rect(px, y, s, 6*s, col);
+            gfx_fill_rect(px+4*s, y, s, 6*s, col);
+            gfx_fill_rect(px+2*s, y+3*s, s, 3*s, col);
             break;
 
         case 'Y':
-            gfx_fill_rect(px, y, s, 3*s, COL_DIM);
-            gfx_fill_rect(px+4*s, y, s, 3*s, COL_DIM);
-            gfx_fill_rect(px+2*s, y+3*s, s, 3*s, COL_DIM);
+            gfx_fill_rect(px, y, s, 3*s, col);
+            gfx_fill_rect(px+4*s, y, s, 3*s, col);
+            gfx_fill_rect(px+2*s, y+3*s, s, 3*s, col);
             break;
 
         case ' ':
@@ -570,27 +634,128 @@ static void draw_label(int x, int y, const char *txt, int s)
     }
 }
 
-static void update_int7(int x, int y, int s, int old_value, int new_value,
-                        int digits, uint16_t fg, uint16_t bg)
+static void draw_battery_panel_value_full(int percent)
 {
-    if (old_value < 0) old_value = 0;
-    if (new_value < 0) new_value = 0;
+    int digits_x, digits_y, unit_x, unit_y;
+    uint16_t col = battery_color_for_percent(percent);
 
-    const int t = s;
-    const int L = 6*s;
-    const int w = L + 2*t;
+    percent = clampi(percent, 0, 100);
 
-    for (int i = 0; i < digits; i++) {
-        int old_d = old_value % 10;
-        int new_d = new_value % 10;
-        old_value /= 10;
-        new_value /= 10;
+    icon_battery(ICON_X, battery_icon_y(), ICON_W, ICON_H, percent, 1);
+    get_value_layout(P1Y, &digits_x, &digits_y, &unit_x, &unit_y);
 
-        if (old_d != new_d) {
-            int pos = digits - 1 - i;
-            draw_digit7(x + pos*(w + s), y, s, new_d, fg, bg);
-        }
+    redraw_digits_3(digits_x, digits_y, 3, percent, col, COL_BG);
+    gfx_fill_rect(unit_x, unit_y, UNIT_W, UNIT_H + 4, COL_BG);
+    draw_percent(unit_x, unit_y + 2, 2, col);
+}
+
+static void draw_celltemp_panel_value_full(int temp)
+{
+    int digits_x, digits_y, unit_x, unit_y;
+    uint16_t col = temp_color_for_value(temp);
+
+    temp = clampi(temp, 0, 150);
+
+    get_value_layout(P2Y, &digits_x, &digits_y, &unit_x, &unit_y);
+
+    redraw_digits_3(digits_x, digits_y, 3, temp, col, COL_BG);
+    gfx_fill_rect(unit_x, unit_y, UNIT_W, UNIT_H + 4, COL_BG);
+    draw_C(unit_x, unit_y + 1, 2, col);
+}
+
+static void draw_watertemp_panel_value_full(int temp)
+{
+    int digits_x, digits_y, unit_x, unit_y;
+    uint16_t col = temp_color_for_value(temp);
+
+    temp = clampi(temp, 0, 150);
+
+    get_value_layout(P3Y, &digits_x, &digits_y, &unit_x, &unit_y);
+
+    redraw_digits_3(digits_x, digits_y, 3, temp, col, COL_BG);
+    gfx_fill_rect(unit_x, unit_y, UNIT_W, UNIT_H + 4, COL_BG);
+    draw_C(unit_x, unit_y + 1, 2, col);
+}
+
+static void redraw_celltemp_panel_value_delta(int old_temp, int new_temp)
+{
+    int digits_x, digits_y, unit_x, unit_y;
+
+    old_temp = clampi(old_temp, 0, 150);
+    new_temp = clampi(new_temp, 0, 150);
+
+    uint16_t old_col = temp_color_for_value(old_temp);
+    uint16_t new_col = temp_color_for_value(new_temp);
+
+    get_value_layout(P2Y, &digits_x, &digits_y, &unit_x, &unit_y);
+
+    if (old_col != new_col) {
+        redraw_digits_3(digits_x, digits_y, 3, new_temp, new_col, COL_BG);
+
+        // clear and redraw unit area
+        gfx_fill_rect(unit_x, unit_y, UNIT_W, UNIT_H + 4, COL_BG);
+        draw_C(unit_x, unit_y + 1, 2, new_col);
+    } else {
+        redraw_changed_digits_3(digits_x, digits_y, 3, old_temp, new_temp, new_col, COL_BG);
     }
+}
+
+static void redraw_watertemp_panel_value_delta(int old_temp, int new_temp)
+{
+    int digits_x, digits_y, unit_x, unit_y;
+
+    old_temp = clampi(old_temp, 0, 150);
+    new_temp = clampi(new_temp, 0, 150);
+
+    uint16_t old_col = temp_color_for_value(old_temp);
+    uint16_t new_col = temp_color_for_value(new_temp);
+
+    get_value_layout(P3Y, &digits_x, &digits_y, &unit_x, &unit_y);
+
+    if (old_col != new_col) {
+        redraw_digits_3(digits_x, digits_y, 3, new_temp, new_col, COL_BG);
+        gfx_fill_rect(unit_x, unit_y, UNIT_W, UNIT_H + 4, COL_BG);
+        draw_C(unit_x, unit_y + 1, 2, new_col);
+    } else {
+        redraw_changed_digits_3(digits_x, digits_y, 3, old_temp, new_temp, new_col, COL_BG);
+    }
+}
+
+static void redraw_battery_panel_value_delta(int old_percent, int new_percent)
+{
+    int digits_x, digits_y, unit_x, unit_y;
+
+    old_percent = clampi(old_percent, 0, 100);
+    new_percent = clampi(new_percent, 0, 100);
+
+    uint16_t old_col = battery_color_for_percent(old_percent);
+    uint16_t new_col = battery_color_for_percent(new_percent);
+
+    // icon changes whenever value changes
+    icon_battery(ICON_X, battery_icon_y(), ICON_W, ICON_H, new_percent, 1);
+
+    get_value_layout(P1Y, &digits_x, &digits_y, &unit_x, &unit_y);
+
+    if (old_col != new_col) {
+        redraw_digits_3(digits_x, digits_y, 3, new_percent, new_col, COL_BG);
+        gfx_fill_rect(unit_x, unit_y, UNIT_W, UNIT_H + 4, COL_BG);
+        draw_percent(unit_x, unit_y + 2, 2, new_col);
+    } else {
+        redraw_changed_digits_3(digits_x, digits_y, 3, old_percent, new_percent, new_col, COL_BG);
+    }
+}
+
+static void redraw_speed_number_delta(int old_speed, int new_speed)
+{
+    int digits_x, digits_y;
+
+    old_speed = clampi(old_speed, 0, SPEED_MAX);
+    new_speed = clampi(new_speed, 0, SPEED_MAX);
+
+    get_speed_layout(&digits_x, &digits_y);
+
+    // Speed color is fixed, so we only redraw changed digit cells
+    redraw_changed_digits_3(digits_x, digits_y, 4, old_speed, new_speed, COL_TEXT, COL_BG);
 }
 
 static void draw_int7(int x, int y, int s, int value, int digits, uint16_t fg, uint16_t bg)
@@ -660,7 +825,7 @@ static void get_value_layout(int panel_y, int *digits_x, int *digits_y, int *uni
 static void icon_battery(int x, int y, int w, int h, int percent, int on)
 {
     uint16_t stroke = on ? COL_TEXT : COL_DIM;
-    uint16_t fill   = (percent < 20) ? COL_WARN : COL_GOOD;
+    uint16_t fill   = on ? battery_color_for_percent(percent) : COL_DIM;
 
     // outline
     gfx_fill_rect(x, y, w, h, COL_PANEL);
@@ -672,11 +837,15 @@ static void icon_battery(int x, int y, int w, int h, int percent, int on)
     // terminal nub
     gfx_fill_rect(x+w, y + h/3, w/8, h/3, stroke);
 
-    // fill level
+    // full interior redraw every time
     int inner = w - 4;
     int level = clampi(percent, 0, 100) * inner / 100;
+
     gfx_fill_rect(x+2, y+2, inner, h-4, RGB565(8,8,8));
-    gfx_fill_rect(x+2, y+2, level, h-4, on ? fill : COL_DIM);
+
+    if (level > 0) {
+        gfx_fill_rect(x+2, y+2, level, h-4, fill);
+    }
 }
 
 // ---------- gauge drawing ----------
@@ -690,11 +859,37 @@ static void draw_gauge_static(void)
         (const uint16_t*)speedometer_icon
     );
 
-    //gfx_fill_rect(GAUGE_CX - 5, GAUGE_CY - 5, 10, 10, COL_TEXT);
+    gfx_fill_rect(GAUGE_CX - 5, GAUGE_CY - 5, 10, 10, COL_TEXT);
 }
 
 
 // ---------- panels ----------
+
+static uint16_t battery_color_for_percent(int percent)
+{
+    percent = clampi(percent, 0, 100);
+
+    if (percent <= BATT_RED_MAX) {
+        return COL_WARN;                 // red
+    } else if (percent <= BATT_ORANGE_MAX) {
+        return RGB565(255,165,0);        // orange
+    } else {
+        return COL_GOOD;                 // green
+    }
+}
+
+static uint16_t temp_color_for_value(int temp)
+{
+    temp = clampi(temp, 0, 150);
+
+    if (temp <= TEMP_GREEN_MAX) {
+        return COL_GOOD;                 // green
+    } else if (temp <= TEMP_ORANGE_MAX) {
+        return RGB565(255,165,0);        // orange
+    } else {
+        return COL_WARN;                 // red
+    }
+}
 
 static void draw_speed_number(int speed)
 {
@@ -715,7 +910,7 @@ static void draw_speed_number(int speed)
 static void draw_battery_panel_static(void)
 {
     gfx_fill_rect(PX, P1Y, PW, PH, COL_PANEL);
-    draw_label(VAL_X, P1Y + 8, "BATTERY", 3);
+    draw_label(VAL_X, P1Y + 8, "BATTERY", 3, COL_DIM);
 
     icon_battery(ICON_X, battery_icon_y(), ICON_W, ICON_H, 0, 1);
 
@@ -725,7 +920,7 @@ static void draw_battery_panel_static(void)
 static void draw_celltemp_panel_static(void)
 {
     gfx_fill_rect(PX, P2Y, PW, PH, COL_PANEL);
-    draw_label(VAL_X, P2Y + 8, "CELL TEMP", 3);
+    draw_label(VAL_X, P2Y + 8, "CELL TEMP", 3, COL_DIM);
 
     gfx_blit565(
         ICON_X + 12,
@@ -741,7 +936,7 @@ static void draw_celltemp_panel_static(void)
 static void draw_watertemp_panel_static(void)
 {
     gfx_fill_rect(PX, P3Y, PW, PH, COL_PANEL);
-    draw_label(VAL_X, P3Y + 8, "WATER TEMP", 3);
+    draw_label(VAL_X, P3Y + 8, "WATER TEMP", 3, COL_DIM);
 
     gfx_blit565(
         ICON_X+4,
@@ -752,26 +947,6 @@ static void draw_watertemp_panel_static(void)
     );
 
     draw_value_box(P3Y);
-}
-
-static void update_battery_icon_fill(int old_percent, int new_percent)
-{
-    int x = ICON_X;
-    int y = battery_icon_y();
-    int w = ICON_W;
-    int h = ICON_H;
-
-    int inner = w - 4;
-    int old_level = clampi(old_percent, 0, 100) * inner / 100;
-    int new_level = clampi(new_percent, 0, 100) * inner / 100;
-
-    uint16_t fill = (new_percent < 20) ? COL_WARN : COL_GOOD;
-
-    if (new_level < old_level) {
-        gfx_fill_rect(x + 2 + new_level, y + 2, old_level - new_level, h - 4, RGB565(8,8,8));
-    } else if (new_level > old_level) {
-        gfx_fill_rect(x + 2 + old_level, y + 2, new_level - old_level, h - 4, fill);
-    }
 }
 
 // ---------- public API ----------
@@ -788,28 +963,18 @@ void dash_init(void)
 
     draw_gauge_static();
     update_needle(0);
-    draw_UGR_logo();
     draw_speed_number(0);
 
     draw_battery_panel_static();
     draw_celltemp_panel_static();
     draw_watertemp_panel_static();
 
-    {
-        int digits_x, digits_y, unit_x, unit_y;
+    // initial values
+    draw_battery_panel_value_full(0);
+    draw_celltemp_panel_value_full(0);
+    draw_watertemp_panel_value_full(0);
 
-        get_value_layout(P1Y, &digits_x, &digits_y, &unit_x, &unit_y);
-        draw_int7(digits_x, digits_y, 3, 0, 3, COL_TEXT, COL_BG);
-        draw_percent(unit_x, unit_y + 2, 2, COL_TEXT);
-
-        get_value_layout(P2Y, &digits_x, &digits_y, &unit_x, &unit_y);
-        draw_int7(digits_x, digits_y, 3, 0, 3, COL_TEXT, COL_BG);
-        draw_C(unit_x, unit_y + 1, 2, COL_TEXT);
-
-        get_value_layout(P3Y, &digits_x, &digits_y, &unit_x, &unit_y);
-        draw_int7(digits_x, digits_y, 3, 0, 3, COL_TEXT, COL_BG);
-        draw_C(unit_x, unit_y + 1, 2, COL_TEXT);
-    }
+    draw_UGR_logo();
 
     inited = 1;
 }
@@ -819,53 +984,34 @@ void dash_update(const Dashboard *d)
     if (!inited) dash_init();
     if (!d) return;
 
-
     if (d->battery_charge != prev.battery_charge) {
-        int digits_x, digits_y, unit_x, unit_y;
-        get_value_layout(P1Y, &digits_x, &digits_y, &unit_x, &unit_y);
-
-        update_battery_icon_fill(prev.battery_charge, d->battery_charge);
-        update_int7(digits_x, digits_y, 3,
-                    clampi(prev.battery_charge, 0, 100),
-                    clampi(d->battery_charge, 0, 100),
-                    3, COL_TEXT, COL_BG);
+        redraw_battery_panel_value_delta(prev.battery_charge, d->battery_charge);
         prev.battery_charge = d->battery_charge;
     }
 
     if (d->cell_temperature != prev.cell_temperature) {
-        int digits_x, digits_y, unit_x, unit_y;
-        get_value_layout(P2Y, &digits_x, &digits_y, &unit_x, &unit_y);
-
-        update_int7(digits_x, digits_y, 3,
-                    clampi(prev.cell_temperature, 0, 150),
-                    clampi(d->cell_temperature, 0, 150),
-                    3, COL_TEXT, COL_BG);
+        redraw_celltemp_panel_value_delta(prev.cell_temperature, d->cell_temperature);
         prev.cell_temperature = d->cell_temperature;
     }
 
     if (d->water_temperature != prev.water_temperature) {
-        int digits_x, digits_y, unit_x, unit_y;
-        get_value_layout(P3Y, &digits_x, &digits_y, &unit_x, &unit_y);
-
-        update_int7(digits_x, digits_y, 3,
-                    clampi(prev.water_temperature, 0, 150),
-                    clampi(d->water_temperature, 0, 150),
-                    3, COL_TEXT, COL_BG);
+        redraw_watertemp_panel_value_delta(prev.water_temperature, d->water_temperature);
         prev.water_temperature = d->water_temperature;
     }
 
     if (d->speed != prev.speed) {
         update_needle(d->speed);
-        draw_speed_number(d->speed);
+        redraw_speed_number_delta(prev.speed, d->speed);
         prev.speed = d->speed;
     }
 }
 
 void draw_UGR_logo() {
-    gfx_blit565(
-        510, 5,
+    gfx_blit565_key(
+        440, 5,
         UGR_LOGO_W, UGR_LOGO_H,
-        (const uint16_t*)ugr_logo
+        (const uint16_t*)ugr_logo,
+        RGB565(0,0,0)
     );
 }
 
