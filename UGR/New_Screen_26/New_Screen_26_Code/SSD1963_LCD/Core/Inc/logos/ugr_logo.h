@@ -1,8 +1,8 @@
 #pragma once
 #include <stdint.h>
 
-#define UGR_LOGO_W 203
-#define UGR_LOGO_H 90
+#define UGR_LOGO_W 158
+#define UGR_LOGO_H 70
 
 #define BIG_UGR_LOGO_W 699
 #define BIG_UGR_LOGO_H 310

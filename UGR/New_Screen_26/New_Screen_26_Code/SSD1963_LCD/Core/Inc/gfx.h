@@ -9,6 +9,8 @@ typedef struct {
     const uint16_t *px;   // RGB565, row-major
 } Bitmap565;
 
+void gfx_draw_pixel(int x, int y, uint16_t color);
+
 void gfx_fill_rect(int x, int y, int w, int h, uint16_t color);
 
 // Fast bitmap draw (no transparency)

@@ -3,131 +3,268 @@
 #include "ssd1963.h"
 #include "logos/ugr_logo.h"
 #include "logos/icons.h"
-#include "dashboard_font_20.h"
-#include "font_draw.h"
+#include "gfx_text.h"
+
+//Fonts
+#include "fonts\FreeSansBold18pt7b.h"
 
 #include <string.h>
 #include <math.h>
 
 // If you use math (sinf/cosf), ensure your link flags include -lm in CMake.
 
-#define W 800
-#define H 480
+// ======================================================
+// SCREEN SIZE
+// ======================================================
 
-//=== Touch areas for toggling screens ===
+#define W 800                 // LCD width in pixels
+#define H 480                 // LCD height in pixels
 
-#define SMALL_LOGO_X   380
-#define SMALL_LOGO_Y   5
 
-#define BIG_LOGO_X     50
-#define BIG_LOGO_Y     85
+// ======================================================
+// TOUCH AREAS (logo buttons)
+// ======================================================
 
-#define LOGO_BACK_BTN_X   300
-#define LOGO_BACK_BTN_Y   410
-#define LOGO_BACK_BTN_W   200
-#define LOGO_BACK_BTN_H   50
+#define SMALL_LOGO_X   370    // X position of the small UGR logo (top bar)
+#define SMALL_LOGO_Y   5      // Y position of the small UGR logo
 
-// Battery color thresholds
-#define BATT_RED_MAX        20
-#define BATT_ORANGE_MAX     50
+#define BIG_LOGO_X     50     // X position of the large logo screen image
+#define BIG_LOGO_Y     85     // Y position of the large logo screen image
 
-// Temperature color thresholds
-#define TEMP_GREEN_MAX      60
-#define TEMP_ORANGE_MAX     90
-// above TEMP_ORANGE_MAX => red
+// Back button on the logo screen
+#define LOGO_BACK_BTN_X   300 // Left edge of the back button
+#define LOGO_BACK_BTN_Y   410 // Top edge of the back button
+#define LOGO_BACK_BTN_W   200 // Button width
+#define LOGO_BACK_BTN_H   50  // Button height
 
-#define SPEED_MAX 350
-#define COL_NEEDLE      RGB565(255,0,0)       // bright red
-#define COL_NEEDLE_EDGE RGB565(255,255,255)   // white outline
-#define COL_HUB         RGB565(255,255,255)
 
-// Colors (RGB565 macro comes from your ssd1963.h)
-#define COL_BG     RGB565(0,0,0)
-#define COL_PANEL  RGB565(18,18,18)
-#define COL_TEXT   RGB565(230,230,230)
-#define COL_DIM    RGB565(120,120,120)
-#define COL_ACC    RGB565(0,200,255)
-#define COL_WARN   RGB565(255,80,0)
-#define COL_GOOD   RGB565(0,220,0)
+// ======================================================
+// BATTERY COLOR THRESHOLDS
+// ======================================================
 
-// Layout
-static const int DASH_Y_OFFSET = -30;   // adjust this to move the whole dashboard
+#define BATT_RED_MAX        20   // ≤20% battery = red
+#define BATT_ORANGE_MAX     50   // ≤50% battery = orange
+                                 // >50% battery = green
 
-static const int GAUGE_CX = 230;
-static const int GAUGE_CY = 270 + DASH_Y_OFFSET;
-static const int GAUGE_R  = 165;
 
-// Speed number box 
-static const int SPEED_BOX_W = 130; 
-static const int SPEED_BOX_H = 110; 
-static const int SPEED_BOX_X = GAUGE_CX - SPEED_BOX_W / 2; 
+// ======================================================
+// TEMPERATURE COLOR THRESHOLDS
+// ======================================================
+
+#define TEMP_GREEN_MAX      60   // ≤60°C = green
+#define TEMP_ORANGE_MAX     90   // ≤90°C = orange
+                                 // >90°C = red
+
+
+// ======================================================
+// SPEEDOMETER CONFIGURATION
+// ======================================================
+
+#define SPEED_MAX 350           // Maximum supported speed value
+
+// Needle drawing colours
+#define COL_NEEDLE      RGB565(255,0,0)       // red needle body
+#define COL_NEEDLE_EDGE RGB565(255,255,255)   // white needle outline
+#define COL_HUB         RGB565(255,255,255)   // center hub colour
+
+
+// ======================================================
+// UI COLOR PALETTE
+// ======================================================
+
+#define COL_BG     RGB565(0,0,0)         // background colour
+#define COL_PANEL  RGB565(18,18,18)      // grey panel background
+#define COL_TEXT   RGB565(230,230,230)   // main text colour
+#define COL_DIM    RGB565(120,120,120)   // dimmed text
+#define COL_ACC    RGB565(0,200,255)     // accent colour
+#define COL_WARN   RGB565(255,80,0)      // warning colour (red/orange)
+#define COL_GOOD   RGB565(0,220,0)       // good value colour (green)
+
+
+// ======================================================
+// GLOBAL DASHBOARD OFFSET
+// ======================================================
+
+static const int DASH_Y_OFFSET = -30;
+// Moves the entire dashboard vertically.
+// Negative = move everything up
+// Positive = move everything down
+
+
+// ======================================================
+// SPEEDOMETER POSITION
+// ======================================================
+
+static const int GAUGE_CX = 230;                     // X coordinate of speedometer center
+static const int GAUGE_CY = 270 + DASH_Y_OFFSET;     // Y coordinate of speedometer center
+static const int GAUGE_R  = 165;                     // Speedometer radius
+
+
+// ======================================================
+// SPEED DISPLAY BOX (the large number under the gauge)
+// ======================================================
+
+static const int SPEED_BOX_W = 130;                  // width of the speed box
+static const int SPEED_BOX_H = 110;                  // height of the speed box
+
+// Center the box horizontally under the gauge
+static const int SPEED_BOX_X = GAUGE_CX - SPEED_BOX_W / 2;
+
+// Vertical position of the box
 static const int SPEED_BOX_Y = 340 + DASH_Y_OFFSET;
 
-// Right-side panels
-static const int PX = 480;
-static const int PW = 320;
-static const int P1Y = 115 + DASH_Y_OFFSET;
-static const int P2Y = 240 + DASH_Y_OFFSET;
-static const int P3Y = 365 + DASH_Y_OFFSET;
 
-// Speed number box
+// ======================================================
+// RIGHT PANEL COLUMN POSITION
+// ======================================================
+
+static const int PX = 510;
+// Left edge of the right-side panel column.
+// Increasing this moves the panels right,
+// decreasing moves them left.
+
+
+// ======================================================
+// NEEDLE LENGTH
+// ======================================================
+
 static const int NEEDLE_LEN = GAUGE_R - 28;
+// Distance from center of the gauge to needle tip.
 
-static const float START_ANGLE_DEG = 140.0f;
-static const float TOP_ANGLE_DEG   = 270.0f;
-static const float END_ANGLE_DEG   = 40.0f;   // same as 400°, just wrapped
 
+// ======================================================
+// SPEED → ANGLE MAPPING FOR NEEDLE
+// ======================================================
+
+static const float START_ANGLE_DEG = 140.0f;  // angle for 0 speed
+static const float TOP_ANGLE_DEG   = 270.0f;  // angle at mid speed
+static const float END_ANGLE_DEG   = 40.0f;   // angle at max speed (wraps around)
+
+
+// Speed values corresponding to those angles
 static const int SPEED_AT_START = 0;
 static const int SPEED_AT_TOP   = 140;
 static const int SPEED_AT_END   = 350;
 
-// Value text anchor in panels
-static const int ICON_X = PX + 16;
-static const int ICON_W = 56;
-static const int ICON_H = 40;
 
+// ======================================================
+// PANEL ICON POSITIONING
+// ======================================================
+
+static const int ICON_X = PX + 16;   // left edge of icons inside panel
+static const int ICON_W = 56;        // icon width
+static const int ICON_H = 40;        // icon height
+
+
+// Bitmap icon dimensions
 static const int WATER_BMP_W = 48;
 static const int WATER_BMP_H = 80;
 
 static const int THERMO_BMP_W = 33;
 static const int THERMO_BMP_H = 80;
 
-// Manual icon offsets after centering
-static const int ICON_Y_FINE = 15;   // negative = move icons up, positive = down
+
+// ======================================================
+// ICON POSITION ADJUSTMENTS
+// ======================================================
+
+static const int ICON_Y_FINE = 15;
+// Global vertical adjustment for icons
+
 static const int BATTERY_ICON_Y_FINE = 0;
 static const int THERMO_ICON_Y_FINE  = 0;
 static const int WATER_ICON_Y_FINE   = 0;
-static const int VAL_X  = PX + 95;
+// Individual per-icon adjustments
 
-// Digit geometry (scale = 3)
+
+// ======================================================
+// VALUE NUMBER POSITION
+// ======================================================
+
+static const int VAL_X  = PX + 95;
+// Horizontal anchor for the numeric values (123, 85°C, etc)
+
+
+// ======================================================
+// 7-SEGMENT DIGIT GEOMETRY
+// ======================================================
+
 static const int DIGIT_SCALE = 3;
+// Scale factor controlling digit size
 
 static const int DIGIT_W = (6*DIGIT_SCALE) + (2*DIGIT_SCALE);
 static const int DIGIT_H = (2*(10*DIGIT_SCALE)) + (3*DIGIT_SCALE);
 
-// 3 digits + spacing
+// Total width of a 3-digit value
 static const int DIGITS_W = (3 * DIGIT_W) + (2 * DIGIT_SCALE);
 
-// unit symbol size
-static const int UNIT_W = 12;
-static const int UNIT_H = 12;
 
-// spacing between digits and unit
-static const int VALUE_GAP = 12;
+// ======================================================
+// UNIT SYMBOL SIZE
+// ======================================================
 
-// value box padding
-static const int VALUE_PAD_X = 10;
-static const int VALUE_PAD_Y = 10;
+static const int UNIT_W = 12;  // width of % or °C symbol
+static const int UNIT_H = 12;  // height of unit symbol
 
-// black outlined value box
-static const int VALUE_BOX_X = VAL_X;          // align with label text
-static const int VALUE_BOX_Y_OFF = 36;
-static const int VALUE_BOX_W = DIGITS_W + VALUE_GAP + UNIT_W + VALUE_PAD_X*2;
-static const int VALUE_BOX_H = DIGIT_H + VALUE_PAD_Y*2;
 
-// make gray panel extend down to the bottom of the black box, plus a little margin
+// ======================================================
+// SPACING AROUND VALUES
+// ======================================================
+
+static const int VALUE_GAP = 12;      // gap between digits and unit
+
+static const int VALUE_PAD_X = 10;    // horizontal padding inside value box
+static const int VALUE_PAD_Y = 10;    // vertical padding inside value box
+
+
+// ======================================================
+// VALUE BOX GEOMETRY
+// ======================================================
+
+static const int VALUE_BOX_X = VAL_X; // left edge of the value box
+
+static const int VALUE_BOX_Y_OFF = 28;
+// vertical offset from panel top to value box
+
+static const int VALUE_BOX_W =
+DIGITS_W + VALUE_GAP + UNIT_W + VALUE_PAD_X*2;
+
+static const int VALUE_BOX_H =
+DIGIT_H + VALUE_PAD_Y*2;
+
+
+// ======================================================
+// PANEL HEIGHT
+// ======================================================
+
 static const int PANEL_BOTTOM_PAD = 8;
-static const int PH = VALUE_BOX_Y_OFF + VALUE_BOX_H + PANEL_BOTTOM_PAD;
+// bottom padding inside each panel
+
+static const int PH =
+VALUE_BOX_Y_OFF + VALUE_BOX_H + PANEL_BOTTOM_PAD;
+// total panel height
+
+
+// ======================================================
+// PANEL SPACING
+// ======================================================
+
+static const int PANEL_GAP = 20;
+// vertical gap between panels
+
+
+// ======================================================
+// PANEL POSITIONS
+// ======================================================
+
+static const int P1Y = 80 + DASH_Y_OFFSET;
+// battery panel Y position
+
+static const int P2Y = P1Y + PH + PANEL_GAP;
+// cell temperature panel Y position
+
+static const int P3Y = P2Y + PH + PANEL_GAP;
+// water temperature panel Y position
 
 //prototypes
 static void draw_hline_clipped(int x0, int x1, int y, uint16_t col);
@@ -453,6 +590,12 @@ static void update_needle(int speed)
     prev_needle_tip = new_tip;
 }
 
+
+//=================================================================
+//===========================TEXT STUFF============================
+//=================================================================
+
+
 // ---------- 7-seg digits (no font assets needed) ----------
 /*
 Segments:  a
@@ -555,99 +698,6 @@ static void draw_digit7(int x, int y, int s, int digit, uint16_t fg, uint16_t bg
     if (m & (1<<5)) seg_v(x + 0,     y + t, Hh, t, fg);
     // g: middle
     if (m & (1<<6)) seg_h(x + t, y + t + Hh, L, t, fg);
-}
-
-// ---------- tiny label text ----------
-// ---------- scalable label text ----------
-
-static void draw_label(int x, int y, const char *txt, int s, uint16_t col)
-{
-    // s = scale (2 or 3 recommended)
-
-    const int cw = 6*s;
-
-    for (int i = 0; txt[i]; i++) {
-
-        int px = x + i*cw;
-
-        switch (txt[i]) {
-
-        case 'A':
-            gfx_fill_rect(px, y, 4*s, s, col);
-            gfx_fill_rect(px, y, s, 6*s, col);
-            gfx_fill_rect(px+3*s, y, s, 6*s, col);
-            gfx_fill_rect(px, y+3*s, 4*s, s, col);
-            break;
-
-        case 'B':
-            gfx_fill_rect(px, y, s, 6*s, col);
-            gfx_fill_rect(px, y, 3*s, s, col);
-            gfx_fill_rect(px, y+3*s, 3*s, s, col);
-            gfx_fill_rect(px, y+5*s, 3*s, s, col);
-            gfx_fill_rect(px+3*s, y+s, s, 2*s, col);
-            gfx_fill_rect(px+3*s, y+4*s, s, s, col);
-            break;
-
-        case 'C':
-            gfx_fill_rect(px, y, 4*s, s, col);
-            gfx_fill_rect(px, y, s, 6*s, col);
-            gfx_fill_rect(px, y+5*s, 4*s, s, col);
-            break;
-
-        case 'E':
-            gfx_fill_rect(px, y, 4*s, s, col);
-            gfx_fill_rect(px, y, s, 6*s, col);
-            gfx_fill_rect(px, y+3*s, 3*s, s, col);
-            gfx_fill_rect(px, y+5*s, 4*s, s, col);
-            break;
-
-        case 'L':
-            gfx_fill_rect(px, y, s, 6*s, col);
-            gfx_fill_rect(px, y+5*s, 4*s, s, col);
-            break;
-
-        case 'M':
-            gfx_fill_rect(px, y, s, 6*s, col);
-            gfx_fill_rect(px+4*s, y, s, 6*s, col);
-            gfx_fill_rect(px+2*s, y+2*s, s, 2*s, col);
-            break;
-
-        case 'P':
-            gfx_fill_rect(px, y, s, 6*s, col);
-            gfx_fill_rect(px, y, 4*s, s, col);
-            gfx_fill_rect(px+4*s, y+s, s, 2*s, col);
-            gfx_fill_rect(px, y+3*s, 4*s, s, col);
-            break;
-
-        case 'R':
-            gfx_fill_rect(px, y, s, 6*s, col);
-            gfx_fill_rect(px, y, 4*s, s, col);
-            gfx_fill_rect(px+4*s, y+s, s, 2*s, col);
-            gfx_fill_rect(px, y+3*s, 4*s, s, col);
-            gfx_fill_rect(px+3*s, y+3*s, s, 3*s, col);
-            break;
-
-        case 'T':
-            gfx_fill_rect(px, y, 5*s, s, col);
-            gfx_fill_rect(px+2*s, y, s, 6*s, col);
-            break;
-
-        case 'W':
-            gfx_fill_rect(px, y, s, 6*s, col);
-            gfx_fill_rect(px+4*s, y, s, 6*s, col);
-            gfx_fill_rect(px+2*s, y+3*s, s, 3*s, col);
-            break;
-
-        case 'Y':
-            gfx_fill_rect(px, y, s, 3*s, col);
-            gfx_fill_rect(px+4*s, y, s, 3*s, col);
-            gfx_fill_rect(px+2*s, y+3*s, s, 3*s, col);
-            break;
-
-        case ' ':
-            break;
-        }
-    }
 }
 
 static void draw_battery_panel_value_full(int percent)
@@ -925,8 +975,15 @@ static void draw_speed_number(int speed)
 
 static void draw_battery_panel_static(void)
 {
-    gfx_fill_rect(PX, P1Y, PW, PH, COL_PANEL);
-    draw_label(VAL_X, P1Y + 8, "BATTERY", 3, COL_DIM);
+    //gfx_fill_rect(PX, P1Y, PW, PH, COL_PANEL);
+
+    gfx_draw_text_font(
+        PX + 40,
+        P1Y + 15,   // baseline
+        "BATTERY",
+        &FreeSansBold18pt7b,
+        COL_TEXT
+    );
 
     icon_battery(ICON_X, battery_icon_y(), ICON_W, ICON_H, 0, 1);
 
@@ -935,8 +992,15 @@ static void draw_battery_panel_static(void)
 
 static void draw_celltemp_panel_static(void)
 {
-    gfx_fill_rect(PX, P2Y, PW, PH, COL_PANEL);
-    draw_label(VAL_X, P2Y + 8, "CELL TEMP", 3, COL_DIM);
+    //gfx_fill_rect(PX, P2Y, PW, PH, COL_PANEL);
+
+    gfx_draw_text_font(
+        PX + 30,
+        P2Y + 15,
+        "CELL TEMP",
+        &FreeSansBold18pt7b,
+        COL_TEXT
+    );
 
     gfx_blit565(
         ICON_X + 12,
@@ -951,11 +1015,18 @@ static void draw_celltemp_panel_static(void)
 
 static void draw_watertemp_panel_static(void)
 {
-    gfx_fill_rect(PX, P3Y, PW, PH, COL_PANEL);
-    draw_label(VAL_X, P3Y + 8, "WATER TEMP", 3, COL_DIM);
+    //gfx_fill_rect(PX, P3Y, PW, PH, COL_PANEL);
+
+    gfx_draw_text_font(
+        PX + 20,
+        P3Y + 15,
+        "WATER TEMP",
+        &FreeSansBold18pt7b,
+        COL_TEXT
+    );
 
     gfx_blit565(
-        ICON_X+4,
+        ICON_X + 4,
         water_icon_y(),
         WATER_BMP_W,
         WATER_BMP_H,
@@ -1021,6 +1092,8 @@ void dash_update(const Dashboard *d)
         prev.speed = d->speed;
     }
 }
+
+//===================UGR LOGOS========================
 
 void draw_UGR_logo(void)
 {

@@ -113,3 +113,8 @@ void gfx_blit565_key_crop(int dst_x, int dst_y,
         }
     }
 }
+
+void gfx_draw_pixel(int x, int y, uint16_t color)
+{
+    gfx_fill_rect(x, y, 1, 1, color);
+}

@@ -57,15 +57,33 @@
   /* Private variables ---------------------------------------------------------*/
 
   /* USER CODE BEGIN PV */
-  #define CAN_ID_BATTERY   0x100
-  #define CAN_ID_TEMPS     0x101
-  #define CAN_ID_SPEED     0x102
+  #define SCREEN_TEST_MODE 1 //Set to 1 to have the screen keep incrementing all values to test
+
+  #define CAN_ID_DASHBOARD      0x100
+  #define CAN_DASHBOARD_DLC     5 //Length of data
+
+  #define DASH_IDX_BATTERY      0
+  #define DASH_IDX_CELL_TEMP    1
+  #define DASH_IDX_WATER_TEMP   2
+  #define DASH_IDX_SPEED_L      3
+  #define DASH_IDX_SPEED_H      4
+
+    /* 
+    ===========================================
+    CAN message format (ID 0x100):
+    byte0 = battery_charge
+    byte1 = cell_temperature
+    byte2 = water_temperature
+    byte3 = speed low byte
+    byte4 = speed high byte
+    ===========================================
+    */ 
 
   #define CAN2_RX_QUEUE_SIZE 16
 
   #define LCD_BRIGHTNESS 10 // adjust as needed (0-100%)
 
-  #define TOUCH_COOLDOWN_MS 500
+  #define TOUCH_COOLDOWN_MS 250
 
   typedef struct
   {
@@ -85,6 +103,7 @@ enum Screen_State {
     LOGO
 };
 
+//==================STARTING STATE==============
 static enum Screen_State screen_state = LOGO;
 static volatile uint8_t screen_updated = 0;
 static volatile uint8_t updated = 0;
@@ -95,37 +114,6 @@ static uint32_t next_touch_allowed = 0;
 static GT911_State touch;
 static uint8_t touch_ok = 0;
 
-  /*
-  CAN message formats:
-
-  BATTERY FRAME (ID 0x100):
-  byte0 = battery_charge
-
-  TEMP FRAME (ID 0x101):
-  byte0 = cell_temperature
-  byte1 = water_temperature
-
-  SPEED FRAME (ID 0x102):
-  byte0 = speed low byte
-  byte1 = speed high byte
-
-  EXAMPLE SEND CODE:
-  uint8_t msg_batt[1];
-  uint8_t msg_temp[2];
-  uint8_t msg_speed[2];
-
-  msg_batt[0] = d.battery_charge;
-
-  msg_temp[0] = d.cell_temperature;
-  msg_temp[1] = d.water_temperature;
-
-  msg_speed[0] = (uint8_t)(d.speed & 0xFF);
-  msg_speed[1] = (uint8_t)((d.speed >> 8) & 0xFF);
-
-  CAN2_SendStd(CAN_ID_BATTERY, msg_batt, 1);
-  CAN2_SendStd(CAN_ID_TEMPS, msg_temp, 2);
-  CAN2_SendStd(CAN_ID_SPEED, msg_speed, 2);
-  */
 
   static volatile uint8_t can2_rx_head = 0;
   static volatile uint8_t can2_rx_tail = 0;
@@ -134,8 +122,7 @@ static uint8_t touch_ok = 0;
   static CAN2_RxMessage can2_rx_queue[CAN2_RX_QUEUE_SIZE];
   static uint8_t CAN2_RxQueue_Pop(CAN2_RxMessage *msg);
   static uint8_t CAN2_RxQueue_Push(const CAN_RxHeaderTypeDef *hdr, const uint8_t *data);
-  void CAN2_StartNormal(void);
-  uint8_t CAN2_SendStd(uint16_t id, uint8_t *data, uint8_t dlc);
+  void CAN2_Start(void);
 
   //LCD Brightness control using TIM12 CH2 PWM on PB15
   static inline void LCD_SetBrightness(uint8_t percent)
@@ -204,7 +191,7 @@ static uint8_t touch_ok = 0;
     touch_ok = (GT911_Init(&hi2c1) == HAL_OK) ? 1 : 0;
 
     //CAN INIT
-    CAN2_StartNormal();
+    CAN2_Start();
     __enable_irq(); 
 
     // Start backlight PWM (your external brightness control on PB15)
@@ -217,7 +204,8 @@ static uint8_t touch_ok = 0;
     draw_big_UGR_logo();
 
     /* --use if touch not wanted to switch screens--
-    HAL_Delay(4000);
+    HAL_Delay(1000);
+    SSD1963_Fill(RGB565(0, 0, 0));
     dash_init(d.battery_charge, d.cell_temperature, d.water_temperature, d.speed);
     */
 
@@ -225,10 +213,13 @@ static uint8_t touch_ok = 0;
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
-
+    
     while (1)
     {
-
+        //=========================================================
+        //=================TOUCH SCREEN WHILE PART=================
+        //=========================================================
+         
         if (touch_ok)
         {
             if (GT911_ReadState(&touch) == HAL_OK)
@@ -274,7 +265,10 @@ static uint8_t touch_ok = 0;
             }
         }
         
-        //State machine for screen updates
+        //==================================================================
+        //=================State machine for screen updates=================
+        //==================================================================
+        
         switch(screen_state)
         {
             case DASHBOARD:
@@ -295,79 +289,55 @@ static uint8_t touch_ok = 0;
                 break;
         }
         
-        //CAN TEST
-        static uint32_t last_tx = 0;
-
-        if (HAL_GetTick() - last_tx >= 50)
-        {
-            last_tx = HAL_GetTick();
-
-            static uint8_t battery = 100;
-            static uint8_t cell_temp = 25;
-            static uint8_t water_temp = 90;
-            static uint16_t speed = 1;
-
-            uint8_t msg_batt[1];
-            uint8_t msg_temp[2];
-            uint8_t msg_speed[2];
-
-            msg_batt[0] = battery;
-
-            msg_temp[0] = cell_temp;
-            msg_temp[1] = water_temp;
-
-            msg_speed[0] = (uint8_t)(speed & 0xFF);
-            msg_speed[1] = (uint8_t)((speed >> 8) & 0xFF);
-
-            CAN2_SendStd(CAN_ID_BATTERY, msg_batt, 1);
-            CAN2_SendStd(CAN_ID_TEMPS, msg_temp, 2);
-            CAN2_SendStd(CAN_ID_SPEED, msg_speed, 2);
-
-            battery    = (battery + 1) % 101;
-            cell_temp  = (cell_temp + 1) % 150;
-            water_temp = (water_temp + 1) % 150;
-            speed      = (speed + 1) % (350 + 1);
-        }
+        //==================================================================
+        //=================CAN RX SECTION - IMPORTANT!!!!!!=================
+        //==================================================================
 
         CAN2_RxMessage msg;
+        uint8_t has_msg;
 
-        __disable_irq();
-        while (CAN2_RxQueue_Pop(&msg))
+        do
         {
+            __disable_irq();
+            has_msg = CAN2_RxQueue_Pop(&msg);
             __enable_irq();
 
-            if (msg.hdr.IDE == CAN_ID_STD)
+            if (has_msg)
             {
-                switch (msg.hdr.StdId)
+                if (msg.hdr.IDE == CAN_ID_STD && msg.hdr.StdId == CAN_ID_DASHBOARD)
                 {
-                    case CAN_ID_BATTERY:
-                        if (msg.hdr.DLC >= 1) {
-                            d.battery_charge = msg.data[0];
-                            updated = 1;
-                        }
-                        break;
-
-                    case CAN_ID_TEMPS:
-                        if (msg.hdr.DLC >= 2) {
-                            d.cell_temperature = msg.data[0];
-                            d.water_temperature = msg.data[1];
-                            updated = 1;
-                        }
-                        break;
-
-                    case CAN_ID_SPEED:
-                        if (msg.hdr.DLC >= 2) {
-                            d.speed = (uint16_t)msg.data[0] |
-                                      ((uint16_t)msg.data[1] << 8);
-                            updated = 1;
-                        }
-                        break;
+                    if (msg.hdr.DLC >= CAN_DASHBOARD_DLC) {
+                        d.battery_charge    = msg.data[DASH_IDX_BATTERY];
+                        d.cell_temperature  = msg.data[DASH_IDX_CELL_TEMP];
+                        d.water_temperature = msg.data[DASH_IDX_WATER_TEMP];
+                        d.speed = (uint16_t)msg.data[DASH_IDX_SPEED_L] |
+                                ((uint16_t)msg.data[DASH_IDX_SPEED_H] << 8);
+                        updated = 1;
+                    }
                 }
             }
 
-            __disable_irq();
+        } while (has_msg);
+
+        //==================================================================
+        //==========THIS ONLY RUNS IF TESTING THE SCREEN'S WIDGETS==========
+        //==================================================================
+
+        #if SCREEN_TEST_MODE
+        static uint32_t last_screen_test = 0;
+
+        if (HAL_GetTick() - last_screen_test >= 100)
+        {
+            last_screen_test = HAL_GetTick();
+
+            d.battery_charge = (d.battery_charge + 1) % 101;
+            d.cell_temperature = (d.cell_temperature + 1) % 150;
+            d.water_temperature = (d.water_temperature + 1) % 150;
+            d.speed = (d.speed + 1) % 351;
+
+            updated = 1;
         }
-        __enable_irq();
+        #endif
 
         HAL_Delay(1);
     }
@@ -375,9 +345,7 @@ static uint8_t touch_ok = 0;
     /* USER CODE END WHILE */
     
     /* USER CODE BEGIN 3 */
-      
-      
-    
+
     /* USER CODE END 3 */
   }
 
@@ -432,49 +400,34 @@ void SystemClock_Config(void)
 
   /* USER CODE BEGIN 4 */
 
-  void CAN2_StartNormal(void)
-  {
-      CAN_FilterTypeDef f;
-      memset(&f, 0, sizeof(f));
+void CAN2_Start(void)
+{
+    CAN_FilterTypeDef f;
+    memset(&f, 0, sizeof(f));
 
-      f.FilterActivation     = ENABLE;
-      f.FilterMode           = CAN_FILTERMODE_IDMASK;
-      f.FilterScale          = CAN_FILTERSCALE_32BIT;
-      f.FilterIdHigh         = 0x0000;
-      f.FilterIdLow          = 0x0000;
-      f.FilterMaskIdHigh     = 0x0000;
-      f.FilterMaskIdLow      = 0x0000;
-      f.FilterFIFOAssignment = CAN_RX_FIFO0;
-      f.FilterBank           = 14;
-      f.SlaveStartFilterBank = 14;
+    f.FilterActivation     = ENABLE;
+    f.FilterMode           = CAN_FILTERMODE_IDMASK;
+    f.FilterScale          = CAN_FILTERSCALE_32BIT;
+    f.FilterFIFOAssignment = CAN_RX_FIFO0;
+    f.FilterBank           = 14;
+    f.SlaveStartFilterBank = 14;
 
-      if (HAL_CAN_ConfigFilter(&hcan2, &f) != HAL_OK)
-          Error_Handler();
+    // Standard ID exact match for 0x100
+    f.FilterIdHigh         = (CAN_ID_DASHBOARD << 5);
+    f.FilterIdLow          = 0x0000;
+    f.FilterMaskIdHigh     = (0x7FF << 5); // All 11 bits of the ID matter (7FF is 0111 1111 1111)
+    f.FilterMaskIdLow      = 0x0000;
 
-      if (HAL_CAN_Start(&hcan2) != HAL_OK)
-          Error_Handler();
+    if (HAL_CAN_ConfigFilter(&hcan2, &f) != HAL_OK)
+        Error_Handler();
 
-      if (HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
-          Error_Handler();
-  }
+    if (HAL_CAN_Start(&hcan2) != HAL_OK)
+        Error_Handler();
 
-  uint8_t CAN2_SendStd(uint16_t id, uint8_t *data, uint8_t dlc)
-  {
-      CAN_TxHeaderTypeDef txh;
-      uint32_t mailbox;
+    if (HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
+        Error_Handler();
+}
 
-      txh.StdId = id;
-      txh.ExtId = 0;
-      txh.IDE = CAN_ID_STD;
-      txh.RTR = CAN_RTR_DATA;
-      txh.DLC = dlc;
-      txh.TransmitGlobalTime = DISABLE;
-
-      if (HAL_CAN_AddTxMessage(&hcan2, &txh, data, &mailbox) != HAL_OK)
-          return 0;
-
-      return 1;
-  }
 
   void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
   {
