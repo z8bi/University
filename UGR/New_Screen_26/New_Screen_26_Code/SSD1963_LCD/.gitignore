@@ -1,10 +1,10 @@
-build
 mx.scratch
 !.settings
+
 build/
-CMakeCache.txt
-CMakeFiles/
 cmake-build-*/
-compile_commands.json
+**/CMakeCache.txt
+**/CMakeFiles/
+**/compile_commands.json
 *.ninja
 .ninja_*
