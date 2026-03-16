@@ -80,6 +80,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Inc
     Core/Inc/logos
+    Core/Inc/fonts
 )
 
 add_custom_command(TARGET SSD1963_LCD POST_BUILD

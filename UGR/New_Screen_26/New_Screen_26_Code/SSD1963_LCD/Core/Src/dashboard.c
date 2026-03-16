@@ -3,6 +3,8 @@
 #include "ssd1963.h"
 #include "logos/ugr_logo.h"
 #include "logos/icons.h"
+#include "dashboard_font_20.h"
+#include "font_draw.h"
 
 #include <string.h>
 #include <math.h>
@@ -479,7 +481,7 @@ static void redraw_changed_digits_3(
     split_3digits(old_value, oldd);
     split_3digits(new_value, newd);
 
-    const int t = s;
+    const int t = s + 1;
     const int L = 6*s;
     const int w = L + 2*t;
 
@@ -499,7 +501,7 @@ static void redraw_digits_3(
     int d[3];
     split_3digits(value, d);
 
-    const int t = s;
+    const int t = s + 1;
     const int L = 6*s;
     const int w = L + 2*t;
 
@@ -512,7 +514,7 @@ static void redraw_digits_3(
 static void draw_digit7(int x, int y, int s, int digit, uint16_t fg, uint16_t bg)
 {
     // digit box size
-    const int t = s;          // thickness
+    const int t = s + 1;          // thickness
     const int L = 6*s;        // segment length
     const int Hh = 10*s;      // vertical span per side (top/bottom)
     const int w = L + 2*t;
@@ -557,6 +559,7 @@ static void draw_digit7(int x, int y, int s, int digit, uint16_t fg, uint16_t bg
 
 // ---------- tiny label text ----------
 // ---------- scalable label text ----------
+
 static void draw_label(int x, int y, const char *txt, int s, uint16_t col)
 {
     // s = scale (2 or 3 recommended)
@@ -776,7 +779,7 @@ static void draw_int7(int x, int y, int s, int value, int digits, uint16_t fg, u
     int v = value;
     if (v < 0) v = 0;
 
-    const int t = s;
+    const int t = s + 1;
     const int L = 6*s;
     const int w = L + 2*t;
 

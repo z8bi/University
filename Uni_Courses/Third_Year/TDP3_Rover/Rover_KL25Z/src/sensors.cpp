@@ -2,8 +2,7 @@
 #include "pin_definitions.hpp"
 #include <cmath>
 
-
-//Shmidtt trigger thresholds
+// Schmitt trigger thresholds
 static constexpr float TH_ON  = 0.60f;
 static constexpr float TH_OFF = 0.50f;
 
@@ -30,6 +29,10 @@ Sensors read_sensors() {
 
 LineInfo interpret(const Sensors& s) {
     static constexpr int w[5] = {-2, -1, 0, 1, 2};
+
+    static int   last_active_sensor = 2;
+    static float last_pos = 0.0f;
+
     LineInfo li{};
 
     for (int i = 0; i < 5; i++) {
@@ -39,23 +42,39 @@ LineInfo interpret(const Sensors& s) {
         }
     }
 
-    //lost if no sensors are active
-    li.lost = (li.active_count == 0);
+    if (li.active_count > 0) {
+        li.pos = static_cast<float>(li.pos_sum) / li.active_count;
+        last_pos = li.pos;
 
-    //tracks the direction of the last known position
-    li.pos  = (!li.lost) ? (static_cast<float>(li.pos_sum) / li.active_count) : 0.0f;
+        // remember the furthest sensor currently seeing the line
+        if (s.on[0])      last_active_sensor = 0;
+        else if (s.on[4]) last_active_sensor = 4;
+        else if (s.on[1]) last_active_sensor = 1;
+        else if (s.on[3]) last_active_sensor = 3;
+        else if (s.on[2]) last_active_sensor = 2;
+    } else {
+        li.pos = last_pos;
+    }
 
-    //centered if the middle sensor is on the line and the two adjacent aren't
-    li.centered = s.on[2] && !(s.on[1] || s.on[3]);
+    li.middle     = s.on[2];
+    li.centered   = (li.active_count == 1 && s.on[2]);
 
-    li.middle = s.on[2];
+    li.left_most  = s.on[0];
+    li.right_most = s.on[4];
 
-    // used to check for right degree turns
-    li.right_turn_sig = (s.on[3] && s.on[4]) || (s.on[2] && s.on[4]);
-    li.left_turn_sig  = (s.on[0] && s.on[1]) || (s.on[0] && s.on[2]);
-    li.junction        = (s.on[2] && (li.right_turn_sig || li.left_turn_sig));
-    //
-    
+    // 90-degree corner: any 2+ sensors on at once
+    li.junction = (li.active_count >= 2);
+
+    // choose turn direction for the corner
+    li.left_turn_sig  = li.junction && (li.pos < 0.0f);
+    li.right_turn_sig = li.junction && (li.pos > 0.0f);
+
+    // all sensors off
+    li.fully_lost = (li.active_count == 0);
+
+    // only SEEK if we lost it after it was already at an outermost sensor
+    li.lost = li.fully_lost &&
+              (last_active_sensor == 0 || last_active_sensor == 4);
 
     return li;
 }

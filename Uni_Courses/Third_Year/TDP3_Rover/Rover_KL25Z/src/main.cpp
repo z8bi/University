@@ -58,6 +58,7 @@
 
         // SEEK center-lock
         bool seek_lock_active = false;
+        bool seek_lock_enabled = false;   // only allow middle-lock when FOLLOW triggered SEEK
         int  seek_lock_dir    = 0; // -1 left, +1 right
         Kernel::Clock::time_point seek_lock_until{};
         bool ob_seek_force_full_duration = false;
@@ -275,9 +276,6 @@
         // Debounced event flags
         bool red_confirmed         = false;
         bool obstacle_confirmed    = false;
-        bool found_confirmed       = false;
-        bool follow_lost_confirmed = false;
-        bool align_lost_confirmed  = false;
 
         // Only allow new transitions when obstacle mode is not locked -> this way when obstacle is triggered it won't be overwritted until it releases control
         if (!lock_ob) {
@@ -325,23 +323,16 @@
                 return;
             }
 
-            // ----- SEEK / ALIGN / FOLLOW confirms -----
-            const bool in_seek = (state == CtrlState::SEEK_LEFT || state == CtrlState::SEEK_RIGHT);
-
-            found_confirmed = debounce(in_seek && !li.lost, rt.found_cnt, Config::FOUND_TICKS);
-
             // Track last-known direction
             if (!li.lost) {
                 if (li.pos > 0.2f)       last_pos = +1;
                 else if (li.pos < -0.2f) last_pos = -1;
             }
 
-            follow_lost_confirmed = debounce(state == CtrlState::FOLLOW && li.lost, rt.lost_cnt, Config::FOLLOW_LOST_TICKS);
-            align_lost_confirmed  = debounce(state == CtrlState::ALIGN  && li.lost, rt.align_lost_cnt, Config::ALIGN_LOST_TICKS);
-
             // SEEK center-lock housekeeping
             if (state != CtrlState::SEEK_LEFT && state != CtrlState::SEEK_RIGHT) {
                 rt.seek_lock_active = false;
+                rt.seek_lock_enabled = false;
                 rt.seek_lock_dir    = 0;
                 rt.ob_seek_force_full_duration = false;
             }
@@ -362,30 +353,53 @@
         switch (state) {
 
             case CtrlState::FOLLOW: {
-                if (follow_lost_confirmed) {
-                    enter_state(CtrlState::ALIGN, 0);
+                if (li.right_turn_sig && !li.left_turn_sig) {
+                    last_pos = +1;
+                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS);
+                    motors_brake(Config::BRAKE_STRENGTH);
+                    break;
+                }
+
+                if (li.left_turn_sig && !li.right_turn_sig) {
+                    last_pos = -1;
+                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS);
+                    motors_brake(Config::BRAKE_STRENGTH);
                     break;
                 }
 
                 if (li.centered) {
                     move_forward(Config::DUTY_FWD);
-                } else {
-                    if (li.pos > 0.0f) turn_right_break_inner(Config::FOLLOW_BRAKE_STRENGTH, Config::DUTY_FOLLOW_TURN);
-                    else               turn_left_break_inner (Config::FOLLOW_BRAKE_STRENGTH, Config::DUTY_FOLLOW_TURN);
+                    break;
                 }
+
+                enter_state(CtrlState::ALIGN, 0);
                 break;
             }
 
-            case CtrlState::ALIGN: {
+           case CtrlState::ALIGN: {
                 if (li.centered) {
                     enter_state(CtrlState::FOLLOW, 0);
                     move_forward(Config::DUTY_FWD);
                     break;
                 }
 
-                if (align_lost_confirmed) {
+                if (li.right_turn_sig && !li.left_turn_sig) {
+                    last_pos = +1;
                     enter_state(CtrlState::BRAKING, Config::BRAKE_MS);
                     motors_brake(Config::BRAKE_STRENGTH);
+                    break;
+                }
+
+                if (li.left_turn_sig && !li.right_turn_sig) {
+                    last_pos = -1;
+                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS);
+                    motors_brake(Config::BRAKE_STRENGTH);
+                    break;
+                }
+
+                if (li.lost) {
+                    rt.seek_lock_enabled = false;
+                    enter_state((last_pos >= 0) ? CtrlState::SEEK_RIGHT : CtrlState::SEEK_LEFT, 0);
                     break;
                 }
 
@@ -408,7 +422,7 @@
 
                 if (rt.seek_lock_active && rt.seek_lock_dir != -1) { rt.seek_lock_active = false; rt.seek_lock_dir = 0; }
 
-                if (!rt.seek_lock_active && s.on[0]) {
+                if (rt.seek_lock_enabled && !rt.seek_lock_active && s.on[0]) {
                     rt.seek_lock_active = true;
                     rt.seek_lock_dir    = -1;
                     rt.seek_lock_until  = Kernel::Clock::now() + std::chrono::milliseconds(Config::SEEK_CENTER_LOCK_MS);
@@ -428,7 +442,7 @@
                     rt.ob_seek_force_full_duration = false;
                 }
 
-                if (found_confirmed) {
+                if (!li.fully_lost) {
                     enter_state(CtrlState::ALIGN, 0);
                     break;
                 }
@@ -440,7 +454,7 @@
             case CtrlState::SEEK_RIGHT: {
                 if (rt.seek_lock_active && rt.seek_lock_dir != +1) { rt.seek_lock_active = false; rt.seek_lock_dir = 0; }
 
-                if (!rt.seek_lock_active && s.on[4]) {
+                if (rt.seek_lock_enabled && !rt.seek_lock_active && s.on[4]) {
                     rt.seek_lock_active = true;
                     rt.seek_lock_dir    = +1;
                     rt.seek_lock_until  = Kernel::Clock::now() + std::chrono::milliseconds(Config::SEEK_CENTER_LOCK_MS);
@@ -459,7 +473,7 @@
                     rt.seek_lock_active = false;
                 }
 
-                if (found_confirmed) {
+                if (!li.fully_lost) {
                     enter_state(CtrlState::ALIGN, 0);
                     break;
                 }
@@ -467,13 +481,12 @@
                 turn_right_skid_reverse_inner(Config::DUTY_TURN);
                 break;
             }
-
+            
             case CtrlState::BRAKING: {
                 if (state_time_elapsed()) {
                     motors_all_off();
-
-                    if (li.lost) enter_state((last_pos >= 0) ? CtrlState::SEEK_RIGHT : CtrlState::SEEK_LEFT, 0);
-                    else         enter_state(CtrlState::ALIGN, 0);
+                    rt.seek_lock_enabled = true;   // FOLLOW triggered this SEEK
+                    enter_state((last_pos >= 0) ? CtrlState::SEEK_RIGHT : CtrlState::SEEK_LEFT, 0);
                 } else {
                     motors_brake(Config::BRAKE_STRENGTH);
                 }
@@ -882,7 +895,7 @@
         if (!tcs_ok) Debug::log("TCS3472 init failed");
 
         // START BEHAVIOR!!!! MAKE FULL STOPPED FOR BLUETOOTH -> SEEK FOR QUICK TESTS
-        enter_state(CtrlState::FULLY_STOPPED, 0);
+        enter_state(CtrlState::SEEK_LEFT, 0);
 
         Flags::colorTick.attach(&Flags::color_isr,   std::chrono::milliseconds(Config::COLOR_PERIOD_MS));
         Flags::controlTick.attach(&Flags::control_isr, std::chrono::milliseconds(Config::CTRL_PERIOD_MS));

@@ -30,10 +30,10 @@ static constexpr float FOLLOW_BRAKE_STRENGTH = 0.8f;
 
 // SEEK braking
 static constexpr float BRAKE_STRENGTH = 1.0f;
-static constexpr int   BRAKE_MS       = 50;
+static constexpr int   BRAKE_MS       = 175;
 
 // FULLY_STOPPED behavior
-static constexpr int   FULL_STOP_BRAKE_MS       = 200;
+static constexpr int   FULL_STOP_BRAKE_MS       = 300;
 static constexpr float FULL_STOP_BRAKE_STRENGTH = 1.0f;
 
 // Lost-line confirm windows
@@ -74,10 +74,10 @@ static constexpr int   RED_REACQUIRE_TICKS       = 2;
 static constexpr int   STOP_BRAKE_MS             = 350;
 
 // Manual BT
-static constexpr float BT_DUTY_FWD  = 0.4f;
-static constexpr float BT_DUTY_FWD_SLOW  = 0.3f;
-static constexpr float BT_DUTY_REV  = 0.4f;
-static constexpr float BT_DUTY_REV_SLOW  = 0.3f;
+static constexpr float BT_DUTY_FWD  = 0.6f;
+static constexpr float BT_DUTY_FWD_SLOW  = 0.4f;
+static constexpr float BT_DUTY_REV  = 0.6f;
+static constexpr float BT_DUTY_REV_SLOW  = 0.4f;
 static constexpr float BT_DUTY_TURN = 0.75f;
 
 } // namespace Config
