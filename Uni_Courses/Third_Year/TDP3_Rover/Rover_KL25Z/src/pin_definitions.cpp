@@ -30,4 +30,6 @@ DigitalIn bt_state(PTE21);
 const PinName BT_TX = PTE22;
 const PinName BT_RX = PTE23;
 const int     BT_BAUD = 115200;
+
+DigitalIn start_switch(PTE30, PullUp);
 } // namespace HW

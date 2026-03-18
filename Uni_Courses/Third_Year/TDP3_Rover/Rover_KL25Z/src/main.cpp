@@ -894,9 +894,15 @@
         const bool tcs_ok = HW::color.init(100.0f, tcs3472::Gain::X16);
         if (!tcs_ok) Debug::log("TCS3472 init failed");
 
-        // START BEHAVIOR!!!! MAKE FULL STOPPED FOR BLUETOOTH -> SEEK FOR QUICK TESTS
-        enter_state(CtrlState::SEEK_LEFT, 0);
+        // START BEHAVIOR!!!! IF THE SHORT IS PRESENT AT BOOT -> SEEK, OTHERWISE FULLY STOPPED WAITING FOR BT PAIRING
+        if(HW::start_switch == 0) {
+            enter_state(CtrlState::SEEK_LEFT, 0);
+        }
+        else {
+            enter_state(CtrlState::FULLY_STOPPED, Config::FULL_STOP_BRAKE_MS);
+        }
 
+        //Initialize timers for periodic tasks
         Flags::colorTick.attach(&Flags::color_isr,   std::chrono::milliseconds(Config::COLOR_PERIOD_MS));
         Flags::controlTick.attach(&Flags::control_isr, std::chrono::milliseconds(Config::CTRL_PERIOD_MS));
         Flags::ultraTick.attach(&Flags::ultra_isr,   std::chrono::milliseconds(Config::ULTRA_PERIOD_MS));

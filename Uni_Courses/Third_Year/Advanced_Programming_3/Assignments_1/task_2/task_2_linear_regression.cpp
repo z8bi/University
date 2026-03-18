@@ -7,7 +7,6 @@
 using namespace std; 
 
 //Little helper to calculate mean
-
 template<typename T> //We can actualy use the templates here to ensure our helper works for int and double, etc.
 
 double calculate_mean(vector<T> &vect) {

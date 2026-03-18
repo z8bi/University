@@ -4,10 +4,10 @@
 #include <stdint.h>
 
 typedef struct {
-    double battery_charge;
-    double cell_temperature;
-    double water_temperature;
-    int speed;
+    uint8_t battery_charge;      // 0–100
+    uint8_t cell_temperature;    // 0–150
+    uint8_t water_temperature;   // 0–150
+    uint16_t speed;              // or whatever range
 } Dashboard;
 
 typedef struct {

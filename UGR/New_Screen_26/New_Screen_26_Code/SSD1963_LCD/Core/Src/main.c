@@ -326,7 +326,7 @@ static uint8_t touch_ok = 0;
         #if SCREEN_TEST_MODE
         static uint32_t last_screen_test = 0;
 
-        if (HAL_GetTick() - last_screen_test >= 100)
+        if (HAL_GetTick() - last_screen_test >= 50)
         {
             last_screen_test = HAL_GetTick();
 

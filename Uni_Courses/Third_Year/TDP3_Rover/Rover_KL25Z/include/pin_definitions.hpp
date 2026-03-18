@@ -34,4 +34,7 @@ extern DigitalIn bt_state;
 extern const PinName BT_TX;
 extern const PinName BT_RX;
 extern const int     BT_BAUD;
+
+//Starting Switch
+extern DigitalIn start_switch;
 } // namespace HW

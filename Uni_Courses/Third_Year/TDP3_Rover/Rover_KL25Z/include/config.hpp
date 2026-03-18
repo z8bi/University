@@ -17,7 +17,7 @@ static constexpr int ULTRA_PERIOD_MS = 50; //actually 100 per sensor, each funct
 static constexpr int FOUND_TICKS = 1;
 
 // Drive tunables
-static constexpr float DUTY_FWD  = 0.75f;
+static constexpr float DUTY_FWD  = 0.70f;
 static constexpr float DUTY_TURN = 0.77f;
 
 // Align parameters
@@ -30,7 +30,7 @@ static constexpr float FOLLOW_BRAKE_STRENGTH = 0.8f;
 
 // SEEK braking
 static constexpr float BRAKE_STRENGTH = 1.0f;
-static constexpr int   BRAKE_MS       = 175;
+static constexpr int   BRAKE_MS       = 200;
 
 // FULLY_STOPPED behavior
 static constexpr int   FULL_STOP_BRAKE_MS       = 300;
@@ -48,7 +48,7 @@ static constexpr float FRONT_MAX_CM     = 40.0f;
 static constexpr float RIGHT_MAX_CM     = 40.0f;
 
 // Obstacle avoid
-static constexpr float OB_FRONT_TRIG_CM      = 32.0f;
+static constexpr float OB_FRONT_TRIG_CM      = 35.0f;
 static constexpr float OB_RIGHT_TRIG_CM      = 45.0f;
 
 static constexpr float OB_FRONT_CLOSE_CM     = 25.0f; 
@@ -57,7 +57,7 @@ static constexpr float OB_FRONT_CLOSER_SPEED = 0.30f;
 static constexpr int   OB_PHASE_MIN_MS       = 2000; 
 static constexpr int   OB_SEEK_DURATION      = 350;
 static constexpr int   OB_CONFIRM_CTRL_TICKS = 1;
-static constexpr int   OB_BRAKE_MS           = 700;
+static constexpr int   OB_BRAKE_MS           = 500;
 static constexpr int   TURN_45_MS            = 900;
 static constexpr float DUTY_OB_TURN          = 0.73f;
 static constexpr float DUTY_OB_FWD           = 0.35f;

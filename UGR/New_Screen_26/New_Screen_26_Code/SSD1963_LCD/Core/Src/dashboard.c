@@ -6,7 +6,7 @@
 #include "gfx_text.h"
 
 //Fonts
-#include "fonts\FreeSansBold18pt7b.h"
+#include "FreeSansBold18pt7b.h"
 
 #include <string.h>
 #include <math.h>
@@ -25,8 +25,8 @@
 // TOUCH AREAS (logo buttons)
 // ======================================================
 
-#define SMALL_LOGO_X   370    // X position of the small UGR logo (top bar)
-#define SMALL_LOGO_Y   5      // Y position of the small UGR logo
+#define SMALL_LOGO_X   415    // X position of the small UGR logo (top bar)
+#define SMALL_LOGO_Y   20      // Y position of the small UGR logo
 
 #define BIG_LOGO_X     50     // X position of the large logo screen image
 #define BIG_LOGO_Y     85     // Y position of the large logo screen image
@@ -36,7 +36,6 @@
 #define LOGO_BACK_BTN_Y   410 // Top edge of the back button
 #define LOGO_BACK_BTN_W   200 // Button width
 #define LOGO_BACK_BTN_H   50  // Button height
-
 
 // ======================================================
 // BATTERY COLOR THRESHOLDS
@@ -118,7 +117,7 @@ static const int SPEED_BOX_Y = 340 + DASH_Y_OFFSET;
 // RIGHT PANEL COLUMN POSITION
 // ======================================================
 
-static const int PX = 510;
+static const int PX = 490;
 // Left edge of the right-side panel column.
 // Increasing this moves the panels right,
 // decreasing moves them left.
@@ -181,7 +180,7 @@ static const int WATER_ICON_Y_FINE   = 0;
 // VALUE NUMBER POSITION
 // ======================================================
 
-static const int VAL_X  = PX + 95;
+static const int VAL_X  = PX + 85;
 // Horizontal anchor for the numeric values (123, 85°C, etc)
 
 

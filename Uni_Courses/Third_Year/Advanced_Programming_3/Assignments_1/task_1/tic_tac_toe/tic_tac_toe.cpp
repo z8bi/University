@@ -36,7 +36,7 @@ class Game {
 //All helper function require a game instance to be passed by refference
 
 //Function using nested FOR loops printing the game_state
-void print_board(Game& current_game) {
+void print_board(const Game& current_game) {
 
     cout << "\n+" << " - - - " << "+" << endl;
 
