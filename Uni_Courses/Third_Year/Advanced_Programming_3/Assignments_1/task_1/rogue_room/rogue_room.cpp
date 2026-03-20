@@ -2,8 +2,6 @@
 #include <string>
 #include <vector>
 
-using namespace std; //allows to ommit the ever so annoying std::, no other libraries used here so no conflict due to the namespace, just saves time
-
 //================================
 //=======Class setup section======
 //================================
@@ -28,25 +26,25 @@ public:
 //Function used for room drawing - uses game instance
 void draw_room(Game& game) {
     //Shortcut for initializing string with column number times the second char '-'
-    string horizontal_boundaries(game.number_of_columns, '-');
+    std::string horizontal_boundaries(game.number_of_columns, '-');
 
-    cout << "+" << horizontal_boundaries << "+" << endl;
+    std::cout << "+" << horizontal_boundaries << "+" << std::endl;
 
     //Nested FOR loops checking player row and column position
     for(int i = 0; i < game.number_of_rows; i++) {
-        cout << "|";
+        std::cout << "|";
         for(int j = 0; j < game.number_of_columns; j++) {
             if(game.player_row == i && game.player_column == j) {
-                cout << "@"; //Player char
+                std::cout << "@"; //Player char
             }
             else {
-                cout << "."; //Default empty space char
+                std::cout << "."; //Default empty space char
             }
         }
-        cout << "|" << endl;
+        std::cout << "|" << std::endl;
     }
     
-    cout << "+" << horizontal_boundaries << "+" << endl;
+    std::cout << "+" << horizontal_boundaries << "+" << std::endl;
 
 }
 
@@ -54,9 +52,9 @@ void draw_room(Game& game) {
 bool player_move(Game& game) {
 
     //Terminal interface
-    cout << "Press WASD to move. Press Q to quit ";
+    std::cout << "Press WASD to move. Press Q to quit ";
     char input = ' ';
-    cin >> input;
+    std::cin >> input;
 
     //User input & Player coordinate check - Both upper and lower case accepted
     //Each switch case uses the game instance to check whether the player is in bounds
@@ -68,11 +66,11 @@ bool player_move(Game& game) {
         if (game.player_row > 0)
             game.player_row--;
         else
-            cout << "\n" 
+            std::cout << "\n" 
             << "========================================\n"
             << "Sorry, you have reached the North Wall.\n" 
             << "========================================\n"
-            << endl;
+            << std::endl;
         break;
 
     case 'S':
@@ -80,11 +78,11 @@ bool player_move(Game& game) {
         if (game.player_row < game.number_of_rows - 1)
             game.player_row++;
         else
-            cout << "\n" 
+            std::cout << "\n" 
             << "========================================\n"
             << "Sorry, you have reached the South Wall.\n" 
             << "========================================\n"
-            << endl;
+            << std::endl;
         break;
 
     case 'A':
@@ -92,11 +90,11 @@ bool player_move(Game& game) {
         if (game.player_column > 0)
             game.player_column--;
         else
-            cout << "\n" 
+            std::cout << "\n" 
             << "========================================\n"
             << "Sorry, you have reached the West Wall.\n" 
             << "========================================\n"
-            << endl;
+            << std::endl;
         break;
 
     case 'D':
@@ -104,11 +102,11 @@ bool player_move(Game& game) {
         if (game.player_column < game.number_of_columns - 1)
             game.player_column++;
         else
-            cout << "\n" 
+            std::cout << "\n" 
             << "========================================\n"
             << "Sorry, you have reached the East Wall.\n" 
             << "========================================\n"
-            << endl;
+            << std::endl;
         break;
     
     //Game Termination - used in main to cancel the while loop
@@ -117,7 +115,7 @@ bool player_move(Game& game) {
 
     default:
         //Restart again if the user types incorrectly, which is definitely possible given each input has to be followed by Enter
-        cout << "Invalid input.\n";
+        std::cout << "Invalid input.\n";
     }
 
     //Keep while loop running

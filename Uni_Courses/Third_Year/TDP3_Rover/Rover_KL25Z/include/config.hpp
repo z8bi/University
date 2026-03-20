@@ -2,6 +2,8 @@
 //====================== CONFIG ========================
 //======================================================
 
+#define SPEED_MODE 0
+
 namespace Config {
 
 // Main PWM frequency (for motors)
@@ -12,25 +14,21 @@ static constexpr int CTRL_PERIOD_MS  = 5;
 static constexpr int DEBUG_PERIOD_MS = 100;
 static constexpr int COLOR_PERIOD_MS = 50;
 static constexpr int ULTRA_PERIOD_MS = 50; //actually 100 per sensor, each function run only updates one of the sensors
-
+    
 // Debounce / confirm
 static constexpr int FOUND_TICKS = 1;
 
 // Drive tunables
-static constexpr float DUTY_FWD  = 0.70f;
-static constexpr float DUTY_TURN = 0.77f;
+static constexpr float DUTY_FWD  = SPEED_MODE ? 0.75f : 0.7f; 
+static constexpr float DUTY_TURN = SPEED_MODE ? 0.9f : 0.77f; 
 
 // Align parameters
-static constexpr float ALIGN_DUTY_TURN     = 0.82f;
+static constexpr float ALIGN_DUTY_TURN     = SPEED_MODE ? 1.0f : 0.82f; 
 static constexpr float TURN_BRAKE_STRENGTH = 0.90f;
-
-// Follow gentle turning
-static constexpr float DUTY_FOLLOW_TURN      = 0.7f;
-static constexpr float FOLLOW_BRAKE_STRENGTH = 0.8f;
 
 // SEEK braking
 static constexpr float BRAKE_STRENGTH = 1.0f;
-static constexpr int   BRAKE_MS       = 200;
+static constexpr int   BRAKE_MS       = SPEED_MODE ? 150 : 200;
 
 // FULLY_STOPPED behavior
 static constexpr int   FULL_STOP_BRAKE_MS       = 300;
@@ -64,7 +62,7 @@ static constexpr float DUTY_OB_FWD           = 0.35f;
 static constexpr float DUTY_OB_RIGHT         = 0.68f;
 
 // Traffic light
-static constexpr int RED_CTRL_CONFIRM_TICKS = 2;
+static constexpr int RED_CTRL_CONFIRM_TICKS = 1;
 static constexpr int COLOR_INTENSITY        = 1000;
 
 // STOPPED (red light) behavior

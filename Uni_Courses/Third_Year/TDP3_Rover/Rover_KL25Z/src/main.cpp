@@ -367,9 +367,15 @@
                     break;
                 }
 
-                if (li.centered) {
+                if (li.centered || (!li.left_inner && !li.right_inner)) {
                     move_forward(Config::DUTY_FWD);
                     break;
+                }
+
+                if(li.left_inner) {
+                    last_pos = -1;
+                } else if(li.right_inner) {
+                    last_pos = +1;
                 }
 
                 enter_state(CtrlState::ALIGN, 0);
@@ -443,6 +449,7 @@
                 }
 
                 if (!li.fully_lost) {
+                    li.pos = -1;
                     enter_state(CtrlState::ALIGN, 0);
                     break;
                 }
@@ -474,6 +481,7 @@
                 }
 
                 if (!li.fully_lost) {
+                    li.pos = 1;
                     enter_state(CtrlState::ALIGN, 0);
                     break;
                 }

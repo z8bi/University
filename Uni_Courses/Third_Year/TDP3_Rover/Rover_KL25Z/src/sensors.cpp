@@ -60,6 +60,8 @@ LineInfo interpret(const Sensors& s) {
     li.centered   = (li.active_count == 1 && s.on[2]);
 
     li.left_most  = s.on[0];
+    li.left_inner = s.on[1];
+    li.right_inner = s.on[3];
     li.right_most = s.on[4];
 
     // 90-degree corner: any 2+ sensors on at once

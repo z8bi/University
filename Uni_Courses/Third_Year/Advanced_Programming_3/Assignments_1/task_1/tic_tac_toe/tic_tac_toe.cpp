@@ -2,8 +2,6 @@
 #include <string>
 #include<cstdlib>
 
-using namespace std; //Yay namespace saves time
-
 //=================================================
 //=========Main Game Class + Helper class==========
 //=================================================
@@ -38,18 +36,18 @@ class Game {
 //Function using nested FOR loops printing the game_state
 void print_board(const Game& current_game) {
 
-    cout << "\n+" << " - - - " << "+" << endl;
+    std::cout << "\n+" << " - - - " << "+" << std::endl;
 
     //Iterates the Game instance's internal board array and prints it out with nice vertical spacers
     for(int i = 0; i < 3; i++) {
-        cout << "| ";
+        std::cout << "| ";
         for(int j = 0; j < 3; j++) {
-            cout << current_game.board[i][j] << " "; 
+            std::cout << current_game.board[i][j] << " "; 
         }
-        cout << "|" << endl;
+        std::cout << "|" << std::endl;
     }
     
-    cout << "+" << " - - - " << "+\n" << endl;
+    std::cout << "+" << " - - - " << "+\n" << std::endl;
 }
 
 //Both player and computer use this function to interact with the Game object
@@ -58,9 +56,9 @@ void make_move(Game& current_game, bool is_player_turn) {
     if(is_player_turn) {
         //While loop ensures a player makes a valid movement -> is exited with break when correct move is made
         while (true) {
-            cout << "Please select which tile to mark by typing 1 - 9. (Assume 1 is top left)" << endl;
+            std::cout << "Please select which tile to mark by typing 1 - 9. (Assume 1 is top left)" << std::endl;
             int player_choice = ' ';
-            cin >> player_choice;
+            std::cin >> player_choice;
 
             //Useful math which converts the numbers to the corresponding positions 
             int row = (player_choice - 1) / 3;
@@ -74,11 +72,11 @@ void make_move(Game& current_game, bool is_player_turn) {
                 break;
             }
             else {
-                cout << 
+                std::cout << 
                 "\n==================================================\n" <<
                 "Sorry, that tile is occupied. Please, try again.\n" <<
                 "=================================================="
-                << endl;
+                << std::endl;
                 print_board(current_game);
             }
         }
@@ -185,22 +183,22 @@ int main() {
     //Win/Loss/Draw terminal text
     switch(test_game.game_state) {
         case draw: 
-            cout <<
+            std::cout <<
             "======================\n" <<
             "=====ITS A DRAW!!!====\n" <<
-            "=======================" << endl;
+            "=======================" << std::endl;
             break;
         case player_won: 
-            cout <<
+            std::cout <<
             "=======================\n" <<
             "======YOU WON!!!!=====\n" <<
-            "======================" << endl;
+            "======================" << std::endl;
             break;
         case computer_won: 
-            cout <<
+            std::cout <<
             "=======================\n" <<
             "======YOU LOST!!!!=====\n" <<
-            "=======================" << endl;
+            "=======================" << std::endl;
             break;
     }
 

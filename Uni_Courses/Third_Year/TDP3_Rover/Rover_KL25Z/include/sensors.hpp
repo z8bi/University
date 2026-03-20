@@ -29,6 +29,8 @@ struct LineInfo {
     bool right_turn_sig = false;
     bool left_turn_sig  = false;
 
+    bool left_inner  = false;
+    bool right_inner = false;
     bool right_most = false;
     bool left_most  = false;
 
