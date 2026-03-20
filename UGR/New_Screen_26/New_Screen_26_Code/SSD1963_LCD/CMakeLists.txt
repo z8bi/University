@@ -76,6 +76,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Src/gfx.c
     Core/Src/gt911.c
     Core/Src/gfx_text.c
+    Core/Src/sd_card.c
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE

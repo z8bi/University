@@ -25,6 +25,7 @@
   #include "usb_otg.h"
   #include "gpio.h"
   #include "fmc.h"
+  #include "sd_card.h"
 
   /* Private includes ----------------------------------------------------------*/
   /* USER CODE BEGIN Includes */
@@ -201,7 +202,7 @@ static uint8_t touch_ok = 0;
     //Main LOGO screen initialization
     SSD1963_Init();
     SSD1963_Fill(RGB565(0, 0, 0));
-    draw_big_UGR_logo();
+    //draw_big_UGR_logo();
 
     /* --use if touch not wanted to switch screens--
     HAL_Delay(1000);
@@ -209,6 +210,29 @@ static uint8_t touch_ok = 0;
     dash_init(d.battery_charge, d.cell_temperature, d.water_temperature, d.speed);
     */
 
+    uint8_t sector[512];
+
+    SD_Debug("Starting SD...", RGB565(255,255,255));
+
+    if (!SD_Init())
+    {
+        SD_Debug("SD init failed", RGB565(255,0,0));
+    }
+    else
+    {
+        SD_Debug("SD init OK", RGB565(0,255,0));
+
+        HAL_Delay(500);
+
+        if (!SD_ReadBlock(0, sector))
+        {
+            SD_Debug("Read block 0 failed", RGB565(255,255,0));
+        }
+        else
+        {
+            SD_Debug("Read block 0 OK", RGB565(0,255,0));
+        }
+    }
     /* USER CODE END 2 */
 
     /* Infinite loop */
@@ -216,6 +240,7 @@ static uint8_t touch_ok = 0;
     
     while (1)
     {
+        /*
         //=========================================================
         //=================TOUCH SCREEN WHILE PART=================
         //=========================================================
@@ -340,12 +365,13 @@ static uint8_t touch_ok = 0;
         #endif
 
         HAL_Delay(1);
+    */
     }
-
+    
     /* USER CODE END WHILE */
     
     /* USER CODE BEGIN 3 */
-
+        
     /* USER CODE END 3 */
   }
 

@@ -1141,3 +1141,10 @@ UI_Area dash_get_area(DashAreaId id)
 
     return a;
 }
+
+//REMOVE LATER
+void SD_Debug(const char *msg, uint16_t color)
+{
+    SSD1963_Fill(RGB565(0, 0, 0));
+    gfx_draw_text_font(20, 40, msg, &FreeSansBold18pt7b, color);
+}

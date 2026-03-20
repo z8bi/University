@@ -34,4 +34,6 @@ void draw_big_UGR_logo(void);
 
 UI_Area dash_get_area(DashAreaId id);
 
+void SD_Debug(const char *msg, uint16_t color);
+
 #endif
