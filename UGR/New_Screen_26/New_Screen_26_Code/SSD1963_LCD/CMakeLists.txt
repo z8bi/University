@@ -54,6 +54,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add project symbols (macros)
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
+    PROGMEM=
     # Add user defined symbols
 )
 
@@ -77,12 +78,16 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Src/gt911.c
     Core/Src/gfx_text.c
     Core/Src/sd_card.c
+    FATFS/App/fatfs.c
+    FATFS/Target/user_diskio.c
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Inc
     Core/Inc/logos
     Core/Inc/fonts
+    FATFS/APP
+    FATFS/Target
 )
 
 add_custom_command(TARGET SSD1963_LCD POST_BUILD

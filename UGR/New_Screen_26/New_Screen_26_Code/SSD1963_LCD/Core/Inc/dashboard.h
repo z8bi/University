@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 typedef struct {
+    uint8_t lap;     
     uint8_t battery_charge;      // 0–100
     uint8_t cell_temperature;    // 0–150
     uint8_t water_temperature;   // 0–150

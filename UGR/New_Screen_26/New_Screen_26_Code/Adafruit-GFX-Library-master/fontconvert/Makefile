@@ -1,12 +1,6 @@
-all: fontconvert
+CC = gcc
+CFLAGS = -Wall -IC:/msys64/mingw64/include/freetype2
+LDFLAGS = -LC:/msys64/mingw64/lib -lfreetype
 
-CC     = gcc
-CFLAGS = -Wall -I/usr/local/include/freetype2 -I/usr/include/freetype2 -I/usr/include
-LIBS   = -lfreetype
-
-fontconvert: fontconvert.c
-	$(CC) $(CFLAGS) $< $(LIBS) -o $@
-	strip $@
-
-clean:
-	rm -f fontconvert
+all:
+	$(CC) fontconvert.c $(CFLAGS) $(LDFLAGS) -o fontconvert.exe

@@ -1,4 +1,4 @@
-  /* USER CODE BEGIN Header */
+/* USER CODE BEGIN Header */
   /**
     ******************************************************************************
     * @file           : main.c
@@ -15,49 +15,80 @@
     *
     ******************************************************************************
     */
-  /* USER CODE END Header */
-  /* Includes ------------------------------------------------------------------*/
-  #include "main.h"
-  #include "can.h"
-  #include "i2c.h"
-  #include "spi.h"
-  #include "tim.h"
-  #include "usb_otg.h"
-  #include "gpio.h"
-  #include "fmc.h"
-  #include "sd_card.h"
+/* USER CODE END Header */
+/* Includes ------------------------------------------------------------------*/
+#include "main.h"
+#include "can.h"
+#include "fatfs.h"
+#include "i2c.h"
+#include "spi.h"
+#include "tim.h"
+#include "usb_otg.h"
+#include "gpio.h"
+#include "fmc.h"
 
-  /* Private includes ----------------------------------------------------------*/
-  /* USER CODE BEGIN Includes */
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
   #include <string.h>
   #include "dashboard.h"
   #include "gfx.h"
   #include "ssd1963.h"
   #include "gt911.h" //touchscreen
 
+  //sd card
+  #include "sd_card.h"
+  #include "fatfs.h"
+  #include "ff.h"
+
   //Logos
   #include "logos/ugr_logo.h"
 
-  /* USER CODE END Includes */
+/* USER CODE END Includes */
 
-  /* Private typedef -----------------------------------------------------------*/
-  /* USER CODE BEGIN PTD */
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
 
-  /* USER CODE END PTD */
+/* USER CODE END PTD */
 
-  /* Private define ------------------------------------------------------------*/
-  /* USER CODE BEGIN PD */
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
 
-  /* USER CODE END PD */
+/* USER CODE END PD */
 
-  /* Private macro -------------------------------------------------------------*/
-  /* USER CODE BEGIN PM */
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+    const char *fr_str(FRESULT fr)
+    {
+        switch (fr)
+        {
+            case FR_OK: return "FR_OK";
+            case FR_DISK_ERR: return "FR_DISK_ERR";
+            case FR_INT_ERR: return "FR_INT_ERR";
+            case FR_NOT_READY: return "FR_NOT_READY";
+            case FR_NO_FILE: return "FR_NO_FILE";
+            case FR_NO_PATH: return "FR_NO_PATH";
+            case FR_INVALID_NAME: return "FR_INVALID_NAME";
+            case FR_DENIED: return "FR_DENIED";
+            case FR_EXIST: return "FR_EXIST";
+            case FR_INVALID_OBJECT: return "FR_INVALID_OBJECT";
+            case FR_WRITE_PROTECTED: return "FR_WRITE_PROTECTED";
+            case FR_INVALID_DRIVE: return "FR_INVALID_DRIVE";
+            case FR_NOT_ENABLED: return "FR_NOT_ENABLED";
+            case FR_NO_FILESYSTEM: return "FR_NO_FILESYSTEM";
+            case FR_MKFS_ABORTED: return "FR_MKFS_ABORTED";
+            case FR_TIMEOUT: return "FR_TIMEOUT";
+            case FR_LOCKED: return "FR_LOCKED";
+            case FR_NOT_ENOUGH_CORE: return "FR_NOT_ENOUGH_CORE";
+            case FR_TOO_MANY_OPEN_FILES: return "FR_TOO_MANY_OPEN_FILES";
+            case FR_INVALID_PARAMETER: return "FR_INVALID_PARAMETER";
+            default: return "FR_UNKNOWN";
+        }
+    }
+/* USER CODE END PM */
 
-  /* USER CODE END PM */
+/* Private variables ---------------------------------------------------------*/
 
-  /* Private variables ---------------------------------------------------------*/
-
-  /* USER CODE BEGIN PV */
+/* USER CODE BEGIN PV */
   #define SCREEN_TEST_MODE 1 //Set to 1 to have the screen keep incrementing all values to test
 
   #define CAN_ID_DASHBOARD      0x100
@@ -93,6 +124,7 @@
   } CAN2_RxMessage;
 
 static Dashboard d = {
+    .lap = 0,
     .battery_charge = 50,
     .cell_temperature = 25,
     .water_temperature = 20,
@@ -100,12 +132,12 @@ static Dashboard d = {
 };
 
 enum Screen_State {
-    DASHBOARD,
+    ENDURANCE,
     LOGO
 };
 
 //==================STARTING STATE==============
-static enum Screen_State screen_state = LOGO;
+static enum Screen_State screen_state = ENDURANCE;
 static volatile uint8_t screen_updated = 0;
 static volatile uint8_t updated = 0;
 
@@ -134,59 +166,60 @@ static uint8_t touch_ok = 0;
       __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, (arr * percent) / 100);
   }
 
-  /* USER CODE END PV */
+/* USER CODE END PV */
 
-  /* Private function prototypes -----------------------------------------------*/
-  void SystemClock_Config(void);
-  static void MPU_Config(void);
-  /* USER CODE BEGIN PFP */
+/* Private function prototypes -----------------------------------------------*/
+void SystemClock_Config(void);
+static void MPU_Config(void);
+/* USER CODE BEGIN PFP */
 
-  /* USER CODE END PFP */
+/* USER CODE END PFP */
 
-  /* Private user code ---------------------------------------------------------*/
-  /* USER CODE BEGIN 0 */
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
 
-  /* USER CODE END 0 */
+/* USER CODE END 0 */
 
-  /**
-    * @brief  The application entry point.
-    * @retval int
-    */
-  int main(void)
-  {
+/**
+  * @brief  The application entry point.
+  * @retval int
+  */
+int main(void)
+{
 
-    /* USER CODE BEGIN 1 */
+  /* USER CODE BEGIN 1 */
 
-    /* USER CODE END 1 */
+  /* USER CODE END 1 */
 
-    /* MPU Configuration--------------------------------------------------------*/
-    MPU_Config();
+  /* MPU Configuration--------------------------------------------------------*/
+  MPU_Config();
 
-    /* MCU Configuration--------------------------------------------------------*/
+  /* MCU Configuration--------------------------------------------------------*/
 
-    /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-    HAL_Init();
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
 
-    /* USER CODE BEGIN Init */
+  /* USER CODE BEGIN Init */
 
-    /* USER CODE END Init */
+  /* USER CODE END Init */
 
-    /* Configure the system clock */
-    SystemClock_Config();
+  /* Configure the system clock */
+  SystemClock_Config();
 
-    /* USER CODE BEGIN SysInit */
+  /* USER CODE BEGIN SysInit */
 
-    /* USER CODE END SysInit */
+  /* USER CODE END SysInit */
 
-    /* Initialize all configured peripherals */
-    MX_GPIO_Init();
-    MX_FMC_Init();
-    MX_CAN2_Init();
-    MX_I2C1_Init();
-    MX_SPI3_Init();
-    MX_TIM12_Init();
-    MX_USB_OTG_FS_PCD_Init();
-    /* USER CODE BEGIN 2 */
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_FMC_Init();
+  MX_CAN2_Init();
+  MX_I2C1_Init();
+  MX_SPI3_Init();
+  MX_TIM12_Init();
+  MX_USB_OTG_FS_PCD_Init();
+  MX_FATFS_Init();
+  /* USER CODE BEGIN 2 */
 
     // Initialize GT911 touchscreen
     touch_ok = (GT911_Init(&hi2c1) == HAL_OK) ? 1 : 0;
@@ -202,41 +235,19 @@ static uint8_t touch_ok = 0;
     //Main LOGO screen initialization
     SSD1963_Init();
     SSD1963_Fill(RGB565(0, 0, 0));
-    //draw_big_UGR_logo();
-
-    /* --use if touch not wanted to switch screens--
-    HAL_Delay(1000);
-    SSD1963_Fill(RGB565(0, 0, 0));
-    dash_init(d.battery_charge, d.cell_temperature, d.water_temperature, d.speed);
-    */
-
-    uint8_t sector[512];
-
-    SD_Debug("Starting SD...", RGB565(255,255,255));
-
-    if (!SD_Init())
-    {
-        SD_Debug("SD init failed", RGB565(255,0,0));
+    
+    if (f_mount(&USERFatFS, USERPath, 1) == FR_OK)
+    {   
+        draw_big_UGR_logo();
+        HAL_Delay(1000);
+        screen_state = ENDURANCE;
+        screen_updated = 1;
     }
-    else
-    {
-        SD_Debug("SD init OK", RGB565(0,255,0));
 
-        HAL_Delay(500);
+  /* USER CODE END 2 */
 
-        if (!SD_ReadBlock(0, sector))
-        {
-            SD_Debug("Read block 0 failed", RGB565(255,255,0));
-        }
-        else
-        {
-            SD_Debug("Read block 0 OK", RGB565(0,255,0));
-        }
-    }
-    /* USER CODE END 2 */
-
-    /* Infinite loop */
-    /* USER CODE BEGIN WHILE */
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
     
     while (1)
     {
@@ -255,7 +266,7 @@ static uint8_t touch_ok = 0;
 
                     if (now >= next_touch_allowed)
                     {
-                        UI_Area a = (screen_state == DASHBOARD)
+                        UI_Area a = (screen_state == ENDURANCE)
                                 ? dash_get_area(DASH_AREA_SMALL_LOGO)
                                 : dash_get_area(DASH_AREA_BIG_LOGO);
 
@@ -265,10 +276,10 @@ static uint8_t touch_ok = 0;
                         if (tx >= a.x1 && tx <= a.x2 &&
                             ty >= a.y1 && ty <= a.y2)
                         {
-                            screen_state = (screen_state == DASHBOARD) ? LOGO : DASHBOARD;
+                            screen_state = (screen_state == ENDURANCE) ? LOGO : ENDURANCE;
                             SSD1963_Fill(RGB565(0, 0, 0));
 
-                            if (screen_state == DASHBOARD)
+                            if (screen_state == ENDURANCE)
                             {
                                 dash_init(d.battery_charge,
                                         d.cell_temperature,
@@ -277,7 +288,7 @@ static uint8_t touch_ok = 0;
                             }
                             else
                             {
-                                draw_big_UGR_logo();
+                                //draw_big_UGR_logo();
                             }
 
                             screen_updated = 1;
@@ -289,14 +300,15 @@ static uint8_t touch_ok = 0;
                 last_touch = touch.touched;
             }
         }
-        
+        */
+
         //==================================================================
         //=================State machine for screen updates=================
         //==================================================================
         
         switch(screen_state)
         {
-            case DASHBOARD:
+            case ENDURANCE:
 
                 if (updated) {
                     updated = 0;
@@ -351,10 +363,11 @@ static uint8_t touch_ok = 0;
         #if SCREEN_TEST_MODE
         static uint32_t last_screen_test = 0;
 
-        if (HAL_GetTick() - last_screen_test >= 50)
+        if (HAL_GetTick() - last_screen_test >= 100)
         {
             last_screen_test = HAL_GetTick();
 
+            d.lap = (d.lap + 1) % 23;
             d.battery_charge = (d.battery_charge + 1) % 101;
             d.cell_temperature = (d.cell_temperature + 1) % 150;
             d.water_temperature = (d.water_temperature + 1) % 150;
@@ -365,31 +378,35 @@ static uint8_t touch_ok = 0;
         #endif
 
         HAL_Delay(1);
-    */
+        
     }
     
     /* USER CODE END WHILE */
-    
+
     /* USER CODE BEGIN 3 */
         
-    /* USER CODE END 3 */
-  }
+  /* USER CODE END 3 */
+}
 
-  /**
-    * @brief System Clock Configuration
-    * @retval None
-    */
+/**
+  * @brief System Clock Configuration
+  * @retval None
+  */
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
+  /** Configure the main internal regulator output voltage
+  */
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
+  */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.HSIState = RCC_HSI_OFF;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 4;
@@ -397,22 +414,22 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 9;
   RCC_OscInitStruct.PLL.PLLR = 2;
-
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
   }
 
+  /** Activate the Over-Drive mode
+  */
   if (HAL_PWREx_EnableOverDrive() != HAL_OK)
   {
     Error_Handler();
   }
 
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK |
-                                RCC_CLOCKTYPE_SYSCLK |
-                                RCC_CLOCKTYPE_PCLK1 |
-                                RCC_CLOCKTYPE_PCLK2;
-
+  /** Initializes the CPU, AHB and APB buses clocks
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
@@ -424,7 +441,7 @@ void SystemClock_Config(void)
   }
 }
 
-  /* USER CODE BEGIN 4 */
+/* USER CODE BEGIN 4 */
 
 void CAN2_Start(void)
 {
@@ -501,75 +518,75 @@ void CAN2_Start(void)
       return 1;
   }
 
-  /* USER CODE END 4 */
+/* USER CODE END 4 */
 
-  /* MPU Configuration */
+ /* MPU Configuration */
 
-  void MPU_Config(void)
-  {
-    MPU_Region_InitTypeDef MPU_InitStruct = {0};
+void MPU_Config(void)
+{
+  MPU_Region_InitTypeDef MPU_InitStruct = {0};
 
-    /* Disables the MPU */
-    HAL_MPU_Disable();
+  /* Disables the MPU */
+  HAL_MPU_Disable();
 
-    /** Initializes and configures the Region and the memory to be protected
-    */
-    MPU_InitStruct.Enable = MPU_REGION_ENABLE;
-    MPU_InitStruct.Number = MPU_REGION_NUMBER0;
-    MPU_InitStruct.BaseAddress = 0x0;
-    MPU_InitStruct.Size = MPU_REGION_SIZE_4GB;
-    MPU_InitStruct.SubRegionDisable = 0x87;
-    MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;
-    MPU_InitStruct.AccessPermission = MPU_REGION_PRIV_RW;
-    MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
-    MPU_InitStruct.IsShareable = MPU_ACCESS_SHAREABLE;
-    MPU_InitStruct.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
-    MPU_InitStruct.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
+  /** Initializes and configures the Region and the memory to be protected
+  */
+  MPU_InitStruct.Enable = MPU_REGION_ENABLE;
+  MPU_InitStruct.Number = MPU_REGION_NUMBER0;
+  MPU_InitStruct.BaseAddress = 0x0;
+  MPU_InitStruct.Size = MPU_REGION_SIZE_4GB;
+  MPU_InitStruct.SubRegionDisable = 0x87;
+  MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;
+  MPU_InitStruct.AccessPermission = MPU_REGION_PRIV_RW;
+  MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
+  MPU_InitStruct.IsShareable = MPU_ACCESS_SHAREABLE;
+  MPU_InitStruct.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
+  MPU_InitStruct.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
 
-    HAL_MPU_ConfigRegion(&MPU_InitStruct);
+  HAL_MPU_ConfigRegion(&MPU_InitStruct);
 
-    /** Initializes and configures the Region and the memory to be protected
-    */
-    MPU_InitStruct.Number = MPU_REGION_NUMBER1;
-    MPU_InitStruct.BaseAddress = 0x60000000;
-    MPU_InitStruct.Size = MPU_REGION_SIZE_8MB;
-    MPU_InitStruct.SubRegionDisable = 0x0;
-    MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
-    MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;
+  /** Initializes and configures the Region and the memory to be protected
+  */
+  MPU_InitStruct.Number = MPU_REGION_NUMBER1;
+  MPU_InitStruct.BaseAddress = 0x60000000;
+  MPU_InitStruct.Size = MPU_REGION_SIZE_8MB;
+  MPU_InitStruct.SubRegionDisable = 0x0;
+  MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
+  MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;
 
-    HAL_MPU_ConfigRegion(&MPU_InitStruct);
-    /* Enables the MPU */
-    HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
+  HAL_MPU_ConfigRegion(&MPU_InitStruct);
+  /* Enables the MPU */
+  HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
 
-  }
+}
 
-  /**
-    * @brief  This function is executed in case of error occurrence.
-    * @retval None
-    */
-  void Error_Handler(void)
-  {
-    /* USER CODE BEGIN Error_Handler_Debug */
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
+void Error_Handler(void)
+{
+  /* USER CODE BEGIN Error_Handler_Debug */
     /* User can add his own implementation to report the HAL error return state */
     __disable_irq();
     while (1)
     {
     }
-    /* USER CODE END Error_Handler_Debug */
-  }
-  #ifdef USE_FULL_ASSERT
-  /**
-    * @brief  Reports the name of the source file and the source line number
-    *         where the assert_param error has occurred.
-    * @param  file: pointer to the source file name
-    * @param  line: assert_param error line source number
-    * @retval None
-    */
-  void assert_failed(uint8_t *file, uint32_t line)
-  {
-    /* USER CODE BEGIN 6 */
+  /* USER CODE END Error_Handler_Debug */
+}
+#ifdef USE_FULL_ASSERT
+/**
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
+void assert_failed(uint8_t *file, uint32_t line)
+{
+  /* USER CODE BEGIN 6 */
     /* User can add his own implementation to report the file name and line number,
       ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-    /* USER CODE END 6 */
-  }
-  #endif /* USE_FULL_ASSERT */
+  /* USER CODE END 6 */
+}
+#endif /* USE_FULL_ASSERT */

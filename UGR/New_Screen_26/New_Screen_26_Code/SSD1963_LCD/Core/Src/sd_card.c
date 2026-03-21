@@ -1,7 +1,14 @@
 #include "sd_card.h"
+#include "fatfs.h"
+#include "ff.h"
+#include "ssd1963.h"
+#include "logos/ugr_logo.h"
 
 #define SD_CS_PORT SD_Card_CS_GPIO_Port
 #define SD_CS_PIN  SD_Card_CS_Pin
+
+//buffer
+static uint8_t sd_dummy_tx[512];
 
 static uint8_t sd_is_sdhc = 0;
 
@@ -96,6 +103,11 @@ uint8_t SD_Init(void)
     uint8_t r1;
     uint8_t r7[4];
     uint8_t ocr[4];
+
+    for (int i = 0; i < 512; i++)
+    {
+        sd_dummy_tx[i] = 0xFF;
+    }
 
     sd_is_sdhc = 0;
 
@@ -219,7 +231,7 @@ uint8_t SD_Init(void)
 
 uint8_t SD_ReadBlock(uint32_t sector, uint8_t *buffer)
 {
-    uint8_t token;
+    uint8_t token = 0xFF;
     uint32_t addr = sd_is_sdhc ? sector : (sector * 512);
 
     uint8_t r1 = SD_SendCommand(17, addr, 0x01);   // CMD17
@@ -247,9 +259,11 @@ uint8_t SD_ReadBlock(uint32_t sector, uint8_t *buffer)
         return 0;
     }
 
-    for (int i = 0; i < 512; i++)
+    if (HAL_SPI_TransmitReceive(&hspi3, sd_dummy_tx, buffer, 512, HAL_MAX_DELAY) != HAL_OK)
     {
-        buffer[i] = SPI_TxRx(0xFF);
+        SD_CS_HIGH();
+        SPI_TxRx(0xFF);
+        return 0;
     }
 
     // discard CRC
@@ -261,3 +275,93 @@ uint8_t SD_ReadBlock(uint32_t sector, uint8_t *buffer)
 
     return 1;
 }
+
+uint8_t SD_ReadBlocks(uint32_t sector, uint8_t *buffer, uint32_t count)
+{
+    uint8_t token = 0xFF;
+    uint32_t addr = sd_is_sdhc ? sector : (sector * 512);
+
+    if (count == 0)
+    {
+        return 0;
+    }
+
+    // Single block can still use CMD17
+    if (count == 1)
+    {
+        return SD_ReadBlock(sector, buffer);
+    }
+
+    // CMD18 = READ_MULTIPLE_BLOCK
+    if (SD_SendCommand(18, addr, 0x01) != 0x00)
+    {
+        SD_CS_HIGH();
+        SPI_TxRx(0xFF);
+        return 0;
+    }
+
+    for (uint32_t blk = 0; blk < count; blk++)
+    {
+        uint32_t start = HAL_GetTick();
+
+        do
+        {
+            token = SPI_TxRx(0xFF);
+            if (token == 0xFE)
+            {
+                break;
+            }
+        } while ((HAL_GetTick() - start) < 100);
+
+        if (token != 0xFE)
+        {
+            SD_CS_HIGH();
+            SPI_TxRx(0xFF);
+            return 0;
+        }
+
+        if (HAL_SPI_TransmitReceive(&hspi3,
+                                    sd_dummy_tx,
+                                    buffer + (blk * 512),
+                                    512,
+                                    HAL_MAX_DELAY) != HAL_OK)
+        {
+            SD_CS_HIGH();
+            SPI_TxRx(0xFF);
+            return 0;
+        }
+
+        // discard CRC
+        SPI_TxRx(0xFF);
+        SPI_TxRx(0xFF);
+    }
+
+    // Stop transmission: CMD12
+    SD_CS_HIGH();
+    SPI_TxRx(0xFF);
+
+    SD_CS_LOW();
+    SPI_TxRx(0xFF);
+    SPI_TxRx(0x40 | 12);
+    SPI_TxRx(0x00);
+    SPI_TxRx(0x00);
+    SPI_TxRx(0x00);
+    SPI_TxRx(0x00);
+    SPI_TxRx(0x01);
+
+    // CMD12 has a stuff byte / delayed response behavior
+    for (int i = 0; i < 10; i++)
+    {
+        token = SPI_TxRx(0xFF);
+        if ((token & 0x80) == 0)
+        {
+            break;
+        }
+    }
+
+    SD_CS_HIGH();
+    SPI_TxRx(0xFF);
+
+    return 1;
+}
+
