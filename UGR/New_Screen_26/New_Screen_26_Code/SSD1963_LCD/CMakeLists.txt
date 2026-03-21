@@ -70,7 +70,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 
 
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-    #Core/Src/dashboard.c
     Core/Src/ssd1963.c
     Core/Src/logos/icons.c
     Core/Src/logos/ugr_logo.c
@@ -82,8 +81,16 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Src/dashboard/endurance_dashboard.c
     Core/Src/dashboard/dashboard_core.c
     Core/Src/dashboard/dashboard_tests.c
+
+    #SD Card
     FATFS/App/fatfs.c
     FATFS/Target/user_diskio.c
+
+    #USB
+    USB_DEVICE/App/usb_device.c
+    USB_DEVICE/App/usbd_cdc_if.c
+    USB_DEVICE/Target/usbd_conf.c
+    USB_DEVICE/App/usbd_desc.c
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
@@ -91,8 +98,14 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Inc/logos
     Core/Inc/fonts
     Core/Inc/dashboard
+
+    #SD Card
     FATFS/APP
     FATFS/Target
+
+    #USB
+    USB_DEVICE/App
+    USB_DEVICE/Target
 )
 
 add_custom_command(TARGET SSD1963_LCD POST_BUILD

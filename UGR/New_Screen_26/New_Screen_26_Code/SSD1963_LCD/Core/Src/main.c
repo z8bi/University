@@ -23,7 +23,7 @@
 #include "i2c.h"
 #include "spi.h"
 #include "tim.h"
-#include "usb_otg.h"
+#include "usb_device.h"
 #include "gpio.h"
 #include "fmc.h"
 
@@ -46,10 +46,24 @@
   //Logos
   #include "logos/ugr_logo.h"
 
+  //USB
+  #include "usbd_core.h"
+  extern USBD_HandleTypeDef hUsbDeviceFS;
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+
+//USB FLASHING REQUEST
+static volatile uint8_t g_enter_dfu_requested = 0;
+
+void Request_EnterDfu(void)
+{
+    g_enter_dfu_requested = 1;
+}
+
+/* USER CODE END PFP */
 
 /* USER CODE END PTD */
 
@@ -132,12 +146,12 @@
 
 static Dashboard d = {
     .lap = 0,
-    .battery_charge = 50,
-    .cell_temperature = 25,
-    .water_temperature = 20, //obsolete
-    .speed = 256,
-    .throttle_percent = 78,
-    .brake_percent = 19
+    .battery_charge = 0,
+    .cell_temperature = 0,
+    .water_temperature = 0, //obsolete
+    .speed = 0,
+    .throttle_percent = 0,
+    .brake_percent = 0
 };
 
 enum Screen_State {
@@ -182,7 +196,8 @@ static uint8_t touch_ok = 0;
 void SystemClock_Config(void);
 static void MPU_Config(void);
 /* USER CODE BEGIN PFP */
-
+static void JumpToSystemBootloader(void);
+void Request_EnterDfu(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -227,8 +242,8 @@ int main(void)
   MX_I2C1_Init();
   MX_SPI3_Init();
   MX_TIM12_Init();
-  MX_USB_OTG_FS_PCD_Init();
   MX_FATFS_Init();
+  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
 
     // Initialize GT911 touchscreen
@@ -311,6 +326,16 @@ int main(void)
             }
         }
         */
+
+        //==================================================================
+        //=================GO TO BOOTLOADER WHEN USB REQUESTS IT============
+        //==================================================================
+
+        if (g_enter_dfu_requested)
+        {
+            HAL_Delay(20);
+            JumpToSystemBootloader();
+        }
 
         //==================================================================
         //=================State machine for screen updates=================
@@ -457,6 +482,42 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+static void JumpToSystemBootloader(void)
+{
+    void (*SysMemBootJump)(void);
+    uint32_t sysmem_addr = 0x1FF00000U;   // verify for your exact STM32F767 variant
+
+    __disable_irq();
+
+    USBD_Stop(&hUsbDeviceFS);
+    USBD_DeInit(&hUsbDeviceFS);
+
+    HAL_RCC_DeInit();
+    HAL_DeInit();
+
+    SysTick->CTRL = 0;
+    SysTick->LOAD = 0;
+    SysTick->VAL  = 0;
+
+    for (uint32_t i = 0; i < 8; i++) {
+        NVIC->ICER[i] = 0xFFFFFFFF;
+        NVIC->ICPR[i] = 0xFFFFFFFF;
+    }
+
+    __HAL_RCC_SYSCFG_CLK_ENABLE();
+    SYSCFG->MEMRMP = SYSCFG_MEMRMP_MEM_BOOT;
+
+    __DSB();
+    __ISB();
+
+    __set_MSP(*(volatile uint32_t *)sysmem_addr);
+    SysMemBootJump = (void (*)(void))(*(volatile uint32_t *)(sysmem_addr + 4U));
+    SysMemBootJump();
+
+    while (1) {
+    }
+}
 
 void CAN2_Start(void)
 {
