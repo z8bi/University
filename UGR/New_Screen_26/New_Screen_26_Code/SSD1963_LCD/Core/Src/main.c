@@ -30,10 +30,13 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
   #include <string.h>
-  #include "dashboard.h"
   #include "gfx.h"
   #include "ssd1963.h"
   #include "gt911.h" //touchscreen
+
+  #include "dashboard/endurance_dashboard.h"
+  #include "dashboard/pedal_graph_dashboard.h"
+  #include "dashboard/dashboard_tests.h"
 
   //sd card
   #include "sd_card.h"
@@ -91,6 +94,10 @@
 /* USER CODE BEGIN PV */
   #define SCREEN_TEST_MODE 1 //Set to 1 to have the screen keep incrementing all values to test
 
+  #if SCREEN_TEST_MODE
+    static DashboardTestSim dashboard_test_sim;
+    #endif
+
   #define CAN_ID_DASHBOARD      0x100
   #define CAN_DASHBOARD_DLC     5 //Length of data
 
@@ -127,12 +134,15 @@ static Dashboard d = {
     .lap = 0,
     .battery_charge = 50,
     .cell_temperature = 25,
-    .water_temperature = 20,
-    .speed = 0
+    .water_temperature = 20, //obsolete
+    .speed = 256,
+    .throttle_percent = 78,
+    .brake_percent = 19
 };
 
 enum Screen_State {
     ENDURANCE,
+    PEDAL,
     LOGO
 };
 
@@ -239,8 +249,8 @@ int main(void)
     if (f_mount(&USERFatFS, USERPath, 1) == FR_OK)
     {   
         draw_big_UGR_logo();
-        HAL_Delay(1000);
-        screen_state = ENDURANCE;
+        HAL_Delay(2000);
+        screen_state = PEDAL;
         screen_updated = 1;
     }
 
@@ -312,7 +322,16 @@ int main(void)
 
                 if (updated) {
                     updated = 0;
-                    dash_update(&d);
+                    endurance_dash_update(&d);
+                }
+
+                break;
+
+            case PEDAL:
+
+                if (updated) {
+                    updated = 0;
+                    pedal_graph_dash_update(&d);
                 }
 
                 break;
@@ -363,15 +382,11 @@ int main(void)
         #if SCREEN_TEST_MODE
         static uint32_t last_screen_test = 0;
 
-        if (HAL_GetTick() - last_screen_test >= 100)
+        if (HAL_GetTick() - last_screen_test >= 20)
         {
             last_screen_test = HAL_GetTick();
 
-            d.lap = (d.lap + 1) % 23;
-            d.battery_charge = (d.battery_charge + 1) % 101;
-            d.cell_temperature = (d.cell_temperature + 1) % 150;
-            d.water_temperature = (d.water_temperature + 1) % 150;
-            d.speed = (d.speed + 1) % 351;
+            dashboard_test_sim_step(&dashboard_test_sim, &d, last_screen_test);
 
             updated = 1;
         }

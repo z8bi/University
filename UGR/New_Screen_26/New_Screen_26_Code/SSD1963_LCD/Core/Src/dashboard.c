@@ -70,22 +70,22 @@ static uint16_t logo_chunk[BIG_UGR_LOGO_W * LOGO_CHUNK_ROWS];
 // UI COLOR PALETTE
 // ======================================================
 
-#define COL_BG     RGB565(0,0,0)
-#define COL_PANEL  RGB565(18,18,18)
-#define COL_TEXT   RGB565(230,230,230)
-#define COL_DIM    RGB565(120,120,120)
-#define COL_ACC    RGB565(0,200,255)
-#define COL_WARN   RGB565(255,80,0)
-#define COL_GOOD   RGB565(0,220,0)
-#define COL_GRID   RGB565(70,70,70)
-#define COL_BAR_BG RGB565(8,8,8)
+#define COL_BG     RGB565(0, 0, 0)
+#define COL_PANEL  RGB565(18, 18, 18)
+#define COL_TEXT   RGB565(230, 230, 230)
+#define COL_DIM    RGB565(120, 120, 120)
+#define COL_ACC    RGB565(0, 200, 255)
+#define COL_WARN   RGB565(255, 80, 0)
+#define COL_GOOD   RGB565(0, 220, 0)
+#define COL_GRID   RGB565(70, 70, 70)
+#define COL_BAR_BG RGB565(8, 8, 8)
 
 // ======================================================
 // LAP DISPLAY DEFAULTS
 // ======================================================
 
-#define LAP_TOTAL_DEFAULT   22
-#define RIGHT_VALUE_BASELINE_GAP 58
+#define LAP_TOTAL_DEFAULT         22
+#define RIGHT_VALUE_BASELINE_GAP  58
 
 // ======================================================
 // INTERNAL GEOMETRY TYPES
@@ -207,19 +207,21 @@ static void u32_to_str(uint32_t val, char *buf);
 static void swap_int(int *a, int *b);
 static inline int clampi(int v, int lo, int hi);
 static Rect make_rect(int x, int y, int w, int h);
+static Rect union_rects(Rect a, Rect b);
+static void draw_rect_outline(int x, int y, int w, int h, uint16_t col);
+
 static int font_text_width(const char *text, const GFXfont *font);
-static void draw_text_centered_in_rect(const Rect *r, int y, const char *text, const GFXfont *font, uint16_t color);
-static void draw_text_right_aligned(int right_x, int y, const char *text, const GFXfont *font, uint16_t color);
-static void draw_vertical_bar_guides(const VerticalBarWidget *w);
-static void redraw_vertical_bar_guides_in_range(const VerticalBarWidget *w, int y0, int y1);
-static void draw_vertical_bar_value_text(const VerticalBarWidget *w, int value, uint16_t fill_col);
-static Rect get_vertical_bar_value_rect(const VerticalBarWidget *w, int value);
-static void draw_lap_counter_delta(const NumericBlockWidget *w, int current_lap, int total_laps, uint16_t color);
-static const GFXfont *numeric_block_value_font(const NumericBlockWidget *w);
-static Rect get_numeric_block_value_rect(const NumericBlockWidget *w, int value);
-static void draw_numeric_block_value_text(const NumericBlockWidget *w, int value, uint16_t color);
 static void font_text_bounds(const char *text, const GFXfont *font,
                              int *out_w, int *out_min_y, int *out_max_y);
+
+static void draw_text_centered_in_rect(const Rect *r, int y, const char *text,
+                                       const GFXfont *font, uint16_t color);
+static void draw_text_right_aligned(int right_x, int y, const char *text,
+                                    const GFXfont *font, uint16_t color);
+static void draw_text_right_aligned_centered_y(int right_x, int center_y,
+                                               const char *text,
+                                               const GFXfont *font,
+                                               uint16_t color);
 
 // Layout
 static void dash_build_layout(DashboardLayout *L, const DashboardTheme *T);
@@ -235,22 +237,53 @@ static void draw_C(int x, int y, int s, uint16_t col);
 // 7-segment helpers
 static void seg_h(int x, int y, int len, int t, uint16_t col);
 static void seg_v(int x, int y, int len, int t, uint16_t col);
-static void draw_digit7(int x, int y, int s, int digit, uint16_t fg, uint16_t bg, int outline);
-static void draw_int7(int x, int y, int s, int gap, int value, int digits, uint16_t fg, uint16_t bg, int outline);
+static void draw_digit7(int x, int y, int s, int digit,
+                        uint16_t fg, uint16_t bg, int outline);
+static void draw_int7(int x, int y, int s, int gap, int value, int digits,
+                      uint16_t fg, uint16_t bg, int outline);
 static int digit7_total_width(int digits, int s, int gap);
 static int digit7_total_height(int s);
+static int digit7_thickness(int s);
+static int digit7_digit_width(int s);
+static int digit7_digit_height(int s);
+
+// Numeric/text geometry
+static const GFXfont *numeric_block_value_font(const NumericBlockWidget *w);
+static Rect get_numeric_block_value_rect(const NumericBlockWidget *w, int value);
+static Rect get_lap_value_rect(const NumericBlockWidget *w,
+                               int current_lap, int total_laps);
+static void draw_numeric_block_value_text(const NumericBlockWidget *w,
+                                          int value, uint16_t color);
+static void draw_lap_counter_delta(const NumericBlockWidget *w,
+                                   int current_lap, int total_laps,
+                                   uint16_t color);
+static void draw_lap_counter_full(const NumericBlockWidget *w,
+                                  int current_lap, int total_laps,
+                                  uint16_t color);
+
+// Vertical bar helpers
+static Rect get_vertical_bar_inner_rect(const VerticalBarWidget *w);
+static Rect get_vertical_bar_value_rect(const VerticalBarWidget *w, int value);
+static void draw_vertical_bar_guides(const VerticalBarWidget *w);
+static void redraw_vertical_bar_guides_in_range(const VerticalBarWidget *w,
+                                                int y0, int y1);
+static void draw_vertical_bar_value_text(const VerticalBarWidget *w,
+                                         int value, uint16_t fill_col);
 
 // Widgets
-static int map_value_to_fill_height(int value, int min_value, int max_value, int pixel_height);
+static int map_value_to_fill_height(int value, int min_value,
+                                    int max_value, int pixel_height);
 static void draw_vertical_bar_static(const VerticalBarWidget *w);
 static void draw_vertical_bar_value_full(const VerticalBarWidget *w, int value);
-static void draw_vertical_bar_value_delta(const VerticalBarWidget *w, int old_value, int new_value);
+static void draw_vertical_bar_value_delta(const VerticalBarWidget *w,
+                                          int old_value, int new_value);
 
 static void draw_numeric_block_static(const NumericBlockWidget *w);
-static void draw_numeric_block_value_full(const NumericBlockWidget *w, int value, uint16_t color);
-static void draw_numeric_block_value_delta(const NumericBlockWidget *w, int old_value, int new_value, uint16_t color);
-
-static void draw_lap_counter_full(const NumericBlockWidget *w, int current_lap, int total_laps, uint16_t color);
+static void draw_numeric_block_value_full(const NumericBlockWidget *w,
+                                          int value, uint16_t color);
+static void draw_numeric_block_value_delta(const NumericBlockWidget *w,
+                                           int old_value, int new_value,
+                                           uint16_t color);
 
 // Dashboard draw
 static void dash_draw_static(const DashboardLayout *L);
@@ -271,50 +304,87 @@ uint8_t draw_raw565_from_sd_chunked(const char *path,
 // GENERIC HELPERS
 // ======================================================
 
-static Rect get_numeric_block_value_rect(const NumericBlockWidget *w, int value)
+static Rect make_rect(int x, int y, int w, int h)
 {
-    char buf[16];
-    int tw, min_y, max_y;
-    int baseline_y;
-    int text_h;
-    int x, y;
-    const GFXfont *font = numeric_block_value_font(w);
-
-    snprintf(buf, sizeof(buf), "%d", value);
-    font_text_bounds(buf, font, &tw, &min_y, &max_y);
-
-    baseline_y = (w->area.y + 30) + 58 + w->value_y_offset;
-    text_h = max_y - min_y + 1;
-
-    x = w->area.x + (w->area.w - tw) / 2 - 6;
-    y = baseline_y + min_y - 6;
-
-    return make_rect(x, y, tw + 12, text_h + 12);
+    Rect r;
+    r.x = x;
+    r.y = y;
+    r.w = w;
+    r.h = h;
+    return r;
 }
 
-static void draw_numeric_block_value_text(const NumericBlockWidget *w, int value, uint16_t color)
+static Rect union_rects(Rect a, Rect b)
 {
-    char buf[16];
-    Rect value_rect = get_numeric_block_value_rect(w, value);
-    const GFXfont *font = numeric_block_value_font(w);
+    int x1 = (a.x < b.x) ? a.x : b.x;
+    int y1 = (a.y < b.y) ? a.y : b.y;
+    int x2 = ((a.x + a.w) > (b.x + b.w)) ? (a.x + a.w) : (b.x + b.w);
+    int y2 = ((a.y + a.h) > (b.y + b.h)) ? (a.y + a.h) : (b.y + b.h);
 
-    gfx_fill_rect(value_rect.x, value_rect.y, value_rect.w, value_rect.h, w->bg_color);
-
-    snprintf(buf, sizeof(buf), "%d", value);
-
-    draw_text_centered_in_rect(
-        &w->area,
-        (w->area.y + 30) + RIGHT_VALUE_BASELINE_GAP + w->value_y_offset,
-        buf,
-        font,
-        color
-    );
+    return make_rect(x1, y1, x2 - x1, y2 - y1);
 }
 
-static const GFXfont *numeric_block_value_font(const NumericBlockWidget *w)
+static inline int clampi(int v, int lo, int hi)
 {
-    if (w && w->value_font) return w->value_font;
-    return &FreeSansBold24pt7b;
+    return (v < lo) ? lo : (v > hi) ? hi : v;
+}
+
+static void swap_int(int *a, int *b)
+{
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+
+static void u32_to_str(uint32_t val, char *buf)
+{
+    char tmp[12];
+    int i = 0;
+    int j = 0;
+
+    if (val == 0) {
+        buf[0] = '0';
+        buf[1] = '\0';
+        return;
+    }
+
+    while (val > 0) {
+        tmp[i++] = '0' + (val % 10);
+        val /= 10;
+    }
+
+    while (i > 0) {
+        buf[j++] = tmp[--i];
+    }
+
+    buf[j] = '\0';
+}
+
+static void draw_rect_outline(int x, int y, int w, int h, uint16_t col)
+{
+    gfx_draw_line(x,         y,         x + w - 1, y,         col);
+    gfx_draw_line(x,         y + h - 1, x + w - 1, y + h - 1, col);
+    gfx_draw_line(x,         y,         x,         y + h - 1, col);
+    gfx_draw_line(x + w - 1, y,         x + w - 1, y + h - 1, col);
+}
+
+static int font_text_width(const char *text, const GFXfont *font)
+{
+    int w = 0;
+
+    if (!text || !font) {
+        return 0;
+    }
+
+    while (*text) {
+        unsigned char c = (unsigned char)*text++;
+        if (c < font->first || c > font->last) {
+            continue;
+        }
+        w += font->glyph[c - font->first].xAdvance;
+    }
+
+    return w;
 }
 
 static void font_text_bounds(const char *text, const GFXfont *font,
@@ -333,16 +403,21 @@ static void font_text_bounds(const char *text, const GFXfont *font,
 
     while (*text) {
         unsigned char c = (unsigned char)*text++;
-        if (c < font->first || c > font->last) continue;
+        if (c < font->first || c > font->last) {
+            continue;
+        }
 
         const GFXglyph *g = &font->glyph[c - font->first];
-
         int gy0 = g->yOffset;
         int gy1 = g->yOffset + g->height - 1;
 
         if (g->height > 0) {
-            if (gy0 < min_y) min_y = gy0;
-            if (gy1 > max_y) max_y = gy1;
+            if (gy0 < min_y) {
+                min_y = gy0;
+            }
+            if (gy1 > max_y) {
+                max_y = gy1;
+            }
         }
 
         x += g->xAdvance;
@@ -358,17 +433,62 @@ static void font_text_bounds(const char *text, const GFXfont *font,
     *out_max_y = max_y;
 }
 
-static Rect get_lap_value_rect(const NumericBlockWidget *w, int current_lap, int total_laps)
+static void draw_text_centered_in_rect(const Rect *r, int y, const char *text,
+                                       const GFXfont *font, uint16_t color)
 {
-    char buf[20];
-    int tw, min_y, max_y;
+    int tw = font_text_width(text, font);
+    int x = r->x + (r->w - tw) / 2;
+    gfx_draw_text_font(x, y, text, font, color);
+}
+
+static void draw_text_right_aligned(int right_x, int y, const char *text,
+                                    const GFXfont *font, uint16_t color)
+{
+    int tw = font_text_width(text, font);
+    gfx_draw_text_font(right_x - tw, y, text, font, color);
+}
+
+static void draw_text_right_aligned_centered_y(int right_x, int center_y,
+                                               const char *text,
+                                               const GFXfont *font,
+                                               uint16_t color)
+{
+    int tw;
+    int min_y;
+    int max_y;
+    int baseline_y;
+
+    font_text_bounds(text, font, &tw, &min_y, &max_y);
+    baseline_y = center_y - (min_y + max_y) / 2;
+
+    gfx_draw_text_font(right_x - tw, baseline_y, text, font, color);
+}
+
+// ======================================================
+// NUMERIC/TEXT GEOMETRY HELPERS
+// ======================================================
+
+static const GFXfont *numeric_block_value_font(const NumericBlockWidget *w)
+{
+    if (w && w->value_font) {
+        return w->value_font;
+    }
+    return &FreeSansBold24pt7b;
+}
+
+static Rect get_numeric_block_value_rect(const NumericBlockWidget *w, int value)
+{
+    char buf[16];
+    int tw;
+    int min_y;
+    int max_y;
     int baseline_y;
     int text_h;
-    int x, y;
+    int x;
+    int y;
     const GFXfont *font = numeric_block_value_font(w);
 
-    snprintf(buf, sizeof(buf), "%d", current_lap, total_laps);
-
+    snprintf(buf, sizeof(buf), "%d", value);
     font_text_bounds(buf, font, &tw, &min_y, &max_y);
 
     baseline_y = (w->area.y + 30) + RIGHT_VALUE_BASELINE_GAP + w->value_y_offset;
@@ -380,27 +500,61 @@ static Rect get_lap_value_rect(const NumericBlockWidget *w, int current_lap, int
     return make_rect(x, y, tw + 12, text_h + 12);
 }
 
-static void draw_text_right_aligned_centered_y(int right_x, int center_y,
-                                               const char *text,
-                                               const GFXfont *font,
-                                               uint16_t color)
+static Rect get_lap_value_rect(const NumericBlockWidget *w,
+                               int current_lap, int total_laps)
 {
-    int tw, min_y, max_y;
+    char buf[20];
+    int tw;
+    int min_y;
+    int max_y;
     int baseline_y;
+    int text_h;
+    int x;
+    int y;
+    const GFXfont *font = numeric_block_value_font(w);
 
-    font_text_bounds(text, font, &tw, &min_y, &max_y);
+    snprintf(buf, sizeof(buf), "%d", current_lap, total_laps);
+    font_text_bounds(buf, font, &tw, &min_y, &max_y);
 
-    baseline_y = center_y - (min_y + max_y) / 2;
+    baseline_y = (w->area.y + 30) + RIGHT_VALUE_BASELINE_GAP + w->value_y_offset;
+    text_h = max_y - min_y + 1;
 
-    gfx_draw_text_font(right_x - tw, baseline_y, text, font, color);
+    x = w->area.x + (w->area.w - tw) / 2 - 6;
+    y = baseline_y + min_y - 6;
+
+    return make_rect(x, y, tw + 12, text_h + 12);
 }
 
-static void draw_lap_counter_delta(const NumericBlockWidget *w, int current_lap, int total_laps, uint16_t color)
+static void draw_numeric_block_value_text(const NumericBlockWidget *w,
+                                          int value, uint16_t color)
+{
+    char buf[16];
+    Rect value_rect = get_numeric_block_value_rect(w, value);
+    const GFXfont *font = numeric_block_value_font(w);
+
+    gfx_fill_rect(value_rect.x, value_rect.y, value_rect.w, value_rect.h,
+                  w->bg_color);
+
+    snprintf(buf, sizeof(buf), "%d", value);
+
+    draw_text_centered_in_rect(
+        &w->area,
+        (w->area.y + 30) + RIGHT_VALUE_BASELINE_GAP + w->value_y_offset,
+        buf,
+        font,
+        color
+    );
+}
+
+static void draw_lap_counter_delta(const NumericBlockWidget *w,
+                                   int current_lap, int total_laps,
+                                   uint16_t color)
 {
     char old_buf[20];
     char new_buf[20];
-    Rect old_r, new_r;
-    int rx, ry, rr, rb;
+    Rect old_r;
+    Rect new_r;
+    Rect dirty;
     const GFXfont *font = numeric_block_value_font(w);
 
     snprintf(old_buf, sizeof(old_buf), "%d", prev.lap, total_laps);
@@ -408,13 +562,9 @@ static void draw_lap_counter_delta(const NumericBlockWidget *w, int current_lap,
 
     old_r = get_lap_value_rect(w, prev.lap, total_laps);
     new_r = get_lap_value_rect(w, current_lap, total_laps);
+    dirty = union_rects(old_r, new_r);
 
-    rx = (old_r.x < new_r.x) ? old_r.x : new_r.x;
-    ry = (old_r.y < new_r.y) ? old_r.y : new_r.y;
-    rr = ((old_r.x + old_r.w) > (new_r.x + new_r.w)) ? (old_r.x + old_r.w) : (new_r.x + new_r.w);
-    rb = ((old_r.y + old_r.h) > (new_r.y + new_r.h)) ? (old_r.y + old_r.h) : (new_r.y + new_r.h);
-
-    gfx_fill_rect(rx, ry, rr - rx, rb - ry, w->bg_color);
+    gfx_fill_rect(dirty.x, dirty.y, dirty.w, dirty.h, w->bg_color);
 
     draw_text_centered_in_rect(
         &w->area,
@@ -425,115 +575,9 @@ static void draw_lap_counter_delta(const NumericBlockWidget *w, int current_lap,
     );
 }
 
-static void redraw_vertical_bar_guides_in_range(const VerticalBarWidget *w, int y0, int y1)
-{
-    const Rect *b = &w->bar_rect;
-    int inner_x = b->x + 2;
-    int inner_y = b->y + 2;
-    int inner_w = b->w - 4;
-    int inner_h = b->h - 4;
-    int i;
-
-    if (y0 > y1) {
-        int t = y0;
-        y0 = y1;
-        y1 = t;
-    }
-
-    for (i = 0; i <= 4; i++) {
-        int gy = inner_y + (i * inner_h) / 4;
-        if (gy >= y0 && gy <= y1) {
-            gfx_draw_line(inner_x, gy, inner_x + inner_w - 1, gy, COL_GRID);
-        }
-    }
-}
-
-static void draw_vertical_bar_value_text(const VerticalBarWidget *w, int value, uint16_t fill_col)
-{
-    Rect value_rect = get_vertical_bar_value_rect(w, value);
-    char buf[12];
-    int text_w, min_y, max_y;
-    int text_x;
-    int baseline_y;
-    int text_h;
-    int unit_y;
-
-    gfx_fill_rect(value_rect.x, value_rect.y, value_rect.w, value_rect.h, w->bg_color);
-
-    snprintf(buf, sizeof(buf), "%d", value);
-    font_text_bounds(buf, &F1Bold24pt7b, &text_w, &min_y, &max_y);
-
-    text_h = max_y - min_y + 1;
-    text_x = value_rect.x + 8;
-    baseline_y = value_rect.y + 8 - min_y;
-
-    gfx_draw_text_font(text_x, baseline_y, buf, &F1Bold24pt7b, fill_col);
-
-    if (w->unit_draw_fn) {
-        unit_y = value_rect.y + 8 + (text_h - 12) / 2;
-        w->unit_draw_fn(text_x + text_w + 10, unit_y, 2, fill_col);
-    }
-}
-
-static void get_numeric_block_digits_origin(const NumericBlockWidget *w, int *out_x, int *out_y)
-{
-    int num_w = digit7_total_width(w->digits, w->seg_scale, w->digit_gap);
-    int num_h = digit7_total_height(w->seg_scale);
-
-    int content_top = w->area.y + 30;
-    int content_h = w->area.h - 30;
-
-    *out_x = w->area.x + (w->area.w - num_w) / 2;
-    *out_y = content_top + (content_h - num_h) / 2 + w->value_y_offset;
-}
-
-static void int_to_digits(int value, int digits, int *out)
-{
-    int i;
-    int v = value;
-
-    if (v < 0) v = 0;
-
-    {
-        int maxv = 1;
-        for (i = 0; i < digits; i++) {
-            maxv *= 10;
-        }
-        if (v >= maxv) v = maxv - 1;
-    }
-
-    for (i = digits - 1; i >= 0; i--) {
-        out[i] = v % 10;
-        v /= 10;
-    }
-}
-
-static void draw_rect_outline(int x, int y, int w, int h, uint16_t col)
-{
-    gfx_draw_line(x, y, x + w - 1, y, col);
-    gfx_draw_line(x, y + h - 1, x + w - 1, y + h - 1, col);
-    gfx_draw_line(x, y, x, y + h - 1, col);
-    gfx_draw_line(x + w - 1, y, x + w - 1, y + h - 1, col);
-}
-
-static int digit7_thickness(int s)
-{
-    return s + 2;
-}
-
-static int digit7_digit_width(int s)
-{
-    const int t = digit7_thickness(s);
-    const int L = 6 * s;
-    return L + 2 * t;
-}
-
-static int digit7_digit_height(int s)
-{
-    const int t = digit7_thickness(s);
-    const int Hh = 10 * s;
-    return (2 * Hh) + 3 * t;
-}
+// ======================================================
+// VERTICAL BAR GEOMETRY/TEXT HELPERS
+// ======================================================
 
 static Rect get_vertical_bar_inner_rect(const VerticalBarWidget *w)
 {
@@ -548,13 +592,16 @@ static Rect get_vertical_bar_inner_rect(const VerticalBarWidget *w)
 static Rect get_vertical_bar_value_rect(const VerticalBarWidget *w, int value)
 {
     char buf[12];
-    int text_w, min_y, max_y;
+    int text_w;
+    int min_y;
+    int max_y;
     int unit_w = 0;
     int unit_h = 12;
     int gap = 0;
     int total_w;
     int total_h;
-    int x, y;
+    int x;
+    int y;
     int cx;
     int text_h;
 
@@ -572,10 +619,62 @@ static Rect get_vertical_bar_value_rect(const VerticalBarWidget *w, int value)
 
     cx = w->bar_rect.x + w->bar_rect.w / 2;
     x = cx - total_w / 2 - 8;
-
     y = w->bar_rect.y + w->bar_rect.h + 4;
 
     return make_rect(x, y, total_w + 16, total_h + 16);
+}
+
+static void redraw_vertical_bar_guides_in_range(const VerticalBarWidget *w,
+                                                int y0, int y1)
+{
+    const Rect *b = &w->bar_rect;
+    int inner_x = b->x + 2;
+    int inner_y = b->y + 2;
+    int inner_w = b->w - 4;
+    int inner_h = b->h - 4;
+    int i;
+
+    if (y0 > y1) {
+        swap_int(&y0, &y1);
+    }
+
+    for (i = 0; i <= 4; i++) {
+        int gy = inner_y + (i * inner_h) / 4;
+        if (gy >= y0 && gy <= y1) {
+            gfx_draw_line(inner_x, gy, inner_x + inner_w - 1, gy, COL_GRID);
+        }
+    }
+}
+
+static void draw_vertical_bar_value_text(const VerticalBarWidget *w,
+                                         int value, uint16_t fill_col)
+{
+    Rect value_rect = get_vertical_bar_value_rect(w, value);
+    char buf[12];
+    int text_w;
+    int min_y;
+    int max_y;
+    int text_x;
+    int baseline_y;
+    int text_h;
+    int unit_y;
+
+    gfx_fill_rect(value_rect.x, value_rect.y, value_rect.w, value_rect.h,
+                  w->bg_color);
+
+    snprintf(buf, sizeof(buf), "%d", value);
+    font_text_bounds(buf, &F1Bold24pt7b, &text_w, &min_y, &max_y);
+
+    text_h = max_y - min_y + 1;
+    text_x = value_rect.x + 8;
+    baseline_y = value_rect.y + 8 - min_y;
+
+    gfx_draw_text_font(text_x, baseline_y, buf, &F1Bold24pt7b, fill_col);
+
+    if (w->unit_draw_fn) {
+        unit_y = value_rect.y + 8 + (text_h - 12) / 2;
+        w->unit_draw_fn(text_x + text_w + 10, unit_y, 2, fill_col);
+    }
 }
 
 static void draw_vertical_bar_guides(const VerticalBarWidget *w)
@@ -585,7 +684,6 @@ static void draw_vertical_bar_guides(const VerticalBarWidget *w)
     int inner_y = b->y + 2;
     int inner_w = b->w - 4;
     int inner_h = b->h - 4;
-
     int i;
     char buf[12];
 
@@ -593,7 +691,10 @@ static void draw_vertical_bar_guides(const VerticalBarWidget *w)
         int gy = inner_y + (i * inner_h) / 4;
         int value = w->max_value - ((w->max_value - w->min_value) * i) / 4;
 
-        int tw, min_y, max_y, th;
+        int tw;
+        int min_y;
+        int max_y;
+        int th;
         int label_cy;
 
         snprintf(buf, sizeof(buf), "%d", value);
@@ -616,79 +717,6 @@ static void draw_vertical_bar_guides(const VerticalBarWidget *w)
     }
 }
 
-static int font_text_width(const char *text, const GFXfont *font)
-{
-    int w = 0;
-
-    if (!text || !font) return 0;
-
-    while (*text) {
-        unsigned char c = (unsigned char)*text++;
-        if (c < font->first || c > font->last) continue;
-        w += font->glyph[c - font->first].xAdvance;
-    }
-
-    return w;
-}
-
-static void draw_text_centered_in_rect(const Rect *r, int y, const char *text, const GFXfont *font, uint16_t color)
-{
-    int tw = font_text_width(text, font);
-    int x = r->x + (r->w - tw) / 2;
-    gfx_draw_text_font(x, y, text, font, color);
-}
-
-static void draw_text_right_aligned(int right_x, int y, const char *text, const GFXfont *font, uint16_t color)
-{
-    int tw = font_text_width(text, font);
-    gfx_draw_text_font(right_x - tw, y, text, font, color);
-}
-
-static void u32_to_str(uint32_t val, char *buf)
-{
-    char tmp[12];
-    int i = 0, j = 0;
-
-    if (val == 0) {
-        buf[0] = '0';
-        buf[1] = '\0';
-        return;
-    }
-
-    while (val > 0) {
-        tmp[i++] = '0' + (val % 10);
-        val /= 10;
-    }
-
-    while (i > 0) {
-        buf[j++] = tmp[--i];
-    }
-
-    buf[j] = '\0';
-}
-
-static void swap_int(int *a, int *b)
-{
-    int t = *a;
-    *a = *b;
-    *b = t;
-}
-
-static inline int clampi(int v, int lo, int hi)
-{
-    return (v < lo) ? lo : (v > hi) ? hi : v;
-}
-
-static Rect make_rect(int x, int y, int w, int h)
-{
-    Rect r;
-    r.x = x;
-    r.y = y;
-    r.w = w;
-    r.h = h;
-    return r;
-}
-
 // ======================================================
 // LAYOUT
 // ======================================================
@@ -700,6 +728,8 @@ static void dash_build_layout(DashboardLayout *L, const DashboardTheme *T)
     int x2 = x1 + T->section_w + T->section_gap;
 
     int right_blocks_y0 = T->top_margin + T->right_block_top_gap;
+    int right_block_h =
+        (T->section_h - T->right_block_top_gap - 2 * T->right_block_gap) / 3;
 
     L->screen_w = T->screen_w;
     L->screen_h = T->screen_h;
@@ -745,61 +775,59 @@ static void dash_build_layout(DashboardLayout *L, const DashboardTheme *T)
     L->invtemp_bar.unit_draw_fn = draw_C;
 
     // Right blocks
-int right_block_h = (T->section_h - T->right_block_top_gap - 2 * T->right_block_gap) / 3;
+    L->lap_block.area = make_rect(
+        L->right_section.x,
+        right_blocks_y0,
+        L->right_section.w,
+        right_block_h
+    );
+    L->lap_block.label = "LAP";
+    L->lap_block.digits = 2;
+    L->lap_block.seg_scale = 2;
+    L->lap_block.label_y_offset = 2;
+    L->lap_block.value_y_offset = 10;
+    L->lap_block.digit_gap = 0;
+    L->lap_block.digit_outline = 0;
+    L->lap_block.fg_color = COL_TEXT;
+    L->lap_block.bg_color = COL_BG;
+    L->lap_block.label_font = &FreeSansBold18pt7b;
+    L->lap_block.value_font = &F1Bold40pt7b;
 
-        L->lap_block.area = make_rect(
-            L->right_section.x,
-            right_blocks_y0,
-            L->right_section.w,
-            right_block_h
-        );
-        L->lap_block.label = "LAP";
-        L->lap_block.digits = 2;
-        L->lap_block.seg_scale = 2;
-        L->lap_block.label_y_offset = 2;
-        L->lap_block.value_y_offset = 10;
-        L->lap_block.digit_gap = 0;
-        L->lap_block.digit_outline = 0;
-        L->lap_block.fg_color = COL_TEXT;
-        L->lap_block.bg_color = COL_BG;
-        L->lap_block.label_font = &FreeSansBold18pt7b;
-        L->lap_block.value_font = &F1Bold40pt7b;
+    L->temp_block.area = make_rect(
+        L->right_section.x,
+        right_blocks_y0 + right_block_h + T->right_block_gap,
+        L->right_section.w,
+        right_block_h
+    );
+    L->temp_block.label = "TEMP";
+    L->temp_block.digits = 3;
+    L->temp_block.seg_scale = 4;
+    L->temp_block.label_y_offset = -4;
+    L->temp_block.value_y_offset = 10;
+    L->temp_block.digit_gap = 10;
+    L->temp_block.digit_outline = 0;
+    L->temp_block.fg_color = COL_TEXT;
+    L->temp_block.bg_color = COL_BG;
+    L->temp_block.label_font = &FreeSansBold18pt7b;
+    L->temp_block.value_font = &F1Bold40pt7b;
 
-        L->temp_block.area = make_rect(
-            L->right_section.x,
-            right_blocks_y0 + right_block_h + T->right_block_gap,
-            L->right_section.w,
-            right_block_h
-        );
-        L->temp_block.label = "TEMP";
-        L->temp_block.digits = 3;
-        L->temp_block.seg_scale = 4;
-        L->temp_block.label_y_offset = -4;
-        L->temp_block.value_y_offset = 10;
-        L->temp_block.digit_gap = 10;
-        L->temp_block.digit_outline = 0;
-        L->temp_block.fg_color = COL_TEXT;
-        L->temp_block.bg_color = COL_BG;
-        L->temp_block.label_font = &FreeSansBold18pt7b;
-        L->temp_block.value_font = &F1Bold40pt7b;   // ready for later
-
-        L->speed_block.area = make_rect(
-            L->right_section.x,
-            right_blocks_y0 + 2 * (right_block_h + T->right_block_gap),
-            L->right_section.w,
-            right_block_h
-        );
-        L->speed_block.label = "SPEED";
-        L->speed_block.digits = 3;
-        L->speed_block.seg_scale = 4;
-        L->speed_block.label_y_offset = 0;
-        L->speed_block.value_y_offset = 10;
-        L->speed_block.digit_gap = 10;
-        L->speed_block.digit_outline = 0;
-        L->speed_block.fg_color = COL_TEXT;
-        L->speed_block.bg_color = COL_BG;
-        L->speed_block.label_font = &FreeSansBold18pt7b;
-        L->speed_block.value_font = &F1Bold40pt7b;  // ready for later
+    L->speed_block.area = make_rect(
+        L->right_section.x,
+        right_blocks_y0 + 2 * (right_block_h + T->right_block_gap),
+        L->right_section.w,
+        right_block_h
+    );
+    L->speed_block.label = "SPEED";
+    L->speed_block.digits = 3;
+    L->speed_block.seg_scale = 4;
+    L->speed_block.label_y_offset = 0;
+    L->speed_block.value_y_offset = 10;
+    L->speed_block.digit_gap = 10;
+    L->speed_block.digit_outline = 0;
+    L->speed_block.fg_color = COL_TEXT;
+    L->speed_block.bg_color = COL_BG;
+    L->speed_block.label_font = &FreeSansBold18pt7b;
+    L->speed_block.value_font = &F1Bold40pt7b;
 }
 
 // ======================================================
@@ -812,11 +840,11 @@ static uint16_t battery_color_for_percent(int percent)
 
     if (percent <= BATT_RED_MAX) {
         return COL_WARN;
-    } else if (percent <= BATT_ORANGE_MAX) {
-        return RGB565(255,165,0);
-    } else {
-        return COL_GOOD;
     }
+    if (percent <= BATT_ORANGE_MAX) {
+        return RGB565(255, 165, 0);
+    }
+    return COL_GOOD;
 }
 
 static uint16_t temp_color_for_value(int temp)
@@ -825,11 +853,11 @@ static uint16_t temp_color_for_value(int temp)
 
     if (temp <= TEMP_GREEN_MAX) {
         return COL_GOOD;
-    } else if (temp <= TEMP_ORANGE_MAX) {
-        return RGB565(255,165,0);
-    } else {
-        return COL_WARN;
     }
+    if (temp <= TEMP_ORANGE_MAX) {
+        return RGB565(255, 165, 0);
+    }
+    return COL_WARN;
 }
 
 // ======================================================
@@ -839,16 +867,16 @@ static uint16_t temp_color_for_value(int temp)
 static void draw_percent(int x, int y, int s, uint16_t col)
 {
     int r = s;
-    gfx_fill_rect(x, y, r, r, col);
+    gfx_fill_rect(x,         y,         r, r, col);
     gfx_fill_rect(x + 4 * s, y + 4 * s, r, r, col);
     gfx_draw_line(x, y + 5 * s, x + 5 * s, y, col);
 }
 
 static void draw_C(int x, int y, int s, uint16_t col)
 {
-    gfx_fill_rect(x, y,         4 * s, s,     col);
-    gfx_fill_rect(x, y,         s,     6 * s, col);
-    gfx_fill_rect(x, y + 5 * s, 4 * s, s,     col);
+    gfx_fill_rect(x,         y,         4 * s, s,     col);
+    gfx_fill_rect(x,         y,         s,     6 * s, col);
+    gfx_fill_rect(x,         y + 5 * s, 4 * s, s,     col);
 }
 
 // ======================================================
@@ -865,19 +893,33 @@ static void seg_v(int x, int y, int len, int t, uint16_t col)
     gfx_fill_rect(x, y, t, len, col);
 }
 
-static void draw_digit7(int x, int y, int s, int digit, uint16_t fg, uint16_t bg, int outline)
+static int digit7_thickness(int s)
+{
+    return s + 2;
+}
+
+static int digit7_digit_width(int s)
+{
+    const int t = digit7_thickness(s);
+    const int L = 6 * s;
+    return L + 2 * t;
+}
+
+static int digit7_digit_height(int s)
+{
+    const int t = digit7_thickness(s);
+    const int Hh = 10 * s;
+    return (2 * Hh) + 3 * t;
+}
+
+static void draw_digit7(int x, int y, int s, int digit,
+                        uint16_t fg, uint16_t bg, int outline)
 {
     const int t = digit7_thickness(s);
     const int L = 6 * s;
     const int Hh = 10 * s;
     const int w = digit7_digit_width(s);
     const int h = digit7_digit_height(s);
-
-    gfx_fill_rect(x, y, w, h, bg);
-
-    if (outline) {
-        draw_rect_outline(x, y, w, h, COL_TEXT);
-    }
 
     static const uint8_t map[10] = {
         0b0111111,
@@ -894,13 +936,19 @@ static void draw_digit7(int x, int y, int s, int digit, uint16_t fg, uint16_t bg
 
     uint8_t m = (digit >= 0 && digit <= 9) ? map[digit] : 0;
 
-    if (m & (1 << 0)) seg_h(x + t,     y + 0,          L,  t, fg);
-    if (m & (1 << 1)) seg_v(x + t + L, y + t,          Hh, t, fg);
-    if (m & (1 << 2)) seg_v(x + t + L, y + 2*t + Hh,   Hh, t, fg);
-    if (m & (1 << 3)) seg_h(x + t,     y + 2*t + 2*Hh, L,  t, fg);
-    if (m & (1 << 4)) seg_v(x + 0,     y + 2*t + Hh,   Hh, t, fg);
-    if (m & (1 << 5)) seg_v(x + 0,     y + t,          Hh, t, fg);
-    if (m & (1 << 6)) seg_h(x + t,     y + t + Hh,     L,  t, fg);
+    gfx_fill_rect(x, y, w, h, bg);
+
+    if (outline) {
+        draw_rect_outline(x, y, w, h, COL_TEXT);
+    }
+
+    if (m & (1 << 0)) seg_h(x + t,     y,               L,  t, fg);
+    if (m & (1 << 1)) seg_v(x + t + L, y + t,           Hh, t, fg);
+    if (m & (1 << 2)) seg_v(x + t + L, y + 2 * t + Hh,  Hh, t, fg);
+    if (m & (1 << 3)) seg_h(x + t,     y + 2 * t + 2 * Hh, L, t, fg);
+    if (m & (1 << 4)) seg_v(x,         y + 2 * t + Hh,  Hh, t, fg);
+    if (m & (1 << 5)) seg_v(x,         y + t,           Hh, t, fg);
+    if (m & (1 << 6)) seg_h(x + t,     y + t + Hh,      L,  t, fg);
 }
 
 static void draw_int7(int x, int y, int s, int gap, int value, int digits,
@@ -909,14 +957,18 @@ static void draw_int7(int x, int y, int s, int gap, int value, int digits,
     int v = value;
     int i;
 
-    if (v < 0) v = 0;
+    if (v < 0) {
+        v = 0;
+    }
 
     {
         int maxv = 1;
         for (i = 0; i < digits; i++) {
             maxv *= 10;
         }
-        if (v >= maxv) v = maxv - 1;
+        if (v >= maxv) {
+            v = maxv - 1;
+        }
     }
 
     {
@@ -945,7 +997,8 @@ static int digit7_total_height(int s)
 // VALUE/BAR HELPERS
 // ======================================================
 
-static int map_value_to_fill_height(int value, int min_value, int max_value, int pixel_height)
+static int map_value_to_fill_height(int value, int min_value,
+                                    int max_value, int pixel_height)
 {
     value = clampi(value, min_value, max_value);
 
@@ -975,11 +1028,7 @@ static void draw_vertical_bar_static(const VerticalBarWidget *w)
         w->text_color
     );
 
-    gfx_draw_line(b->x, b->y, b->x + b->w - 1, b->y, w->frame_color);
-    gfx_draw_line(b->x, b->y + b->h - 1, b->x + b->w - 1, b->y + b->h - 1, w->frame_color);
-    gfx_draw_line(b->x, b->y, b->x, b->y + b->h - 1, w->frame_color);
-    gfx_draw_line(b->x + b->w - 1, b->y, b->x + b->w - 1, b->y + b->h - 1, w->frame_color);
-
+    draw_rect_outline(b->x, b->y, b->w, b->h, w->frame_color);
     gfx_fill_rect(b->x + 2, b->y + 2, b->w - 4, b->h - 4, COL_BAR_BG);
 
     draw_vertical_bar_guides(w);
@@ -990,7 +1039,8 @@ static void draw_vertical_bar_value_full(const VerticalBarWidget *w, int value)
     Rect inner = get_vertical_bar_inner_rect(w);
     int clamped = clampi(value, w->min_value, w->max_value);
     int shown_value = w->clamp_value_text ? clamped : value;
-    int fill_h = map_value_to_fill_height(clamped, w->min_value, w->max_value, inner.h);
+    int fill_h = map_value_to_fill_height(clamped, w->min_value,
+                                          w->max_value, inner.h);
     uint16_t fill_col = w->color_fn ? w->color_fn(value) : COL_ACC;
 
     gfx_fill_rect(inner.x, inner.y, inner.w, inner.h, COL_BAR_BG);
@@ -1004,7 +1054,8 @@ static void draw_vertical_bar_value_full(const VerticalBarWidget *w, int value)
     draw_vertical_bar_value_text(w, shown_value, fill_col);
 }
 
-static void draw_vertical_bar_value_delta(const VerticalBarWidget *w, int old_value, int new_value)
+static void draw_vertical_bar_value_delta(const VerticalBarWidget *w,
+                                          int old_value, int new_value)
 {
     Rect inner = get_vertical_bar_inner_rect(w);
 
@@ -1014,8 +1065,10 @@ static void draw_vertical_bar_value_delta(const VerticalBarWidget *w, int old_va
     int old_shown = w->clamp_value_text ? old_clamped : old_value;
     int new_shown = w->clamp_value_text ? new_clamped : new_value;
 
-    int old_fill_h = map_value_to_fill_height(old_clamped, w->min_value, w->max_value, inner.h);
-    int new_fill_h = map_value_to_fill_height(new_clamped, w->min_value, w->max_value, inner.h);
+    int old_fill_h = map_value_to_fill_height(old_clamped, w->min_value,
+                                              w->max_value, inner.h);
+    int new_fill_h = map_value_to_fill_height(new_clamped, w->min_value,
+                                              w->max_value, inner.h);
 
     uint16_t old_col = w->color_fn ? w->color_fn(old_value) : COL_ACC;
     uint16_t new_col = w->color_fn ? w->color_fn(new_value) : COL_ACC;
@@ -1056,13 +1109,9 @@ static void draw_vertical_bar_value_delta(const VerticalBarWidget *w, int old_va
     if (old_shown != new_shown || old_col != new_col) {
         Rect old_r = get_vertical_bar_value_rect(w, old_shown);
         Rect new_r = get_vertical_bar_value_rect(w, new_shown);
+        Rect dirty = union_rects(old_r, new_r);
 
-        int rx = (old_r.x < new_r.x) ? old_r.x : new_r.x;
-        int ry = (old_r.y < new_r.y) ? old_r.y : new_r.y;
-        int rr = ((old_r.x + old_r.w) > (new_r.x + new_r.w)) ? (old_r.x + old_r.w) : (new_r.x + new_r.w);
-        int rb = ((old_r.y + old_r.h) > (new_r.y + new_r.h)) ? (old_r.y + old_r.h) : (new_r.y + new_r.h);
-
-        gfx_fill_rect(rx, ry, rr - rx, rb - ry, w->bg_color);
+        gfx_fill_rect(dirty.x, dirty.y, dirty.w, dirty.h, w->bg_color);
         draw_vertical_bar_value_text(w, new_shown, new_col);
     }
 }
@@ -1073,7 +1122,8 @@ static void draw_vertical_bar_value_delta(const VerticalBarWidget *w, int old_va
 
 static void draw_numeric_block_static(const NumericBlockWidget *w)
 {
-    const GFXfont *label_font = (w->label_font) ? w->label_font : &FreeSansBold18pt7b;
+    const GFXfont *label_font =
+        (w->label_font) ? w->label_font : &FreeSansBold18pt7b;
 
     gfx_fill_rect(w->area.x, w->area.y, w->area.w, w->area.h, w->bg_color);
 
@@ -1086,10 +1136,12 @@ static void draw_numeric_block_static(const NumericBlockWidget *w)
     );
 }
 
-static void draw_numeric_block_value_full(const NumericBlockWidget *w, int value, uint16_t color)
+static void draw_numeric_block_value_full(const NumericBlockWidget *w,
+                                          int value, uint16_t color)
 {
     int label_baseline = w->area.y + 18 + w->label_y_offset;
-    const GFXfont *label_font = (w->label_font) ? w->label_font : &FreeSansBold18pt7b;
+    const GFXfont *label_font =
+        (w->label_font) ? w->label_font : &FreeSansBold18pt7b;
 
     gfx_fill_rect(w->area.x, w->area.y, w->area.w, w->area.h, w->bg_color);
 
@@ -1104,24 +1156,23 @@ static void draw_numeric_block_value_full(const NumericBlockWidget *w, int value
     draw_numeric_block_value_text(w, value, color);
 }
 
-static void draw_numeric_block_value_delta(const NumericBlockWidget *w, int old_value, int new_value, uint16_t color)
+static void draw_numeric_block_value_delta(const NumericBlockWidget *w,
+                                           int old_value, int new_value,
+                                           uint16_t color)
 {
     Rect old_r;
     Rect new_r;
-    int rx, ry, rr, rb;
+    Rect dirty;
 
-    if (old_value == new_value) return;
+    if (old_value == new_value) {
+        return;
+    }
 
     old_r = get_numeric_block_value_rect(w, old_value);
     new_r = get_numeric_block_value_rect(w, new_value);
+    dirty = union_rects(old_r, new_r);
 
-    rx = (old_r.x < new_r.x) ? old_r.x : new_r.x;
-    ry = (old_r.y < new_r.y) ? old_r.y : new_r.y;
-    rr = ((old_r.x + old_r.w) > (new_r.x + new_r.w)) ? (old_r.x + old_r.w) : (new_r.x + new_r.w);
-    rb = ((old_r.y + old_r.h) > (new_r.y + new_r.h)) ? (old_r.y + old_r.h) : (new_r.y + new_r.h);
-
-    gfx_fill_rect(rx, ry, rr - rx, rb - ry, w->bg_color);
-
+    gfx_fill_rect(dirty.x, dirty.y, dirty.w, dirty.h, w->bg_color);
     draw_numeric_block_value_text(w, new_value, color);
 }
 
@@ -1129,13 +1180,16 @@ static void draw_numeric_block_value_delta(const NumericBlockWidget *w, int old_
 // LAP DISPLAY
 // ======================================================
 
-static void draw_lap_counter_full(const NumericBlockWidget *w, int current_lap, int total_laps, uint16_t color)
+static void draw_lap_counter_full(const NumericBlockWidget *w,
+                                  int current_lap, int total_laps,
+                                  uint16_t color)
 {
     char buf[20];
     Rect value_rect = get_lap_value_rect(w, current_lap, total_laps);
     const GFXfont *font = numeric_block_value_font(w);
 
-    gfx_fill_rect(value_rect.x, value_rect.y, value_rect.w, value_rect.h, w->bg_color);
+    gfx_fill_rect(value_rect.x, value_rect.y, value_rect.w, value_rect.h,
+                  w->bg_color);
 
     snprintf(buf, sizeof(buf), "%d", current_lap, total_laps);
 
@@ -1163,7 +1217,7 @@ static void dash_draw_static(const DashboardLayout *L)
     draw_numeric_block_static(&L->temp_block);
     draw_numeric_block_static(&L->speed_block);
 
-    //draw_UGR_logo();
+    // draw_UGR_logo();
 }
 
 static void dash_draw_values_full(const DashboardLayout *L,
@@ -1223,13 +1277,15 @@ void dash_init(double initial_battery_charge,
         prev.speed,
         prev.lap
     );
-    
+
     inited = 1;
 }
 
 void dash_update(const Dashboard *d)
 {
-    if (!d) return;
+    if (!d) {
+        return;
+    }
 
     if (!inited) {
         dash_init(d->battery_charge,
@@ -1238,7 +1294,8 @@ void dash_update(const Dashboard *d)
                   d->speed);
 
         prev.lap = d->lap;
-        draw_lap_counter_full(&g_layout.lap_block, prev.lap, LAP_TOTAL_DEFAULT, COL_ACC);
+        draw_lap_counter_full(&g_layout.lap_block, prev.lap,
+                              LAP_TOTAL_DEFAULT, COL_ACC);
         return;
     }
 
@@ -1252,7 +1309,6 @@ void dash_update(const Dashboard *d)
     }
 
     if ((int)d->cell_temperature != (int)prev.cell_temperature) {
-        
         int old_temp = (int)prev.cell_temperature;
         int new_temp = (int)d->cell_temperature;
         uint16_t old_temp_col = temp_color_for_value(old_temp);
@@ -1314,10 +1370,12 @@ void dash_update(const Dashboard *d)
 void draw_UGR_logo(void)
 {
     gfx_blit565_key(
-        SMALL_LOGO_X, SMALL_LOGO_Y,
-        UGR_LOGO_W, UGR_LOGO_H,
-        (const uint16_t*)ugr_logo,
-        RGB565(0,0,0)
+        SMALL_LOGO_X,
+        SMALL_LOGO_Y,
+        UGR_LOGO_W,
+        UGR_LOGO_H,
+        (const uint16_t *)ugr_logo,
+        RGB565(0, 0, 0)
     );
 }
 
@@ -1325,8 +1383,10 @@ void draw_big_UGR_logo(void)
 {
     draw_raw565_from_sd_chunked(
         "0:/logo.bin",
-        BIG_LOGO_X, BIG_LOGO_Y,
-        BIG_UGR_LOGO_W, BIG_UGR_LOGO_H
+        BIG_LOGO_X,
+        BIG_LOGO_Y,
+        BIG_UGR_LOGO_W,
+        BIG_UGR_LOGO_H
     );
 }
 
@@ -1373,18 +1433,18 @@ uint8_t draw_raw565_from_sd_chunked(const char *path,
     UINT br;
 
     if (w == 0 || h == 0 || w > 800) {
-        SD_Debug("BAD SIZE", RGB565(255,0,0));
+        SD_Debug("BAD SIZE", RGB565(255, 0, 0));
         return 0;
     }
 
     {
         uint32_t total_start = HAL_GetTick();
         uint32_t read_time = 0;
-        uint32_t lcd_time  = 0;
+        uint32_t lcd_time = 0;
         uint16_t row = 0;
 
         if (f_open(&USERFile, path, FA_READ) != FR_OK) {
-            SD_Debug("OPEN FAIL", RGB565(255,0,0));
+            SD_Debug("OPEN FAIL", RGB565(255, 0, 0));
             return 0;
         }
 
@@ -1404,16 +1464,18 @@ uint8_t draw_raw565_from_sd_chunked(const char *path,
 
             if (fr != FR_OK || br != bytes_to_read) {
                 f_close(&USERFile);
-                SD_Debug("READ FAIL", RGB565(255,0,0));
+                SD_Debug("READ FAIL", RGB565(255, 0, 0));
                 return 0;
             }
 
             t0 = HAL_GetTick();
 
-            SSD1963_SetWindow(x,
-                              y + row,
-                              x + w - 1,
-                              y + row + rows_this_chunk - 1);
+            SSD1963_SetWindow(
+                x,
+                y + row,
+                x + w - 1,
+                y + row + rows_this_chunk - 1
+            );
 
             SSD1963_WritePixels(logo_chunk, (uint32_t)w * rows_this_chunk);
 
@@ -1437,4 +1499,122 @@ void SD_Debug(const char *msg, uint16_t color)
 {
     SSD1963_Fill(RGB565(0, 0, 0));
     gfx_draw_text_font(20, 40, msg, &FreeSansBold24pt7b, color);
+}
+
+//GRAPHING
+
+typedef struct {
+    Rect area;
+
+    uint8_t throttle[300];
+    uint8_t brake[300];
+
+    int capacity;   // e.g. 300
+    int head;       // next write position
+    int count;      // number of valid samples, <= capacity
+
+    uint16_t bg_color;
+    uint16_t grid_color;
+    uint16_t throttle_color;
+    uint16_t brake_color;
+    uint16_t frame_color;
+} DualTraceGraphWidget;
+
+static void graph_push_sample(DualTraceGraphWidget *g, int throttle, int brake)
+{
+    if (!g || g->capacity <= 0) {
+        return;
+    }
+
+    throttle = clampi(throttle, 0, 100);
+    brake = clampi(brake, 0, 100);
+
+    g->throttle[g->head] = (uint8_t)throttle;
+    g->brake[g->head] = (uint8_t)brake;
+
+    g->head = (g->head + 1) % g->capacity;
+
+    if (g->count < g->capacity) {
+        g->count++;
+    }
+}
+
+static int graph_oldest_index(const DualTraceGraphWidget *g)
+{
+    if (g->count < g->capacity) {
+        return 0;
+    }
+    return g->head;
+}
+
+static int graph_buffer_index(const DualTraceGraphWidget *g, int visible_pos)
+{
+    int oldest = graph_oldest_index(g);
+    return (oldest + visible_pos) % g->capacity;
+}
+
+static int graph_value_to_y(const DualTraceGraphWidget *g, int value)
+{
+    int inner_top = g->area.y + 2;
+    int inner_h = g->area.h - 4;
+
+    value = clampi(value, 0, 100);
+
+    return inner_top + ((100 - value) * (inner_h - 1)) / 100;
+}
+
+static void draw_graph_static(const DualTraceGraphWidget *g)
+{
+    int i;
+    int inner_x = g->area.x + 1;
+    int inner_y = g->area.y + 1;
+    int inner_w = g->area.w - 2;
+    int inner_h = g->area.h - 2;
+
+    gfx_fill_rect(g->area.x, g->area.y, g->area.w, g->area.h, g->bg_color);
+    draw_rect_outline(g->area.x, g->area.y, g->area.w, g->area.h, g->frame_color);
+
+    for (i = 0; i <= 4; i++) {
+        int gy = inner_y + (i * inner_h) / 4;
+        gfx_draw_line(inner_x, gy, inner_x + inner_w - 1, gy, g->grid_color);
+    }
+}
+
+static void draw_graph_full(const DualTraceGraphWidget *g)
+{
+    int inner_x = g->area.x + 1;
+    int inner_y = g->area.y + 1;
+    int inner_w = g->area.w - 2;
+    int inner_h = g->area.h - 2;
+    int visible = (g->count < inner_w) ? g->count : inner_w;
+    int start_x = inner_x + inner_w - visible;
+    int i;
+
+    gfx_fill_rect(inner_x, inner_y, inner_w, inner_h, g->bg_color);
+
+    for (i = 0; i <= 4; i++) {
+        int gy = inner_y + (i * inner_h) / 4;
+        gfx_draw_line(inner_x, gy, inner_x + inner_w - 1, gy, g->grid_color);
+    }
+
+    if (visible < 2) {
+        return;
+    }
+
+    for (i = 1; i < visible; i++) {
+        int idx0 = graph_buffer_index(g, g->count - visible + (i - 1));
+        int idx1 = graph_buffer_index(g, g->count - visible + i);
+
+        int x0 = start_x + (i - 1);
+        int x1 = start_x + i;
+
+        int y0_throttle = graph_value_to_y(g, g->throttle[idx0]);
+        int y1_throttle = graph_value_to_y(g, g->throttle[idx1]);
+
+        int y0_brake = graph_value_to_y(g, g->brake[idx0]);
+        int y1_brake = graph_value_to_y(g, g->brake[idx1]);
+
+        gfx_draw_line(x0, y0_throttle, x1, y1_throttle, g->throttle_color);
+        gfx_draw_line(x0, y0_brake, x1, y1_brake, g->brake_color);
+    }
 }

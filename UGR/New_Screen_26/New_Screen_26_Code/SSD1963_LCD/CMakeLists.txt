@@ -70,7 +70,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 
 
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-    Core/Src/dashboard.c
+    #Core/Src/dashboard.c
     Core/Src/ssd1963.c
     Core/Src/logos/icons.c
     Core/Src/logos/ugr_logo.c
@@ -78,6 +78,10 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Src/gt911.c
     Core/Src/gfx_text.c
     Core/Src/sd_card.c
+    Core/Src/dashboard/pedal_graph_dashboard.c
+    Core/Src/dashboard/endurance_dashboard.c
+    Core/Src/dashboard/dashboard_core.c
+    Core/Src/dashboard/dashboard_tests.c
     FATFS/App/fatfs.c
     FATFS/Target/user_diskio.c
 )
@@ -86,6 +90,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Inc
     Core/Inc/logos
     Core/Inc/fonts
+    Core/Inc/dashboard
     FATFS/APP
     FATFS/Target
 )

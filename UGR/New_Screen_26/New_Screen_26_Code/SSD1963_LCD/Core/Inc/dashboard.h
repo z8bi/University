@@ -4,11 +4,13 @@
 #include <stdint.h>
 
 typedef struct {
-    uint8_t lap;     
-    uint8_t battery_charge;      // 0–100
-    uint8_t cell_temperature;    // 0–150
-    uint8_t water_temperature;   // 0–150
-    uint16_t speed;              // or whatever range
+    uint8_t battery_charge;
+    uint8_t cell_temperature;
+    uint8_t water_temperature;
+    uint16_t speed;
+    uint8_t lap;
+    uint8_t throttle_percent;
+    uint8_t brake_percent;
 } Dashboard;
 
 typedef struct {
