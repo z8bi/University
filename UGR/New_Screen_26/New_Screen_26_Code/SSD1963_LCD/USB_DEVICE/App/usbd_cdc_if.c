@@ -33,6 +33,10 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+extern void Request_EnterDfu(void);
+extern void Request_LogoScreen(void);
+extern void Request_EnduranceScreen(void);
+extern void Request_PedalScreen(void);
 
 /* USER CODE END PV */
 
@@ -261,16 +265,36 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
   * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL
   */
 
-extern void Request_EnterDfu(void);
-
 static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 {
     if ((*Len >= 9) && (memcmp(Buf, "ENTER_DFU", 9) == 0))
     {
         const char reply[] = "OK DFU\r\n";
         (void)CDC_Transmit_FS((uint8_t*)reply, sizeof(reply) - 1);
-
         Request_EnterDfu();
+    }
+    else if ((*Len >= 11) && (memcmp(Buf, "SCREEN LOGO", 11) == 0))
+    {
+        const char reply[] = "OK LOGO\r\n";
+        (void)CDC_Transmit_FS((uint8_t*)reply, sizeof(reply) - 1);
+        Request_LogoScreen();
+    }
+    else if ((*Len >= 16) && (memcmp(Buf, "SCREEN ENDURANCE", 16) == 0))
+    {
+        const char reply[] = "OK ENDURANCE\r\n";
+        (void)CDC_Transmit_FS((uint8_t*)reply, sizeof(reply) - 1);
+        Request_EnduranceScreen();
+    }
+    else if ((*Len >= 12) && (memcmp(Buf, "SCREEN PEDAL", 12) == 0))
+    {
+        const char reply[] = "OK PEDAL\r\n";
+        (void)CDC_Transmit_FS((uint8_t*)reply, sizeof(reply) - 1);
+        Request_PedalScreen();
+    }
+    else
+    {
+        const char reply[] = "ERR\r\n";
+        (void)CDC_Transmit_FS((uint8_t*)reply, sizeof(reply) - 1);
     }
 
     USBD_CDC_SetRxBuffer(&hUsbDeviceFS, Buf);

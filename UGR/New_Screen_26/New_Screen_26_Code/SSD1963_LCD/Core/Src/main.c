@@ -55,12 +55,40 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
-//USB FLASHING REQUEST
+//USB REQUESTS
+
+typedef enum {
+    SCREEN_REQ_NONE = 0,
+    SCREEN_REQ_LOGO,
+    SCREEN_REQ_ENDURANCE,
+    SCREEN_REQ_PEDAL
+} ScreenRequest;
+
 static volatile uint8_t g_enter_dfu_requested = 0;
+static volatile uint8_t g_screen_change_requested = 0;
+static volatile ScreenRequest g_requested_screen = SCREEN_REQ_NONE;
 
 void Request_EnterDfu(void)
 {
     g_enter_dfu_requested = 1;
+}
+
+void Request_LogoScreen(void)
+{
+    g_requested_screen = SCREEN_REQ_LOGO;
+    g_screen_change_requested = 1;
+}
+
+void Request_EnduranceScreen(void)
+{
+    g_requested_screen = SCREEN_REQ_ENDURANCE;
+    g_screen_change_requested = 1;
+}
+
+void Request_PedalScreen(void)
+{
+    g_requested_screen = SCREEN_REQ_PEDAL;
+    g_screen_change_requested = 1;
 }
 
 /* USER CODE END PFP */
@@ -196,8 +224,13 @@ static uint8_t touch_ok = 0;
 void SystemClock_Config(void);
 static void MPU_Config(void);
 /* USER CODE BEGIN PFP */
+
 static void JumpToSystemBootloader(void);
 void Request_EnterDfu(void);
+void Request_LogoScreen(void);
+void Request_EnduranceScreen(void);
+void Request_PedalScreen(void);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -261,6 +294,8 @@ int main(void)
     SSD1963_Init();
     SSD1963_Fill(RGB565(0, 0, 0));
     
+
+    //DRAW BIG UGR LOGO FROM SD CARD IF PRESENT
     if (f_mount(&USERFatFS, USERPath, 1) == FR_OK)
     {   
         draw_big_UGR_logo();
@@ -328,13 +363,55 @@ int main(void)
         */
 
         //==================================================================
-        //=================GO TO BOOTLOADER WHEN USB REQUESTS IT============
+        //========GO TO BOOTLOADER OR SWITCH SCREEN FROM USB INPUT==========
         //==================================================================
 
         if (g_enter_dfu_requested)
         {
             HAL_Delay(20);
             JumpToSystemBootloader();
+        }
+
+        if (g_screen_change_requested)
+        {
+            g_screen_change_requested = 0;
+
+            SSD1963_Fill(RGB565(0, 0, 0));
+
+            switch (g_requested_screen)
+            {
+                case SCREEN_REQ_LOGO:
+                    screen_state = LOGO;
+                    draw_big_UGR_logo();
+                    screen_updated = 0;
+                    break;
+
+                case SCREEN_REQ_ENDURANCE:
+                    screen_state = ENDURANCE;
+                    endurance_dash_init(
+                            d.battery_charge,
+                            d.cell_temperature,
+                            d.lap,
+                            d.speed); 
+                    updated = 1;
+                    break;
+
+                case SCREEN_REQ_PEDAL:
+                    screen_state = PEDAL;
+                    pedal_graph_dash_init(
+                            d.battery_charge,
+                            d.cell_temperature,
+                            d.lap,
+                            d.speed); 
+                    updated = 1;
+                    break;
+
+                case SCREEN_REQ_NONE:
+                default:
+                    break;
+            }
+
+            g_requested_screen = SCREEN_REQ_NONE;
         }
 
         //==================================================================
