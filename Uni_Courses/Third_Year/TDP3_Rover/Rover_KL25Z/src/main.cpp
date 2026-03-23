@@ -355,14 +355,14 @@
             case CtrlState::FOLLOW: {
                 if (li.right_turn_sig && !li.left_turn_sig) {
                     last_pos = +1;
-                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS);
+                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS_FOLLOW);
                     motors_brake(Config::BRAKE_STRENGTH);
                     break;
                 }
 
                 if (li.left_turn_sig && !li.right_turn_sig) {
                     last_pos = -1;
-                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS);
+                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS_FOLLOW);
                     motors_brake(Config::BRAKE_STRENGTH);
                     break;
                 }
@@ -382,23 +382,30 @@
                 break;
             }
 
-           case CtrlState::ALIGN: {
+            case CtrlState::ALIGN: {
+
+                // ✅ Normal exit (keep this)
                 if (li.centered) {
                     enter_state(CtrlState::FOLLOW, 0);
                     move_forward(Config::DUTY_FWD);
                     break;
                 }
 
+                // ✅ NEW: crossed line but not centered → flip direction
+                if (li.middle && !li.centered) {
+                    last_pos = -last_pos;  // flip direction
+                }
+
                 if (li.right_turn_sig && !li.left_turn_sig) {
                     last_pos = +1;
-                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS);
+                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS_ALIGN);
                     motors_brake(Config::BRAKE_STRENGTH);
                     break;
                 }
 
                 if (li.left_turn_sig && !li.right_turn_sig) {
                     last_pos = -1;
-                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS);
+                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS_ALIGN);
                     motors_brake(Config::BRAKE_STRENGTH);
                     break;
                 }
@@ -409,8 +416,12 @@
                     break;
                 }
 
-                if (li.pos > 0.0f) turn_right_break_inner(Config::TURN_BRAKE_STRENGTH, Config::ALIGN_DUTY_TURN);
-                else               turn_left_break_inner (Config::TURN_BRAKE_STRENGTH, Config::ALIGN_DUTY_TURN);
+                // 🔁 Use last_pos instead of li.pos for stability
+                if (last_pos > 0)
+                    turn_right_break_inner(Config::TURN_BRAKE_STRENGTH, Config::ALIGN_DUTY_TURN);
+                else
+                    turn_left_break_inner(Config::TURN_BRAKE_STRENGTH, Config::ALIGN_DUTY_TURN);
+
                 break;
             }
 
