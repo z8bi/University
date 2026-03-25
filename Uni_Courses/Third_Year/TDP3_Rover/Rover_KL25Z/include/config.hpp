@@ -2,7 +2,7 @@
 //====================== CONFIG ========================
 //======================================================
 
-#define SPEED_MODE 1
+#define SPEED_MODE 0
 
 namespace Config {
 
@@ -19,17 +19,17 @@ static constexpr int ULTRA_PERIOD_MS = 50; //actually 100 per sensor, each funct
 static constexpr int FOUND_TICKS = 1;
 
 // Drive tunables
-static constexpr float DUTY_FWD  = SPEED_MODE ? 0.75f : 0.7f; 
-static constexpr float DUTY_TURN = SPEED_MODE ? 0.9f : 0.77f; 
+static constexpr float DUTY_FWD  = SPEED_MODE ? 0.85f : 0.7f; 
+static constexpr float DUTY_TURN = SPEED_MODE ? 0.85f : 0.77f; 
 
 // Align parameters
-static constexpr float ALIGN_DUTY_TURN     = SPEED_MODE ? 0.9f : 0.82f; 
-static constexpr float TURN_BRAKE_STRENGTH = SPEED_MODE ? 1.0f : 0.90f; 
+static constexpr float ALIGN_DUTY_TURN     = SPEED_MODE ? 0.82 : 0.82f; 
+static constexpr float TURN_BRAKE_STRENGTH = SPEED_MODE ? 0.9f : 0.90f; 
 
 // SEEK braking
 static constexpr float BRAKE_STRENGTH = 1.0f;
-static constexpr int   BRAKE_MS_FOLLOW      = SPEED_MODE ? 200 : 150;
-static constexpr int   BRAKE_MS_ALIGN       = SPEED_MODE ? 1 : 50;
+static constexpr int   BRAKE_MS_FOLLOW      = SPEED_MODE ? 175 : 200;
+static constexpr int   BRAKE_MS_ALIGN       = SPEED_MODE ? 100 : 200;
 
 // FULLY_STOPPED behavior
 static constexpr int   FULL_STOP_BRAKE_MS       = 300;
@@ -57,7 +57,7 @@ static constexpr int   OB_PHASE_MIN_MS       = 2000;
 static constexpr int   OB_SEEK_DURATION      = 350;
 static constexpr int   OB_CONFIRM_CTRL_TICKS = 1;
 static constexpr int   OB_BRAKE_MS           = 500;
-static constexpr int   TURN_45_MS            = 800;
+static constexpr int   TURN_45_MS            = 700;
 static constexpr float DUTY_OB_TURN          = 0.73f;
 static constexpr float DUTY_OB_FWD           = 0.35f;
 static constexpr float DUTY_OB_RIGHT         = 0.68f;
@@ -67,7 +67,7 @@ static constexpr int RED_CTRL_CONFIRM_TICKS = 1;
 static constexpr int COLOR_INTENSITY        = 1000;
 
 // STOPPED (red light) behavior
-static constexpr float DUTY_REV_FIND_RED         = 0.25f;
+static constexpr float DUTY_REV_FIND_RED         = 0.30f;
 static constexpr int   LOST_RED_TICKS_BEFORE_REV = 10;
 static constexpr int   RED_REACQUIRE_TICKS       = 2;
 static constexpr int   STOP_BRAKE_MS             = 350;

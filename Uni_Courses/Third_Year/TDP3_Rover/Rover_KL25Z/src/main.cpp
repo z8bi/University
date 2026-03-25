@@ -80,8 +80,9 @@
         enum class StopPhase { HOLD_ON_RED, BACKUP_FIND_RED };
         StopPhase stop_phase = StopPhase::HOLD_ON_RED;
         int stop_no_red_cnt = 0;
-        int stop_red_reacq_cnt = 0;
+        uint16_t stop_last_intensity = 0;
         int stop_green_cnt = 0;
+        bool stop_seen_red_during_backup = false;
     };
 
     //initialize all static tracking variables
@@ -259,8 +260,9 @@
             if (state == CtrlState::STOPPED) {
                 rt.stop_phase = ControllerRuntime::StopPhase::HOLD_ON_RED;
                 rt.stop_no_red_cnt = 0;
-                rt.stop_red_reacq_cnt = 0;
+                rt.stop_last_intensity = 0;
                 rt.stop_green_cnt = 0;
+                rt.stop_seen_red_during_backup = false;
             }
 
             rt.prev_state = state;
@@ -353,15 +355,15 @@
         switch (state) {
 
             case CtrlState::FOLLOW: {
-                if (li.right_turn_sig && !li.left_turn_sig) {
-                    last_pos = +1;
+
+                if (li.left_turn_sig && !li.right_turn_sig) {
+                    last_pos = -1;
                     enter_state(CtrlState::BRAKING, Config::BRAKE_MS_FOLLOW);
                     motors_brake(Config::BRAKE_STRENGTH);
                     break;
                 }
-
-                if (li.left_turn_sig && !li.right_turn_sig) {
-                    last_pos = -1;
+                if (li.right_turn_sig && !li.left_turn_sig) {
+                    last_pos = +1;
                     enter_state(CtrlState::BRAKING, Config::BRAKE_MS_FOLLOW);
                     motors_brake(Config::BRAKE_STRENGTH);
                     break;
@@ -396,15 +398,15 @@
                     last_pos = -last_pos;  // flip direction
                 }
 
-                if (li.right_turn_sig && !li.left_turn_sig) {
-                    last_pos = +1;
+                if (li.left_turn_sig && !li.right_turn_sig) {
+                    last_pos = -1;
                     enter_state(CtrlState::BRAKING, Config::BRAKE_MS_ALIGN);
                     motors_brake(Config::BRAKE_STRENGTH);
                     break;
                 }
 
-                if (li.left_turn_sig && !li.right_turn_sig) {
-                    last_pos = -1;
+                if (li.right_turn_sig && !li.left_turn_sig) {
+                    last_pos = +1;
                     enter_state(CtrlState::BRAKING, Config::BRAKE_MS_ALIGN);
                     motors_brake(Config::BRAKE_STRENGTH);
                     break;
@@ -702,12 +704,13 @@
                 if (rt.stop_green_cnt >= 2) {
                     rt.stop_green_cnt = 0;
                     rt.stop_no_red_cnt = 0;
-                    rt.stop_red_reacq_cnt = 0;
+                    rt.stop_last_intensity = 0;
+                    rt.stop_seen_red_during_backup = false;
                     rt.stop_phase = ControllerRuntime::StopPhase::HOLD_ON_RED;
 
                     found_light_again = false; // reset reacquisition flag for next time we stop
 
-                    enter_state(CtrlState::FOLLOW, 0);
+                    enter_state((last_pos >= 0) ? CtrlState::SEEK_RIGHT : CtrlState::SEEK_LEFT, 0);
                     break;
                 }
 
@@ -721,20 +724,31 @@
                         rt.stop_no_red_cnt++;
                         if (rt.stop_no_red_cnt >= Config::LOST_RED_TICKS_BEFORE_REV && !found_light_again) {
                             rt.stop_no_red_cnt = 0;
-                            rt.stop_red_reacq_cnt = 0;
+                            rt.stop_last_intensity = sh.rgbc_valid ? sh.rgbc.c : 0;
+                            rt.stop_seen_red_during_backup = false;
                             rt.stop_phase = ControllerRuntime::StopPhase::BACKUP_FIND_RED;
                         }
                     }
                 } else { // BACKUP_FIND_RED
-                    move_backward(Config::DUTY_REV_FIND_RED);
+                    const uint16_t intensity = sh.rgbc_valid ? sh.rgbc.c : 0;
 
-                    if (red_now) rt.stop_red_reacq_cnt++;
-                    else         rt.stop_red_reacq_cnt = 0;
+                    // Phase 1: red not found yet -> keep backing up until red is seen
+                    if (!rt.stop_seen_red_during_backup) {
+                        move_backward(Config::DUTY_REV_FIND_RED);
 
-                    if (rt.stop_red_reacq_cnt >= Config::RED_REACQUIRE_TICKS) {
-                        rt.stop_red_reacq_cnt = 0;
+                        if (red_now) {
+                            rt.stop_seen_red_during_backup = true;
+                            rt.stop_last_intensity = intensity;
+                        }
+                    }
+                    // Phase 2: red is seen -> keep backing up only while intensity increases
+                    else if (red_now && intensity > rt.stop_last_intensity) {
+                        rt.stop_last_intensity = intensity;
+                        move_backward(Config::DUTY_REV_FIND_RED);
+                    } else {
                         found_light_again = true;
                         rt.stop_phase = ControllerRuntime::StopPhase::HOLD_ON_RED;
+                        rt.stop_seen_red_during_backup = false;
                         motors_all_off();
                     }
                 }
