@@ -3337,6 +3337,330 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "DF51:DF51-4DP-2DS_50_"
+			(pin_names
+				(offset 1.016)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at -8.89 3.175 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left bottom)
+				)
+			)
+			(property "Value" "DF51-4DP-2DS_50_"
+				(at -8.89 -7.62 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left bottom)
+				)
+			)
+			(property "Footprint" "DF51-4DP-2DS_50_:HIROSE_DF51-4DP-2DS_50_"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "MF" "Hirose Electric Co Ltd"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "MAXIMUM_PACKAGE_HEIGHT" "7.60mm"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "CREATOR" "NEZY"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Price" "None"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Package" "None"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Check_prices" "https://www.snapeda.com/parts/DF51-4DP-2DS(50)/Hirose/view-part/?ref=eda"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "STANDARD" "Manufacturer Recommendations"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "PARTREV" "1"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "VERIFIER" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "SnapEDA_Link" "https://www.snapeda.com/parts/DF51-4DP-2DS(50)/Hirose/view-part/?ref=snap"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "MP" "DF51-4DP-2DS(50)"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Description_1" "Connector Header Through Hole, Right Angle 4 position 0.079 (2.00mm)"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "Availability" "In Stock"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(property "MANUFACTURER" "Hirose"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify bottom)
+					(hide yes)
+				)
+			)
+			(symbol "DF51-4DP-2DS_50__0_0"
+				(rectangle
+					(start -8.89 -5.08)
+					(end 8.89 2.54)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(rectangle
+					(start -8.255 -0.3175)
+					(end -6.6675 0.3175)
+					(stroke
+						(width 0.1)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start -8.255 -2.8575)
+					(end -6.6675 -2.2225)
+					(stroke
+						(width 0.1)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start 6.6675 -0.3175)
+					(end 8.255 0.3175)
+					(stroke
+						(width 0.1)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start 6.6675 -2.8575)
+					(end 8.255 -2.2225)
+					(stroke
+						(width 0.1)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(pin passive line
+					(at -12.7 0 0)
+					(length 5.08)
+					(name "1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -12.7 -2.54 0)
+					(length 5.08)
+					(name "3"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 12.7 0 180)
+					(length 5.08)
+					(name "2"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 12.7 -2.54 180)
+					(length 5.08)
+					(name "4"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.016 1.016)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Device:C"
 			(pin_numbers
 				(hide yes)
@@ -8049,6 +8373,208 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "MMBT5550L:MMBT5550L"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "MMBT5550L_0_1"
+				(polyline
+					(pts
+						(xy -7.62 0) (xy -4.445 0)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -4.445 1.905) (xy -4.445 -1.905) (xy -4.445 -1.905)
+					)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -4.445 0.635) (xy -2.54 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -4.445 -0.635) (xy -2.54 -2.54) (xy -2.54 -2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center -3.81 0)
+					(radius 2.8194)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -3.81 -1.778) (xy -3.302 -1.27) (xy -2.794 -2.286) (xy -3.81 -1.778) (xy -3.81 -1.778)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.286 -1.27) (xy -2.286 -1.27)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.286 -1.27) (xy -2.286 -1.27)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "MMBT5550L_1_1"
+				(pin input line
+					(at -10.16 0 0)
+					(length 2.54)
+					(name "B"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin open_collector line
+					(at -2.54 5.08 270)
+					(length 2.54)
+					(name "C"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin open_emitter line
+					(at -2.54 -5.08 90)
+					(length 2.54)
+					(name "E"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "My_ICs:TPS2112APW"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -8854,8 +9380,20 @@
 		(uuid 83ee3796-91ea-4425-a4a5-4e8ef0f25714)
 	)
 	(rectangle
-		(start 22.86 228.6)
-		(end 85.09 279.4)
+		(start 16.51 172.72)
+		(end 99.06 223.52)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 89c15373-bf75-4a8e-88e0-dc929403e58f)
+	)
+	(rectangle
+		(start 16.51 228.6)
+		(end 100.33 279.4)
 		(stroke
 			(width 0)
 			(type default)
@@ -8970,6 +9508,16 @@
 			)
 		)
 		(uuid "6703ce86-4fa0-41f4-a497-0497fde146d0")
+	)
+	(text "DASHBOARD DF51 INTERFACE"
+		(exclude_from_sim no)
+		(at 52.07 170.434 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+			)
+		)
+		(uuid "711662a6-74e1-4ce1-a884-137030509c81")
 	)
 	(text "SDC READING"
 		(exclude_from_sim no)
@@ -9110,7 +9658,7 @@
 		(uuid "40a2e6b7-755f-4b5a-a7a3-d88824df6088")
 	)
 	(junction
-		(at 223.52 193.04)
+		(at 251.46 193.04)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "4100b506-108a-4bda-91e1-2a1880e411a8")
@@ -9146,7 +9694,7 @@
 		(uuid "598be5d6-2bdc-4176-a6b9-3b899d2a46e7")
 	)
 	(junction
-		(at 205.74 190.5)
+		(at 233.68 190.5)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "5fe72885-ba83-4690-be76-5c34227d93bd")
@@ -9438,10 +9986,6 @@
 		(uuid "17bb0415-34ab-4f11-95ef-b04a345f7e3b")
 	)
 	(no_connect
-		(at 200.66 127)
-		(uuid "19a70ca5-1161-488b-8b5f-54b8432012c5")
-	)
-	(no_connect
 		(at 154.94 162.56)
 		(uuid "1e5d24f0-6643-4eef-87df-fe1ac2bfe4e3")
 	)
@@ -9464,10 +10008,6 @@
 	(no_connect
 		(at 200.66 147.32)
 		(uuid "30da4a56-e73a-4d4b-b4b8-47894b09994d")
-	)
-	(no_connect
-		(at 200.66 180.34)
-		(uuid "31cb6b41-8323-474a-a744-61d21da610ff")
 	)
 	(no_connect
 		(at 154.94 223.52)
@@ -9518,20 +10058,12 @@
 		(uuid "5b1a0806-a858-4c71-a771-d7cbfa39142c")
 	)
 	(no_connect
-		(at 200.66 185.42)
-		(uuid "5c773ff8-52ce-4401-820c-322981f0bb00")
-	)
-	(no_connect
 		(at 281.94 143.51)
 		(uuid "5d6e7c1e-94be-4a31-a71f-5d23a95196a0")
 	)
 	(no_connect
 		(at 154.94 198.12)
 		(uuid "5f5a2662-ddb2-499d-8c09-9e99fca59c9f")
-	)
-	(no_connect
-		(at 200.66 129.54)
-		(uuid "61edc6ef-ed12-4406-842d-f352b09ee0a2")
 	)
 	(no_connect
 		(at 154.94 157.48)
@@ -9550,12 +10082,12 @@
 		(uuid "65da7fa6-b90a-4a2b-975a-46b1655d6514")
 	)
 	(no_connect
-		(at 353.06 185.42)
-		(uuid "72648d78-7bbc-428e-b9e2-c154c73e174f")
+		(at 67.31 189.23)
+		(uuid "720d1c4a-2bbb-4a49-b34c-5c7259eae531")
 	)
 	(no_connect
-		(at 200.66 132.08)
-		(uuid "77c1bfa2-22bb-45f5-a934-19e5bbbe72f9")
+		(at 353.06 185.42)
+		(uuid "72648d78-7bbc-428e-b9e2-c154c73e174f")
 	)
 	(no_connect
 		(at 200.66 251.46)
@@ -9568,10 +10100,6 @@
 	(no_connect
 		(at 200.66 220.98)
 		(uuid "8ea73040-9eeb-44bf-95fe-14c68f8d020c")
-	)
-	(no_connect
-		(at 200.66 134.62)
-		(uuid "94916da8-294e-4936-b8d8-2933b7e6aa4d")
 	)
 	(no_connect
 		(at 200.66 195.58)
@@ -9680,6 +10208,16 @@
 			(type default)
 		)
 		(uuid "01a702c0-b6e0-4ffd-9924-53c5976be286")
+	)
+	(wire
+		(pts
+			(xy 41.91 189.23) (xy 41.91 193.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "048c1cfd-3e7e-4dd4-89b7-09ce831191e8")
 	)
 	(wire
 		(pts
@@ -9913,7 +10451,7 @@
 	)
 	(wire
 		(pts
-			(xy 205.74 190.5) (xy 210.82 190.5)
+			(xy 233.68 190.5) (xy 238.76 190.5)
 		)
 		(stroke
 			(width 0)
@@ -10073,6 +10611,16 @@
 	)
 	(wire
 		(pts
+			(xy 200.66 190.5) (xy 233.68 190.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "285753ca-aee4-48aa-9706-58dc39492768")
+	)
+	(wire
+		(pts
 			(xy 129.54 172.72) (xy 134.62 172.72)
 		)
 		(stroke
@@ -10110,16 +10658,6 @@
 			(type default)
 		)
 		(uuid "2ce2d3f0-df68-48dd-a90d-04d5a53b5b96")
-	)
-	(wire
-		(pts
-			(xy 200.66 193.04) (xy 223.52 193.04)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3094080a-6055-440c-9c94-74690e2526a3")
 	)
 	(wire
 		(pts
@@ -10220,6 +10758,16 @@
 			(type default)
 		)
 		(uuid "3ddba88e-f6d9-487e-af6a-d7f13b6d4a2e")
+	)
+	(wire
+		(pts
+			(xy 200.66 193.04) (xy 251.46 193.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "427b328a-29c5-4e1f-95e9-729c0b143cc6")
 	)
 	(wire
 		(pts
@@ -10640,6 +11188,16 @@
 			(type default)
 		)
 		(uuid "6af7fce7-e997-4331-9457-d3677bab751b")
+	)
+	(wire
+		(pts
+			(xy 67.31 186.69) (xy 72.39 186.69)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6cb646db-1745-466b-a927-f67c703029f0")
 	)
 	(wire
 		(pts
@@ -11243,7 +11801,7 @@
 	)
 	(wire
 		(pts
-			(xy 223.52 193.04) (xy 228.6 193.04)
+			(xy 251.46 193.04) (xy 256.54 193.04)
 		)
 		(stroke
 			(width 0)
@@ -11563,6 +12121,16 @@
 	)
 	(wire
 		(pts
+			(xy 72.39 203.2) (xy 72.39 208.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c9179cb4-c23a-4926-94a6-0274772c9b55")
+	)
+	(wire
+		(pts
 			(xy 59.69 247.65) (xy 57.15 247.65)
 		)
 		(stroke
@@ -11630,6 +12198,26 @@
 			(type default)
 		)
 		(uuid "d1ae3c4b-665c-4301-9e72-019e77daf9c1")
+	)
+	(wire
+		(pts
+			(xy 72.39 186.69) (xy 72.39 193.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d1c485cb-1254-42df-8108-820004335890")
+	)
+	(wire
+		(pts
+			(xy 41.91 207.01) (xy 41.91 203.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d214c669-bc37-4044-a19e-40e9eb6b8de2")
 	)
 	(wire
 		(pts
@@ -11810,16 +12398,6 @@
 			(type default)
 		)
 		(uuid "eaab25f3-55be-46fb-8be6-f601790bdbd4")
-	)
-	(wire
-		(pts
-			(xy 200.66 190.5) (xy 205.74 190.5)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "eac26d42-49e5-4db0-b288-de3b88f85121")
 	)
 	(wire
 		(pts
@@ -12805,7 +13383,7 @@
 	)
 	(global_label "T_SDA"
 		(shape output)
-		(at 228.6 193.04 0)
+		(at 256.54 193.04 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -12815,7 +13393,7 @@
 		)
 		(uuid "4add9766-8b75-4091-9b82-ceeb5b8964d8")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 237.0885 193.04 0)
+			(at 265.0285 193.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12935,6 +13513,28 @@
 			)
 		)
 	)
+	(global_label "STATE_RD"
+		(shape bidirectional)
+		(at 41.91 186.69 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "6398cbf8-d688-4666-8fdd-db5dbef363ad")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 28.9236 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "CAN_N"
 		(shape bidirectional)
 		(at 45.72 59.69 0)
@@ -12997,6 +13597,28 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DASH_LED_2"
+		(shape bidirectional)
+		(at 200.66 185.42 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "68e85894-ea44-41e9-8f96-12e352f5df70")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 216.2469 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
 				(hide yes)
 			)
 		)
@@ -13551,6 +14173,28 @@
 			)
 		)
 	)
+	(global_label "STATE_RD"
+		(shape bidirectional)
+		(at 200.66 134.62 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a4c70502-89b3-41c4-ac3d-d3ae75b97ee8")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 213.6464 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "LCD_D1"
 		(shape output)
 		(at 154.94 231.14 180)
@@ -13771,6 +14415,28 @@
 			)
 		)
 	)
+	(global_label "DASH_LED_1"
+		(shape bidirectional)
+		(at 80.01 198.12 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b7e89302-d6d1-4ae7-8361-bd72cdef2605")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 95.5969 198.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "CAN1_RX"
 		(shape input)
 		(at 200.66 200.66 0)
@@ -13828,6 +14494,72 @@
 		(uuid "c4b09870-10cc-4a60-bc66-009f1f3a2047")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 293.4146 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "MCU_SDC-"
+		(shape bidirectional)
+		(at 200.66 129.54 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c5a233f1-74eb-4c1f-ba1e-09a115a17ac6")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 215.0979 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DASH_LED_2"
+		(shape bidirectional)
+		(at 49.53 198.12 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cb262a15-418b-4057-bca4-2c592d77f9be")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 65.1169 198.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "MCU_SDC+"
+		(shape bidirectional)
+		(at 200.66 127 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cca2aeff-50f4-4477-9e74-cefbf961c83c")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 215.0979 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13921,6 +14653,28 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DASH_LED_1"
+		(shape bidirectional)
+		(at 200.66 180.34 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e5c89129-94b4-4f2e-a608-d59eb4b4f0c8")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 216.2469 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
 				(hide yes)
 			)
 		)
@@ -14103,7 +14857,7 @@
 	)
 	(global_label "T_SCL"
 		(shape output)
-		(at 210.82 190.5 0)
+		(at 238.76 190.5 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -14113,7 +14867,7 @@
 		)
 		(uuid "f299da56-154a-4970-8539-2ce496dfdcc9")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 219.248 190.5 0)
+			(at 247.188 190.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14837,7 +15591,7 @@
 			(uuid "8a378085-0a0a-4795-821c-90d6fa6e1431")
 		)
 		(instances
-			(project ""
+			(project "UGR_Driver_Screen_26"
 				(path "/56b54214-0ae7-4f9b-a691-8fe25d2dd784"
 					(reference "U5")
 					(unit 1)
@@ -15134,7 +15888,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 223.52 189.23 0)
+		(at 251.46 189.23 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -15143,7 +15897,7 @@
 		(fields_autoplaced yes)
 		(uuid "1cde7f3d-fb4b-494b-a746-0fc7725b45ca")
 		(property "Reference" "R2_I2C1"
-			(at 226.06 187.9599 0)
+			(at 254 187.9599 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15152,7 +15906,7 @@
 			)
 		)
 		(property "Value" "4.7k"
-			(at 226.06 190.4999 0)
+			(at 254 190.4999 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15161,7 +15915,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
-			(at 221.742 189.23 90)
+			(at 249.682 189.23 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15170,7 +15924,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 223.52 189.23 0)
+			(at 251.46 189.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15179,7 +15933,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 223.52 189.23 0)
+			(at 251.46 189.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15460,6 +16214,79 @@
 			(project "UGR_Driver_Screen_26"
 				(path "/56b54214-0ae7-4f9b-a691-8fe25d2dd784"
 					(reference "#PWR032")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "MMBT5550L:MMBT5550L")
+		(at 39.37 198.12 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "27aef1db-fbf4-4be8-ab4c-017e98d4d973")
+		(property "Reference" "U6"
+			(at 39.37 196.8499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "~"
+			(at 39.37 199.3899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MMBT5551LT1G:SOT95P237X111-3N"
+			(at 39.37 198.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 39.37 198.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 39.37 198.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "500364b1-f4bc-4ebf-9a70-f42759904003")
+		)
+		(pin "3"
+			(uuid "b5880ffb-8a48-4d7f-8949-b7f447d4eb7b")
+		)
+		(pin "1"
+			(uuid "9aebe93f-77eb-4b41-99c5-9ce00e9c18af")
+		)
+		(instances
+			(project "UGR_Driver_Screen_26"
+				(path "/56b54214-0ae7-4f9b-a691-8fe25d2dd784"
+					(reference "U6")
 					(unit 1)
 				)
 			)
@@ -15813,7 +16640,7 @@
 			(uuid "e7244f27-6554-4515-8611-c07c46a9f669")
 		)
 		(instances
-			(project ""
+			(project "UGR_Driver_Screen_26"
 				(path "/56b54214-0ae7-4f9b-a691-8fe25d2dd784"
 					(reference "TPS2112APW1")
 					(unit 1)
@@ -15988,7 +16815,7 @@
 			(uuid "dcb6517f-77bd-42bf-8e93-00d34a07b928")
 		)
 		(instances
-			(project ""
+			(project "UGR_Driver_Screen_26"
 				(path "/56b54214-0ae7-4f9b-a691-8fe25d2dd784"
 					(reference "U3")
 					(unit 1)
@@ -16193,6 +17020,221 @@
 			(project "UGR_Driver_Screen_26"
 				(path "/56b54214-0ae7-4f9b-a691-8fe25d2dd784"
 					(reference "C1_CAP1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "DF51:DF51-4DP-2DS_50_")
+		(at 54.61 186.69 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "39dfe140-4b70-4a1e-8d2d-6fabbf9f9803")
+		(property "Reference" "J4"
+			(at 54.61 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "DF51-4DP-2DS_50_"
+			(at 54.61 181.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "DF51:HIROSE_DF51-4DP-2DS_50_"
+			(at 54.61 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 54.61 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 54.61 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MF" "Hirose Electric Co Ltd"
+			(at 54.61 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MAXIMUM_PACKAGE_HEIGHT" "7.60mm"
+			(at 54.61 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "CREATOR" "NEZY"
+			(at 54.61 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Price" "None"
+			(at 54.61 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Package" "None"
+			(at 54.61 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Check_prices" "https://www.snapeda.com/parts/DF51-4DP-2DS(50)/Hirose/view-part/?ref=eda"
+			(at 54.61 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "STANDARD" "Manufacturer Recommendations"
+			(at 54.61 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "PARTREV" "1"
+			(at 54.61 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "VERIFIER" ""
+			(at 54.61 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "SnapEDA_Link" "https://www.snapeda.com/parts/DF51-4DP-2DS(50)/Hirose/view-part/?ref=snap"
+			(at 54.61 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MP" "DF51-4DP-2DS(50)"
+			(at 54.61 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Description_1" "Connector Header Through Hole, Right Angle 4 position 0.079 (2.00mm)"
+			(at 54.61 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "Availability" "In Stock"
+			(at 54.61 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(property "MANUFACTURER" "Hirose"
+			(at 54.61 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify bottom)
+				(hide yes)
+			)
+		)
+		(pin "4"
+			(uuid "7c5d6b68-39f6-479d-bde2-927d26315337")
+		)
+		(pin "3"
+			(uuid "9db98010-77c0-4dfc-9b78-f9be9f431e76")
+		)
+		(pin "2"
+			(uuid "dd94a6aa-ad50-4800-89ed-8cc301bb9772")
+		)
+		(pin "1"
+			(uuid "2d4793a4-7c0e-40fe-baf7-3d23fdb00ce5")
+		)
+		(instances
+			(project "UGR_Driver_Screen_26"
+				(path "/56b54214-0ae7-4f9b-a691-8fe25d2dd784"
+					(reference "J4")
 					(unit 1)
 				)
 			)
@@ -17040,7 +18082,7 @@
 			(uuid "f390bf7b-46a8-4f6c-86e9-227dc371eb06")
 		)
 		(instances
-			(project ""
+			(project "UGR_Driver_Screen_26"
 				(path "/56b54214-0ae7-4f9b-a691-8fe25d2dd784"
 					(reference "J2")
 					(unit 1)
@@ -17117,7 +18159,7 @@
 	)
 	(symbol
 		(lib_id "power:+3.3V")
-		(at 223.52 185.42 0)
+		(at 251.46 185.42 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -17126,7 +18168,7 @@
 		(fields_autoplaced yes)
 		(uuid "5b6b6dc3-fba4-4a35-a36f-c4516e70bf50")
 		(property "Reference" "#PWR026"
-			(at 223.52 189.23 0)
+			(at 251.46 189.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17135,7 +18177,7 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 223.52 180.34 0)
+			(at 251.46 180.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17143,7 +18185,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 223.52 185.42 0)
+			(at 251.46 185.42 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17152,7 +18194,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 223.52 185.42 0)
+			(at 251.46 185.42 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17161,7 +18203,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 223.52 185.42 0)
+			(at 251.46 185.42 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17404,7 +18446,7 @@
 			(uuid "cef68069-ed39-4673-9982-26adf09e98fd")
 		)
 		(instances
-			(project ""
+			(project "UGR_Driver_Screen_26"
 				(path "/56b54214-0ae7-4f9b-a691-8fe25d2dd784"
 					(reference "J1")
 					(unit 1)
@@ -17778,7 +18820,7 @@
 			(uuid "157dcf1e-0429-4942-a7aa-548e3ba61c53")
 		)
 		(instances
-			(project ""
+			(project "UGR_Driver_Screen_26"
 				(path "/56b54214-0ae7-4f9b-a691-8fe25d2dd784"
 					(reference "S1")
 					(unit 1)
@@ -17788,7 +18830,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 205.74 186.69 0)
+		(at 233.68 186.69 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -17797,7 +18839,7 @@
 		(fields_autoplaced yes)
 		(uuid "6a584b92-e80e-41c5-a08a-60a9d5c61bfd")
 		(property "Reference" "R1_I2C1"
-			(at 208.28 185.4199 0)
+			(at 236.22 185.4199 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17806,7 +18848,7 @@
 			)
 		)
 		(property "Value" "4.7k"
-			(at 208.28 187.9599 0)
+			(at 236.22 187.9599 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17815,7 +18857,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
-			(at 203.962 186.69 90)
+			(at 231.902 186.69 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17824,7 +18866,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 205.74 186.69 0)
+			(at 233.68 186.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -17833,7 +18875,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 205.74 186.69 0)
+			(at 233.68 186.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18478,7 +19520,6 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "82957153-4fae-4559-a140-228ec3edf2dc")
 		(property "Reference" "U2"
 			(at 182.4833 259.08 0)
@@ -18678,6 +19719,7 @@
 		)
 		(pin "25"
 			(uuid "cc3f982d-654b-4ccc-b9ce-60e207af3ab8")
+			(alternate "ADC1_IN3")
 		)
 		(pin "28"
 			(uuid "6b6df456-b0d5-4a0a-9d3b-004e2fa18e7b")
@@ -18846,9 +19888,11 @@
 		)
 		(pin "22"
 			(uuid "c6774d75-18cc-4132-90d4-e24e7a1542a6")
+			(alternate "ADC1_IN0")
 		)
 		(pin "23"
 			(uuid "7fa7fc75-3c96-45d1-af1c-0771cecad521")
+			(alternate "ADC1_IN1")
 		)
 		(pin "24"
 			(uuid "055b0c5c-a4de-4d56-bc5c-057f7b4c14cf")
@@ -18860,7 +19904,7 @@
 			(uuid "0a2a272c-2af5-45ce-b056-1f95b977505a")
 		)
 		(instances
-			(project ""
+			(project "UGR_Driver_Screen_26"
 				(path "/56b54214-0ae7-4f9b-a691-8fe25d2dd784"
 					(reference "U2")
 					(unit 1)
@@ -19473,7 +20517,7 @@
 	)
 	(symbol
 		(lib_id "power:+3.3V")
-		(at 205.74 182.88 0)
+		(at 233.68 182.88 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -19481,7 +20525,7 @@
 		(dnp no)
 		(uuid "895f4722-a0fa-400d-bed6-775f94414047")
 		(property "Reference" "#PWR023"
-			(at 205.74 186.69 0)
+			(at 233.68 186.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19490,7 +20534,7 @@
 			)
 		)
 		(property "Value" "+3V3"
-			(at 208.28 182.372 0)
+			(at 236.22 182.372 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19498,7 +20542,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 205.74 182.88 0)
+			(at 233.68 182.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19507,7 +20551,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 205.74 182.88 0)
+			(at 233.68 182.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19516,7 +20560,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 205.74 182.88 0)
+			(at 233.68 182.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20238,6 +21282,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 72.39 208.28 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "9a80c2b1-dd49-4e65-9de7-a648b64af254")
+		(property "Reference" "#PWR051"
+			(at 72.39 214.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 72.39 213.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 72.39 208.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 72.39 208.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 72.39 208.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "10c7140b-dc98-4330-a14d-c9b3e655225b")
+		)
+		(instances
+			(project "UGR_Driver_Screen_26"
+				(path "/56b54214-0ae7-4f9b-a691-8fe25d2dd784"
+					(reference "#PWR051")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+5V")
 		(at 82.55 251.46 0)
 		(unit 1)
@@ -20705,6 +21815,79 @@
 		)
 	)
 	(symbol
+		(lib_id "MMBT5550L:MMBT5550L")
+		(at 69.85 198.12 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a1312080-d2f5-4dec-9220-0932868754d7")
+		(property "Reference" "U4"
+			(at 69.85 196.8499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "~"
+			(at 69.85 199.3899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MMBT5551LT1G:SOT95P237X111-3N"
+			(at 69.85 198.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 69.85 198.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 69.85 198.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "9b7e62e7-7b21-419c-90ff-ff7697b3f0b7")
+		)
+		(pin "3"
+			(uuid "c2d97b29-4da7-48b8-92dc-07563075f38d")
+		)
+		(pin "1"
+			(uuid "8f5c23c7-1866-4747-a9b7-a65ab84609fd")
+		)
+		(instances
+			(project "UGR_Driver_Screen_26"
+				(path "/56b54214-0ae7-4f9b-a691-8fe25d2dd784"
+					(reference "U4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 207.01 102.87 90)
 		(unit 1)
@@ -20834,6 +22017,72 @@
 			(project "UGR_Driver_Screen_26"
 				(path "/56b54214-0ae7-4f9b-a691-8fe25d2dd784"
 					(reference "C2_VDD1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 41.91 207.01 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a8637269-2a4c-4b6d-a304-18e0d9d6ab17")
+		(property "Reference" "#PWR050"
+			(at 41.91 213.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 41.91 212.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 41.91 207.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 41.91 207.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 41.91 207.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ebb9dc4a-fafb-4f2f-a08e-8176190f3036")
+		)
+		(instances
+			(project "UGR_Driver_Screen_26"
+				(path "/56b54214-0ae7-4f9b-a691-8fe25d2dd784"
+					(reference "#PWR050")
 					(unit 1)
 				)
 			)
@@ -22546,7 +23795,7 @@
 			(uuid "1fcb8d28-afcc-4d43-b89c-4ce80a0af69f")
 		)
 		(instances
-			(project ""
+			(project "UGR_Driver_Screen_26"
 				(path "/56b54214-0ae7-4f9b-a691-8fe25d2dd784"
 					(reference "D2")
 					(unit 1)
@@ -22626,7 +23875,7 @@
 			(uuid "177c1e75-3990-4b47-ab98-e242f7bf586e")
 		)
 		(instances
-			(project ""
+			(project "UGR_Driver_Screen_26"
 				(path "/56b54214-0ae7-4f9b-a691-8fe25d2dd784"
 					(reference "J5")
 					(unit 1)
