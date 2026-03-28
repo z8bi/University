@@ -14,6 +14,9 @@
 
     using namespace std::chrono_literals;
 
+    SpeedMode speed_mode = SpeedMode::Slow;
+    static constexpr bool LINE_FOLLOW_ONLY = true;
+
     //======================================================
     //================== TIMERS / FLAGS ====================
     //======================================================
@@ -251,6 +254,14 @@
         // exit if FULLY STOPPED or MANUAL
         if (manual_mode && state != CtrlState::FULLY_STOPPED) return;
 
+        if (LINE_FOLLOW_ONLY) {
+            if (state == CtrlState::OBSTACLE_AVOID || state == CtrlState::STOPPED) {
+                cancel_obstacle_mode();
+                enter_state((last_pos >= 0) ? CtrlState::SEEK_RIGHT : CtrlState::SEEK_LEFT, 0);
+                return;
+            }
+        }
+
         // Track state changes
         if (state != rt.prev_state) {
             if (state == CtrlState::OBSTACLE_AVOID) {
@@ -269,7 +280,10 @@
         }
 
         // If obstacle mode was latched, force it
-        if (rt.ob_active && state != CtrlState::OBSTACLE_AVOID && manual_mode == false) {
+        if (!LINE_FOLLOW_ONLY &&
+            rt.ob_active &&
+            state != CtrlState::OBSTACLE_AVOID &&
+            manual_mode == false) {
             enter_state(CtrlState::OBSTACLE_AVOID, 0);
         }
 
@@ -280,7 +294,8 @@
         bool obstacle_confirmed    = false;
 
         // Only allow new transitions when obstacle mode is not locked -> this way when obstacle is triggered it won't be overwritted until it releases control
-        if (!lock_ob) {
+                // In line-follow-only mode, completely disable obstacle + traffic-light FSM transitions
+        if (!LINE_FOLLOW_ONLY && !lock_ob) {
 
             // ----- FRONT OBSTACLE -> OBSTACLE_AVOID -----
             const bool front_fresh = (Kernel::Clock::now() - sh.front_stamp) < 300ms;
@@ -306,7 +321,7 @@
                 rt.ob_cnt         = 0;
 
                 enter_state(CtrlState::OBSTACLE_AVOID, Config::OB_BRAKE_MS);
-                motors_brake(Config::BRAKE_STRENGTH);
+                motors_brake(Config::BRAKE_STRENGTH());
                 return;
             }
 
@@ -316,28 +331,34 @@
             if (state != CtrlState::FULLY_STOPPED &&
                 state != CtrlState::STOPPED &&
                 red_confirmed &&
-                right_present) // ensure the traffic light is actually there to avoid red lockers doing stupid things
+                right_present)
             {
                 rt.red_ctrl_cnt = 0;
                 enter_state(CtrlState::STOPPED, 0);
                 stop_brake_until = Kernel::Clock::now() + std::chrono::milliseconds(Config::STOP_BRAKE_MS);
-                motors_brake(Config::BRAKE_STRENGTH);
+                motors_brake(Config::BRAKE_STRENGTH());
                 return;
             }
+        } else if (LINE_FOLLOW_ONLY) {
+            // Keep these counters/state clean in LF-only mode
+            rt.red_ctrl_cnt = 0;
+            rt.ob_cnt = 0;
+            rt.ob_active = false;
+            rt.ob_reset_pending = true;
+        }
 
-            // Track last-known direction
-            if (!li.lost) {
-                if (li.pos > 0.2f)       last_pos = +1;
-                else if (li.pos < -0.2f) last_pos = -1;
-            }
+        // Track last-known direction
+        if (!li.lost) {
+            if (li.pos > 0.2f)       last_pos = +1;
+            else if (li.pos < -0.2f) last_pos = -1;
+        }
 
-            // SEEK center-lock housekeeping
-            if (state != CtrlState::SEEK_LEFT && state != CtrlState::SEEK_RIGHT) {
-                rt.seek_lock_active = false;
-                rt.seek_lock_enabled = false;
-                rt.seek_lock_dir    = 0;
-                rt.ob_seek_force_full_duration = false;
-            }
+        // SEEK center-lock housekeeping
+        if (state != CtrlState::SEEK_LEFT && state != CtrlState::SEEK_RIGHT) {
+            rt.seek_lock_active = false;
+            rt.seek_lock_enabled = false;
+            rt.seek_lock_dir    = 0;
+            rt.ob_seek_force_full_duration = false;
         }
 
         //============================== FSM ==============================
@@ -358,19 +379,19 @@
 
                 if (li.left_turn_sig && !li.right_turn_sig) {
                     last_pos = -1;
-                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS_FOLLOW);
-                    motors_brake(Config::BRAKE_STRENGTH);
+                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS_FOLLOW());
+                    motors_brake(Config::BRAKE_STRENGTH());
                     break;
                 }
                 if (li.right_turn_sig && !li.left_turn_sig) {
                     last_pos = +1;
-                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS_FOLLOW);
-                    motors_brake(Config::BRAKE_STRENGTH);
+                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS_FOLLOW());
+                    motors_brake(Config::BRAKE_STRENGTH());
                     break;
                 }
 
                 if (li.centered || (!li.left_inner && !li.right_inner)) {
-                    move_forward(Config::DUTY_FWD);
+                    move_forward(Config::DUTY_FWD());
                     break;
                 }
 
@@ -386,29 +407,24 @@
 
             case CtrlState::ALIGN: {
 
-                // ✅ Normal exit (keep this)
-                if (li.centered) {
-                    enter_state(CtrlState::FOLLOW, 0);
-                    move_forward(Config::DUTY_FWD);
-                    break;
-                }
-
+                /*
                 // ✅ NEW: crossed line but not centered → flip direction
                 if (li.middle && !li.centered) {
                     last_pos = -last_pos;  // flip direction
                 }
+                */
 
                 if (li.left_turn_sig && !li.right_turn_sig) {
                     last_pos = -1;
-                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS_ALIGN);
-                    motors_brake(Config::BRAKE_STRENGTH);
+                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS_ALIGN());
+                    motors_brake(Config::BRAKE_STRENGTH());
                     break;
                 }
 
                 if (li.right_turn_sig && !li.left_turn_sig) {
                     last_pos = +1;
-                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS_ALIGN);
-                    motors_brake(Config::BRAKE_STRENGTH);
+                    enter_state(CtrlState::BRAKING, Config::BRAKE_MS_ALIGN());
+                    motors_brake(Config::BRAKE_STRENGTH());
                     break;
                 }
 
@@ -418,11 +434,18 @@
                     break;
                 }
 
+                // Exit
+                if (li.middle) {
+                    enter_state(CtrlState::FOLLOW, 0);
+                    move_forward(Config::DUTY_FWD());
+                    break;
+                }
+
                 // 🔁 Use last_pos instead of li.pos for stability
                 if (last_pos > 0)
-                    turn_right_break_inner(Config::TURN_BRAKE_STRENGTH, Config::ALIGN_DUTY_TURN);
+                    turn_right_break_inner(Config::TURN_BRAKE_STRENGTH(), Config::ALIGN_DUTY_TURN());
                 else
-                    turn_left_break_inner(Config::TURN_BRAKE_STRENGTH, Config::ALIGN_DUTY_TURN);
+                    turn_left_break_inner(Config::TURN_BRAKE_STRENGTH(), Config::ALIGN_DUTY_TURN());
 
                 break;
             }
@@ -432,7 +455,7 @@
                 // after finding the line, do a short left brake-inner turn first
                 if (rt.ob_left_break_active) {
                     if (Kernel::Clock::now() < rt.ob_left_break_until) {
-                        turn_left_break_inner(Config::TURN_BRAKE_STRENGTH, Config::ALIGN_DUTY_TURN);
+                        turn_left_break_inner(Config::TURN_BRAKE_STRENGTH(), Config::ALIGN_DUTY_TURN());
                         break;
                     } else {
                         rt.ob_left_break_active = false;
@@ -454,7 +477,7 @@
                         break;
                     }
                     if (Kernel::Clock::now() < rt.seek_lock_until) {
-                        turn_left_skid_reverse_inner(Config::DUTY_TURN);
+                        turn_left_skid_reverse_inner(Config::DUTY_TURN());
                         break;
                     }
                     rt.seek_lock_active = false;
@@ -467,7 +490,7 @@
                     break;
                 }
 
-                turn_left_skid_reverse_inner(Config::DUTY_TURN);
+                turn_left_skid_reverse_inner(Config::DUTY_TURN());
                 break;
             }
 
@@ -487,7 +510,7 @@
                         break;
                     }
                     if (Kernel::Clock::now() < rt.seek_lock_until) {
-                        turn_right_skid_reverse_inner(Config::DUTY_TURN);
+                        turn_right_skid_reverse_inner(Config::DUTY_TURN());
                         break;
                     }
                     rt.seek_lock_active = false;
@@ -499,7 +522,7 @@
                     break;
                 }
 
-                turn_right_skid_reverse_inner(Config::DUTY_TURN);
+                turn_right_skid_reverse_inner(Config::DUTY_TURN());
                 break;
             }
             
@@ -509,7 +532,7 @@
                     rt.seek_lock_enabled = true;   // FOLLOW triggered this SEEK
                     enter_state((last_pos >= 0) ? CtrlState::SEEK_RIGHT : CtrlState::SEEK_LEFT, 0);
                 } else {
-                    motors_brake(Config::BRAKE_STRENGTH);
+                    motors_brake(Config::BRAKE_STRENGTH());
                 }
                 break;
             }
@@ -517,7 +540,7 @@
             case CtrlState::OBSTACLE_AVOID: {
                 // Initial brake window
                 if (!state_time_elapsed()) {
-                    motors_brake(Config::BRAKE_STRENGTH);
+                    motors_brake(Config::BRAKE_STRENGTH());
                     break;
                 }
 
@@ -551,7 +574,7 @@
 
                 // Micro-brake so motors don't go boom
                 if (Kernel::Clock::now() < rt.sub_brake_until) {
-                    motors_brake(Config::BRAKE_STRENGTH);
+                    motors_brake(Config::BRAKE_STRENGTH());
                     break;
                 }
 
@@ -690,7 +713,7 @@
             case CtrlState::STOPPED: {
                 // Brake on entry for a short window
                 if (Kernel::Clock::now() < stop_brake_until) {
-                    motors_brake(Config::BRAKE_STRENGTH);
+                    motors_brake(Config::BRAKE_STRENGTH());
                     break;
                 }
 
@@ -858,6 +881,7 @@
         enter_state(CtrlState::MANUAL_BT, 0);
         leds_for_manual_cmd('A');
         turn_left_break_inner(0.9, 0.82); 
+        return;
     }
     if (c == 'd') {
         manual_mode = true;
@@ -927,18 +951,20 @@
         const bool tcs_ok = HW::color.init(100.0f, tcs3472::Gain::X16);
         if (!tcs_ok) Debug::log("TCS3472 init failed");
 
-        // START BEHAVIOR!!!! IF THE SHORT IS PRESENT AT BOOT -> SEEK, OTHERWISE FULLY STOPPED WAITING FOR BT PAIRING
-        if(HW::start_switch == 0) {
-            enter_state(CtrlState::SEEK_LEFT, 0);
-        }
-        else {
-            enter_state(CtrlState::FULLY_STOPPED, Config::FULL_STOP_BRAKE_MS);
+        enter_state(CtrlState::SEEK_LEFT, 0);
+
+        if (HW::start_switch == 0) {
+            speed_mode = SpeedMode::Slow;
+        } else {
+            speed_mode = SpeedMode::Fast;
         }
 
         //Initialize timers for periodic tasks
-        Flags::colorTick.attach(&Flags::color_isr,   std::chrono::milliseconds(Config::COLOR_PERIOD_MS));
+        if (!LINE_FOLLOW_ONLY) {
+            Flags::colorTick.attach(&Flags::color_isr, std::chrono::milliseconds(Config::COLOR_PERIOD_MS));
+            Flags::ultraTick.attach(&Flags::ultra_isr, std::chrono::milliseconds(Config::ULTRA_PERIOD_MS));
+        }
         Flags::controlTick.attach(&Flags::control_isr, std::chrono::milliseconds(Config::CTRL_PERIOD_MS));
-        Flags::ultraTick.attach(&Flags::ultra_isr,   std::chrono::milliseconds(Config::ULTRA_PERIOD_MS));
         Flags::debugTick.attach(&Flags::debug_isr,   std::chrono::milliseconds(Config::DEBUG_PERIOD_MS));
 
         while (true) {
@@ -952,12 +978,13 @@
             if (Flags::ultra_due)   { Flags::ultra_due   = false; do_ultra  = true; }
             if (Flags::color_due)   { Flags::color_due   = false; do_color  = true; }
             if (Flags::debug_due)   { Flags::debug_due   = false; do_debug  = true; }
+            
             core_util_critical_section_exit();
 
             if (do_update) controller_update();
-            if (do_ultra)  task_ultrasonic(us_front, us_right);
-            if (do_color)  task_color(tcs_ok);
-            if (do_debug)  Debug::tick();
+            if (!LINE_FOLLOW_ONLY && do_ultra) task_ultrasonic(us_front, us_right);
+            if (!LINE_FOLLOW_ONLY && do_color) task_color(tcs_ok);
+            if (do_debug) Debug::tick();
 
             task_bluetooth();
         }
