@@ -200,6 +200,10 @@ int main() {
             "======YOU LOST!!!!=====\n" <<
             "=======================" << std::endl;
             break;
+        default:
+            std::cout << 
+            "How did you get here :D"
+            << std::endl;
     }
 
     return 0;
