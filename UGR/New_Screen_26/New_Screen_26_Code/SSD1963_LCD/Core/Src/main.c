@@ -231,7 +231,7 @@ static uint8_t touch_ok = 0;
 
   // CAN message for SDC / state report
   #define CAN_ID_SDC_STATE        0x101
-  #define CAN_SDC_STATE_DLC       5
+  #define CAN_SDC_STATE_DLC       4
 
   typedef enum
   {
@@ -240,6 +240,7 @@ static uint8_t touch_ok = 0;
       STATE_RD_LEVEL_2 = 2
   } StateRdLevel;
 
+  static uint8_t sdc_first_sample_done = 0;
   static StateRdLevel last_state_rd_level = 0xFF;
   static uint16_t last_mcu_sdc_minus = 0xFFFF;
   static uint16_t last_mcu_sdc_plus  = 0xFFFF;
@@ -254,7 +255,7 @@ static void MPU_Config(void);
 static uint16_t ADC1_ReadChannel(uint32_t channel);
 static StateRdLevel GetStateRdLevel(uint16_t adc_value);
 static void ApplyScreenFromStateRd(StateRdLevel level);
-static void CAN2_SendSdcState(uint16_t sdc_minus, uint16_t sdc_plus, StateRdLevel level);
+static void CAN2_SendSdcState(uint16_t sdc_minus, uint16_t sdc_plus);
 
 static void JumpToSystemBootloader(void);
 void Request_EnterDfu(void);
@@ -452,6 +453,39 @@ int main(void)
         }
 
         //==================================================================
+        //================ ADC INPUT PROCESSING SECTION ====================
+        //==================================================================
+        {
+            static uint32_t last_adc_sample_ms = 0;
+
+            if (HAL_GetTick() - last_adc_sample_ms >= 50)
+            {
+                last_adc_sample_ms = HAL_GetTick();
+
+                uint16_t sdc_p_adc    = ADC1_ReadChannel(ADC_CHANNEL_0); // PA0 = MCU_SDC_P
+                uint16_t sdc_n_adc    = ADC1_ReadChannel(ADC_CHANNEL_1); // PA1 = MCU_SDC_N
+                uint16_t state_rd_adc = ADC1_ReadChannel(ADC_CHANNEL_3); // PA3 = STATE_RD
+
+                StateRdLevel state_level = GetStateRdLevel(state_rd_adc);
+
+                // STATE_RD drives the selected screen, same style as USB requests
+                ApplyScreenFromStateRd(state_level);
+
+                // Send CAN only when SDC readings change
+                if (!sdc_first_sample_done ||
+                    sdc_p_adc != last_mcu_sdc_plus ||
+                    sdc_n_adc != last_mcu_sdc_minus)
+                {
+                    CAN2_SendSdcState(sdc_n_adc, sdc_p_adc);
+
+                    last_mcu_sdc_plus = sdc_p_adc;
+                    last_mcu_sdc_minus = sdc_n_adc;
+                    sdc_first_sample_done = 1;
+                }
+            }
+        }
+
+        //==================================================================
         //=================State machine for screen updates=================
         //==================================================================
         
@@ -531,6 +565,8 @@ int main(void)
         }
         #endif
 
+
+        //End of WHILE LOOP
         HAL_Delay(1);
         
     }
@@ -692,43 +728,30 @@ static void ApplyScreenFromStateRd(StateRdLevel level)
         return;
     }
 
-    SSD1963_Fill(RGB565(0, 0, 0));
+    last_state_rd_level = level;
 
     switch (level)
     {
         case STATE_RD_LEVEL_0:
-            screen_state = LOGO;
-            draw_big_UGR_logo();
-            screen_updated = 0;
+            g_requested_screen = SCREEN_REQ_LOGO;
+            g_screen_change_requested = 1;
             break;
 
         case STATE_RD_LEVEL_1:
-            screen_state = ENDURANCE;
-            endurance_dash_init(
-                d.battery_charge,
-                d.cell_temperature,
-                d.lap,
-                d.speed);
-            updated = 1;
+            g_requested_screen = SCREEN_REQ_ENDURANCE;
+            g_screen_change_requested = 1;
             break;
 
         case STATE_RD_LEVEL_2:
         default:
-            screen_state = PEDAL;
-            pedal_graph_dash_init(
-                d.battery_charge,
-                d.cell_temperature,
-                d.lap,
-                d.speed);
-            updated = 1;
+            g_requested_screen = SCREEN_REQ_PEDAL;
+            g_screen_change_requested = 1;
             break;
     }
-
-    last_state_rd_level = level;
 }
 
 //SEND SDC STATE
-static void CAN2_SendSdcState(uint16_t sdc_minus, uint16_t sdc_plus, StateRdLevel level)
+static void CAN2_SendSdcState(uint16_t sdc_minus, uint16_t sdc_plus)
 {
     CAN_TxHeaderTypeDef txHeader;
     uint32_t txMailbox;
@@ -742,10 +765,9 @@ static void CAN2_SendSdcState(uint16_t sdc_minus, uint16_t sdc_plus, StateRdLeve
     txHeader.TransmitGlobalTime = DISABLE;
 
     txData[0] = (uint8_t)(sdc_minus & 0xFF);
-    txData[1] = (uint8_t)((sdc_minus >> 8) & 0x0F);
+    txData[1] = (uint8_t)((sdc_minus >> 8) & 0xFF);
     txData[2] = (uint8_t)(sdc_plus & 0xFF);
-    txData[3] = (uint8_t)((sdc_plus >> 8) & 0x0F);
-    txData[4] = (uint8_t)level;
+    txData[3] = (uint8_t)((sdc_plus >> 8) & 0xFF);
 
     HAL_CAN_AddTxMessage(&hcan2, &txHeader, txData, &txMailbox);
 }

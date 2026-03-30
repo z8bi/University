@@ -59,10 +59,10 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define Touch_RESET_Pin GPIO_PIN_2
 #define Touch_RESET_GPIO_Port GPIOC
-#define MCU_SDC__Pin GPIO_PIN_0
-#define MCU_SDC__GPIO_Port GPIOA
-#define MCU_SDC_A1_Pin GPIO_PIN_1
-#define MCU_SDC_A1_GPIO_Port GPIOA
+#define MCU_SDC_P_Pin GPIO_PIN_0
+#define MCU_SDC_P_GPIO_Port GPIOA
+#define MCU_SDC_N_Pin GPIO_PIN_1
+#define MCU_SDC_N_GPIO_Port GPIOA
 #define STATE_RD_Pin GPIO_PIN_3
 #define STATE_RD_GPIO_Port GPIOA
 #define LCD_RESET_Pin GPIO_PIN_5
