@@ -23,8 +23,8 @@ public:
 };
 
 
-//Function used for room drawing - uses game instance
-void draw_room(Game& game) {
+//Function used for room drawing - uses game instance constant reference which avoid unnecessary copying and ensured the function doesn't accidentally change the game
+void draw_room(const Game& game) {
     //Shortcut for initializing string with column number times the second char '-'
     std::string horizontal_boundaries(game.number_of_columns, '-');
 
@@ -111,6 +111,11 @@ bool player_move(Game& game) {
     
     //Game Termination - used in main to cancel the while loop
     case 'q': case 'Q': 
+            std::cout << "\n" 
+            << "========================================\n"
+            << "===============Quitting...==============\n" 
+            << "========================================\n"
+            << std::endl;
         return false;
 
     default:

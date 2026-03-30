@@ -1,6 +1,6 @@
 #include <iostream>
-#include <string>
-#include<cstdlib>
+#include <ctime>
+#include <cstdlib>
 
 //=================================================
 //=========Main Game Class + Helper class==========
@@ -173,14 +173,19 @@ int main() {
         make_move(test_game, true); 
         check_win(test_game, 'O');
 
-        //skip the computer's turn if player won
+        //skip the computer's turn if player won and exit the loop
         if(test_game.game_state != in_progress) break;
+
+        //Check if board full -> draw (how does one lose draw against computer) (computer still takes a turn after board is full but it doesn't matter as its a draw anyway)
+        if(test_game.number_of_plays >= 9 && test_game.game_state == in_progress) {
+            test_game.game_state = draw;
+        }
 
         //Computer's turn and win check
         make_move(test_game, false); 
         check_win(test_game, 'X'); 
 
-        //Check if board full -> draw (how does one lose draw against computer) (computer still takes a turn after board is full but it doesn't matter as its a draw anyway)
+        //check the draw again as a fall back
         if(test_game.number_of_plays >= 9 && test_game.game_state == in_progress) {
             test_game.game_state = draw;
         }
