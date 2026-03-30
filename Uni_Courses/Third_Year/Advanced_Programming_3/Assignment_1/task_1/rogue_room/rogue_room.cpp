@@ -23,7 +23,7 @@ public:
 };
 
 
-//Function used for room drawing - uses game instance constant reference which avoid unnecessary copying and ensured the function doesn't accidentally change the game
+//Function used for room drawing - uses game instance and constant reference which avoid unnecessary copying and ensured the function doesn't accidentally change the game
 void draw_room(const Game& game) {
     //Shortcut for initializing string with column number times the second char '-'
     std::string horizontal_boundaries(game.number_of_columns, '-');
