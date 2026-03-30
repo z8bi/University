@@ -57,8 +57,14 @@ void make_move(Game& current_game, bool is_player_turn) {
         //While loop ensures a player makes a valid movement -> is exited with break when correct move is made
         while (true) {
             std::cout << "Please select which tile to mark by typing 1 - 9. (Assume 1 is top left)" << std::endl;
-            int player_choice = ' ';
+            int player_choice = 0;
             std::cin >> player_choice;
+
+            //safe guard against stupid players :D
+            if (player_choice < 1 || player_choice > 9) {
+                std::cout << "Please enter a number from 1 to 9.\n";
+                continue;
+            }
 
             //Useful math which converts the numbers to the corresponding positions 
             int row = (player_choice - 1) / 3;
@@ -167,11 +173,14 @@ int main() {
         make_move(test_game, true); 
         check_win(test_game, 'O');
 
+        //skip the computer's turn if player won
+        if(test_game.game_state != in_progress) break;
+
         //Computer's turn and win check
         make_move(test_game, false); 
         check_win(test_game, 'X'); 
 
-        //Check if board full -> draw (how does one lose draw against computer)
+        //Check if board full -> draw (how does one lose draw against computer) (computer still takes a turn after board is full but it doesn't matter as its a draw anyway)
         if(test_game.number_of_plays >= 9 && test_game.game_state == in_progress) {
             test_game.game_state = draw;
         }
