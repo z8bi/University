@@ -18,82 +18,88 @@ double calculate_mean(const std::vector<T> &vect) {
 //=================MAIN DATASET STRUCT======================
 //==========================================================
 
-struct Dataset {
-    double k_value; //gradient
-    double prev_b_value; //intercept
-    size_t size;
+class Dataset {
+    public:
+        double k_value; //gradient
+        double prev_b_value; //intercept
+        size_t size;
 
-    std::vector<double> x_values; 
-    std::vector<double> y_values;
+        std::vector<double> x_values; 
+        std::vector<double> y_values;
 
-    //futureproofing - to use in lin reg calculations - 
-    double omega_value{0};
-    double b_value{0};
-    double x_mean{0}; 
-    double y_mean{0};
-    std::vector<double> y_lin_reg_values; //this way the dataset contains both the original data and lin_reg data
+        //futureproofing - to use in lin reg calculations - 
+        double omega_value{0};
+        double b_value{0};
+        double x_mean{0}; 
+        double y_mean{0};
+        std::vector<double> y_lin_reg_values; //this way the dataset contains both the original data and lin_reg data
 
-    //Simple contrustor so we can easily create new datasets
-    Dataset(double k , double b, size_t num_points, int min, int max, int seed, double noise_multiplier, double sigma) {
+        //Simple contrustor so we can easily create new datasets with different seeds. for consistency, the same seed creates the same dataset initial dataset
+        Dataset(double k , double b, size_t num_points, int min, int max, int seed, double noise_multiplier, double sigma) : 
+            k_value(k), prev_b_value(b), size(num_points) //simple initializer list for otherwise unused values in the contrustor body
+        {
 
-        std::mt19937 rng(seed); //initialize random using our seed
-        std::uniform_int_distribution<int> range(min, max); //clamp random values to a range
-        std::normal_distribution<double> noise_gauss(0.0, sigma);; //clamp random values to a range
+            std::mt19937 rng(seed); //initialize random using our seed -> used to generate core x values
+            std::uniform_real_distribution<double> range(min, max); //clamp random values to a range given in parameters
+            std::normal_distribution<double> noise_gauss(0.0, sigma); //the mean for the noise is 0 and the sigma is given in parameters
 
-        for (size_t i{0}; i < num_points; i++) {
-            double current_x = range(rng);
-            x_values.push_back(current_x); //cast to integer the creation of mt
-            y_values.push_back(k*current_x + b + noise_multiplier*noise_gauss(rng)); // calculate y + add noise
-        }
-        
-        size = num_points;
-        k_value = k;
-        prev_b_value = b;
+            for (size_t i{0}; i < num_points; i++) {
+                double clean_x = range(rng); //first create a clean x
 
-    };
+                // Then add noise to x using the gaussian noise ditribution
+                double noisy_x = clean_x + noise_multiplier * noise_gauss(rng);
 
-    //default contructor (empty) - to be safe, since we declared a custom constructor the default one is overwritten
-    Dataset() = default;
+                // Calculate y given noise x and also add noise
+                double noisy_y = k * noisy_x + b + noise_multiplier * noise_gauss(rng); // calculate y + add noise
 
-    //Basic print function to confirm the dataset + linear regression data (only if it exists) - const as a safeguard only in case print somehow manipulates the data (that would be a very bad print)
-    void print_datasets() const {
-        std::cout << "\nOriginal Values:\n";
-        for (size_t i{0}; i < x_values.size(); i++) {
-            std::cout << "[ " << x_values[i] << ", " << y_values[i] << " ]\n";
-        }
-        std::cout << "\n";
+                //finally push the noisy x and y to the dataset
+                x_values.push_back(noisy_x);
+                y_values.push_back(noisy_y);
+            }
+        };
 
-        //if linear regresison was calculated, print too
-        if(y_lin_reg_values.size() == x_values.size()) { 
-            std::cout << "\nLinear Regression Values:\n";
+        //default contructor (empty) - to be safe, since we declared a custom constructor the default one is overwritten
+        Dataset() = default;
+
+        //Basic print function to confirm the dataset + linear regression data (only if it exists) - const as a safeguard only in case print somehow manipulates the data (that would be a very bad print)
+        void print_datasets() const {
+            std::cout << "\nOriginal Values:\n";
             for (size_t i{0}; i < x_values.size(); i++) {
-                std::cout << "[ " << x_values[i] << ", " << y_lin_reg_values[i] << " ]\n";
+                std::cout << "[ " << x_values[i] << ", " << y_values[i] << " ]\n";
             }
             std::cout << "\n";
-        }
-    };
 
-    //Basic print function to confirm internal values - once again const to be safe
-    void print_internals() const {
-        std::cout << "\ndataset size: " << size;
-        std::cout << "\nk: " << k_value;
-        std::cout << "\nprev_b: " << prev_b_value;
-        std::cout << "\nomega: " << omega_value;
-        std::cout << "\nb: " << b_value;
-        std::cout << "\nx_mean: " << x_mean;
-        std::cout << "\ny_mean: " << y_mean << "\n";
-    };
+            //if linear regresison was calculated, print too
+            if(y_lin_reg_values.size() == x_values.size()) { 
+                std::cout << "\nLinear Regression Values:\n";
+                for (size_t i{0}; i < x_values.size(); i++) {
+                    std::cout << "[ " << x_values[i] << ", " << y_lin_reg_values[i] << " ]\n";
+                }
+                std::cout << "\n";
+            }
+        };
 
-    void print_errors() const {
-        
-        //calculate percentage errors
-        double omega_error = (omega_value - k_value) / k_value * 100;
-        double b_error = (b_value - prev_b_value) / prev_b_value * 100;
-        //print percentage errors
-        std::cout << "\nPercentage errors are the following:\n";
-        std::cout << "\nomega error: " << omega_error << " %";
-        std::cout << "\nb error: " << b_error << " %\n";
-    };
+        //Basic print function to confirm internal values - once again const to be safe
+        void print_internals() const {
+            std::cout << "\ndataset size: " << size;
+            std::cout << "\nk: " << k_value;
+            std::cout << "\nprev_b: " << prev_b_value;
+            std::cout << "\nomega: " << omega_value;
+            std::cout << "\nb: " << b_value;
+            std::cout << "\nx_mean: " << x_mean;
+            std::cout << "\ny_mean: " << y_mean << "\n";
+        };
+
+        void print_errors() const {
+            
+            //calculate percentage errors
+            double omega_error = (omega_value - k_value) / k_value * 100;
+            double b_error = (b_value - prev_b_value) / prev_b_value * 100;
+            //print percentage errors
+            std::cout << "\nPercentage errors are the following:\n";
+            std::cout << "\nomega error: " << omega_error << " %";
+            std::cout << "\nb error: " << b_error << " %\n";
+        };
 };
 
 
@@ -118,7 +124,7 @@ Dataset normal_equation_lin_reg(Dataset data) {
     //compute W denominator value
     for(size_t i{0}; i < data.size; i++) {
         double dx = (data.x_values[i] - data.x_mean);
-        omega_denominator +=  dx*dx; //square the sigma
+        omega_denominator +=  dx*dx; //square the dx
     } 
 
     //final omega lin reg value
@@ -136,7 +142,10 @@ Dataset normal_equation_lin_reg(Dataset data) {
     return data;
 }
 
-Dataset gradient_method_linear_regression(Dataset data, double learning_rate, double gradient_components_limit) {
+//we're using pass by value which means we need to copy the dataset, but since the same dataset is called for both normal equation and gradient method, 
+//this is the only way to ensure they are working on the same dataset for consistency in testing
+//Moreover, since the functions are only called twice and the class itself isn't large, this copying is fine
+Dataset gradient_method_linear_regression(Dataset data, double learning_rate, double gradient_components_limit) { 
 
     //initialize all required variables
     double L_domega{1};
@@ -199,103 +208,109 @@ Dataset gradient_method_linear_regression(Dataset data, double learning_rate, do
 
 
 
-struct DoubleDataset {
+class DoubleDataset {
+    public: 
+        //these are the inputs
+        std::vector<std::vector<double>> x_values{{}, {}};
+        std::vector<double> y_values{};
+        double k1_value{0}; 
+        double k2_value{0}; 
+        double prev_b_value{0}; 
+        size_t dataset_size{0}; 
 
-    //these are the inputs
-    std::vector<std::vector<double>> x_values{{}, {}};
-    std::vector<double> y_values{};
-    double k1_value{0}; 
-    double k2_value{0}; 
-    double prev_b_value{0}; 
-    size_t dataset_size{0}; 
-
-    //these are the outputs after lin reg
-    std::vector<double> omega_values{0,0};
-    double b_value{0};
-    std::vector<double> lin_reg_y_values{};
-    
-    //constructor which creates the two datsets
-    DoubleDataset(double k1, double k2, double b, size_t num_points, int min, int max, int seed, double noise_multiplier, double sigma) {
+        //these are the outputs after lin reg
+        std::vector<double> omega_values{0,0};
+        double b_value{0};
+        std::vector<double> lin_reg_y_values{};
         
-        std::mt19937 rng(seed); //initialize random using our seed
-        std::uniform_int_distribution<int> range(min, max); //clamp random values to a range
-        std::normal_distribution<double> noise_gauss(0.0, sigma);; //clamp random values to a range
+        //constructor which creates the two datsets
+        DoubleDataset(double k1, double k2, double b, size_t num_points, int min, int max, int seed, double noise_multiplier, double sigma) :
+            k1_value(k1), k2_value(k2), prev_b_value(b), dataset_size(num_points) //simple initializer list for otherwise unused values in the contrustor body{
+        {
+            std::mt19937 rng(seed); //initialize random using our seed -> used to generate core x values
+            std::uniform_real_distribution<double> range(min, max); //clamp random values to a range given in parameters
+            std::normal_distribution<double> noise_gauss(0.0, sigma); //the mean for the noise is 0 and the sigma is given in parameters
 
-        for (size_t i{0}; i < num_points; i++) {
-            double current_x1 = range(rng);
-            double current_x2 = range(rng);
-            x_values[0].push_back(current_x1); //cast to integer the creation of mt
-            x_values[1].push_back(current_x2);
-            y_values.push_back((k1*current_x1 + k2*current_x2) + b + noise_multiplier*noise_gauss(rng)); // calculate y + add noise
-        }
-        
-        //assign the rest of the variables for later comparison
-        dataset_size = num_points;
-        k1_value = k1;
-        k2_value = k2;
-        prev_b_value = b;
-    };
+            for (size_t i{0}; i < num_points; i++) {
+                //first the clean x values
+                double clean_x1 = range(rng);
+                double clean_x2 = range(rng);
 
+                // Then noise to both x values is added using the gaussian noise distribution
+                double noisy_x1 = clean_x1 + noise_multiplier * noise_gauss(rng);
+                double noisy_x2 = clean_x2 + noise_multiplier * noise_gauss(rng);
 
-    //Constructor which uses two input datasets
-    DoubleDataset(std::vector<double> x1, std::vector<double> x2, std::vector<double> y) {
+                // The corresponding y value is calculated using the noisy x values and also has noise added to it
+                double noisy_y = (k1 * noisy_x1 + k2 * noisy_x2) + b
+                            + noise_multiplier * noise_gauss(rng);
 
-        //assign all inner variables
-        x_values[0] = x1;
-        x_values[1] = x2;
-        y_values = y;
-        dataset_size = x1.size();
-    };
+                x_values[0].push_back(noisy_x1);
+                x_values[1].push_back(noisy_x2);
+                y_values.push_back(noisy_y);
+            }
+            
+        };
 
-    //default contructor (empty) - just in case, since default constructor isn't created when we specify a
-    DoubleDataset() = default;
+        //Constructor which uses two input datasets -> futureproofing
+        DoubleDataset(std::vector<double> x1, std::vector<double> x2, std::vector<double> y) {
 
-    //print functions again
-    void print_internals() const {
-        std::cout << "\ndataset size: " << dataset_size;
-        std::cout << "\nk_1: " << k1_value;
-        std::cout << "\nk_2: " << k2_value;
-        std::cout << "\nprev_b: " << prev_b_value;
-        std::cout << "\nomega_1: " << omega_values[0];
-        std::cout << "\nomega_2: " << omega_values[1];
-        std::cout << "\nb: " << b_value << "\n";
-    };
+            //assign all inner variables
+            x_values[0] = x1;
+            x_values[1] = x2;
+            y_values = y;
+            dataset_size = x1.size();
+        };
 
-    //prints datasets
-    void print_datasets() const {
-        std::cout << "\nOriginal Values:\n";
-        for (size_t i{0}; i < x_values[0].size(); i++) {
-            std::cout << "[ " << x_values[0][i] << ", "<< x_values[1][i] << ", "<< y_values[i] << " ]\n";
-        }
-        std::cout << "\n";
+        //default contructor (empty) - just in case, since default constructor isn't created when we specify a any contructor
+        DoubleDataset() = default;
 
-        // if linear regression was calculated, print too
-        if (lin_reg_y_values.size() == x_values[0].size()) {
-            std::cout << "\nLinear Regression Values:\n";
+        //print functions again
+        void print_internals() const {
+            std::cout << "\ndataset size: " << dataset_size;
+            std::cout << "\nk_1: " << k1_value;
+            std::cout << "\nk_2: " << k2_value;
+            std::cout << "\nprev_b: " << prev_b_value;
+            std::cout << "\nomega_1: " << omega_values[0];
+            std::cout << "\nomega_2: " << omega_values[1];
+            std::cout << "\nb: " << b_value << "\n";
+        };
+
+        //prints datasets
+        void print_datasets() const {
+            std::cout << "\nOriginal Values:\n";
             for (size_t i{0}; i < x_values[0].size(); i++) {
-                std::cout << "[ "<< x_values[0][i] << ", "<< x_values[1][i] << ", "<< lin_reg_y_values[i] << " ]\n";
+                std::cout << "[ " << x_values[0][i] << ", "<< x_values[1][i] << ", "<< y_values[i] << " ]\n";
             }
             std::cout << "\n";
-        }
-    }
 
-    void print_errors() const {
-        
-        //calculate percentage errors
-        double omega_1_error = (omega_values[0] - k1_value) / k1_value * 100;
-        double omega_2_error = (omega_values[1] - k2_value) / k2_value * 100;
-        double b_error = (b_value - prev_b_value) / prev_b_value * 100;
-        //print percentage errors
-        std::cout << "\nPercentage errors are the following:\n";
-        std::cout << "\nomega_1 error: " << omega_1_error << " %";
-        std::cout << "\nomega_2 error: " << omega_2_error << " %";
-        std::cout << "\nb error: " << b_error << " %";
-    };
+            // if linear regression was calculated, print too
+            if (lin_reg_y_values.size() == x_values[0].size()) {
+                std::cout << "\nLinear Regression Values:\n";
+                for (size_t i{0}; i < x_values[0].size(); i++) {
+                    std::cout << "[ "<< x_values[0][i] << ", "<< x_values[1][i] << ", "<< lin_reg_y_values[i] << " ]\n";
+                }
+                std::cout << "\n";
+            }
+        }
+
+        void print_errors() const {
+            
+            //calculate percentage errors
+            double omega_1_error = (omega_values[0] - k1_value) / k1_value * 100;
+            double omega_2_error = (omega_values[1] - k2_value) / k2_value * 100;
+            double b_error = (b_value - prev_b_value) / prev_b_value * 100;
+            //print percentage errors
+            std::cout << "\nPercentage errors are the following:\n";
+            std::cout << "\nomega_1 error: " << omega_1_error << " %";
+            std::cout << "\nomega_2 error: " << omega_2_error << " %";
+            std::cout << "\nb error: " << b_error << " %";
+        };
 };
 
 //this function could also be expanded to accept a vector of Datasets meaning the multiple linear regression would accept a variable amount
 //this assignment however only requires two meaning this is the easier, but less futureproof method
 
+//once again passing by value as explained before
 DoubleDataset multiple_linear_regression(DoubleDataset data, double learning_rate, double gradient_components_limit) {
     //initialize the derivatives, here omega has two doubles
     std::vector<double> L_domega = {1, 1}; 
@@ -334,10 +349,15 @@ DoubleDataset multiple_linear_regression(DoubleDataset data, double learning_rat
                     - data.y_values[j]; // - previous Y
         } 
 
+        // Normalize to match the gradient formula -> need to cast to double because the size is size_t (can't be used for normal arithmetic)
+        L_domega[0] /= double(data.dataset_size);
+        L_domega[1] /= double(data.dataset_size);
+        L_db /= double(data.dataset_size);
+
         //Assign all three new variables - dataset_size is size_t, so we need to cast as double to ensure no errors
-        data.omega_values[0] = data.omega_values[0] - learning_rate * (1 / double(data.dataset_size)) * L_domega[0]; 
-        data.omega_values[1] = data.omega_values[1] - learning_rate * (1 / double(data.dataset_size)) * L_domega[1]; 
-        data.b_value = data.b_value - learning_rate * (1 / double(data.dataset_size)) *L_db; 
+        data.omega_values[0] = data.omega_values[0] - learning_rate * L_domega[0]; 
+        data.omega_values[1] = data.omega_values[1] - learning_rate * L_domega[1]; 
+        data.b_value = data.b_value - learning_rate * L_db; 
 
         iter++;
     
@@ -351,10 +371,6 @@ DoubleDataset multiple_linear_regression(DoubleDataset data, double learning_rat
     return data;
 }
 
-
-
-
-
 int main() {
 
     //our basic example dataset
@@ -364,7 +380,7 @@ int main() {
         10,      // num_points
         0,      // min x
         100,    // max x
-        3,      // seed
+        3,      // seed -> same seed means same dataset, so we can test different lin reg methods on the same dataset for consistency
         0.2,    // noise_multiplier - larger meanst larger error
         1       // sigma - used in adding error, larger sigma means larger error
     );

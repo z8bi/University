@@ -14,7 +14,7 @@ enum Game_States {
     draw
 };
 
-//Main class
+//Main class (struct could also be used as no member functions are needed)
 class Game {
     public:
         //Storing Tic-Tac-Toe board (default empty)
