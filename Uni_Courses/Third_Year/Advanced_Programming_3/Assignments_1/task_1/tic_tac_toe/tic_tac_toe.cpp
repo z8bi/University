@@ -200,6 +200,8 @@ int main() {
             "======YOU LOST!!!!=====\n" <<
             "=======================" << std::endl;
             break;
+        case in_progress:
+            break;
         default:
             std::cout << 
             "How did you get here :D"
