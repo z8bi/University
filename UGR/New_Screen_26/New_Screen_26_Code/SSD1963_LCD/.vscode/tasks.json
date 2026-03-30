@@ -11,12 +11,12 @@
       "problemMatcher": []
     },
     {
-      "label": "Build (Debug)",
+      "label": "Build (Release)",
       "type": "shell",
       "command": "cmake",
       "args": [
         "--build",
-        "${workspaceFolder}/build/Debug",
+        "${workspaceFolder}/build/Release",
         "-j"
       ],
       "group": {
@@ -33,11 +33,11 @@
         "-c",
         "port=SWD",
         "-w",
-        "${workspaceFolder}/build/Debug/SSD1963_LCD.elf",
+        "${workspaceFolder}/build/Release/SSD1963_LCD.elf",
         "-v",
         "-rst"
       ],
-      "dependsOn": "Build (Debug)",
+      "dependsOn": "Build (Release)",
       "problemMatcher": []
     },
     {
@@ -77,7 +77,7 @@
         "-c",
         "port=USB1",
         "-w",
-        "${workspaceFolder}/build/Debug/SSD1963_LCD.bin",
+        "${workspaceFolder}/build/Release/SSD1963_LCD.bin",
         "0x08000000",
         "-v",
         "-rst"

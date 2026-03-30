@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "can.h"
 #include "fatfs.h"
 #include "i2c.h"
@@ -218,12 +219,42 @@ static uint8_t touch_ok = 0;
       __HAL_TIM_SET_COMPARE(&htim12, TIM_CHANNEL_2, (arr * percent) / 100);
   }
 
+  //ADC VOLTAGE DIVIDERS:
+  #define ADC_MAX_COUNTS          4095U   // 12-bit ADC
+
+  // Adjust these thresholds to match your resistor divider / expected voltages
+  // Example values for 3.3V ADC:
+  // 1.0V -> about 1241 counts
+  // 2.0V -> about 2482 counts
+  #define STATE_RD_TH_LOW         1241U
+  #define STATE_RD_TH_HIGH        2482U
+
+  // CAN message for SDC / state report
+  #define CAN_ID_SDC_STATE        0x101
+  #define CAN_SDC_STATE_DLC       5
+
+  typedef enum
+  {
+      STATE_RD_LEVEL_0 = 0,
+      STATE_RD_LEVEL_1 = 1,
+      STATE_RD_LEVEL_2 = 2
+  } StateRdLevel;
+
+  static StateRdLevel last_state_rd_level = 0xFF;
+  static uint16_t last_mcu_sdc_minus = 0xFFFF;
+  static uint16_t last_mcu_sdc_plus  = 0xFFFF;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MPU_Config(void);
 /* USER CODE BEGIN PFP */
+
+static uint16_t ADC1_ReadChannel(uint32_t channel);
+static StateRdLevel GetStateRdLevel(uint16_t adc_value);
+static void ApplyScreenFromStateRd(StateRdLevel level);
+static void CAN2_SendSdcState(uint16_t sdc_minus, uint16_t sdc_plus, StateRdLevel level);
 
 static void JumpToSystemBootloader(void);
 void Request_EnterDfu(void);
@@ -277,6 +308,7 @@ int main(void)
   MX_TIM12_Init();
   MX_FATFS_Init();
   MX_USB_DEVICE_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 
     // Initialize GT911 touchscreen
@@ -368,17 +400,24 @@ int main(void)
 
         if (g_enter_dfu_requested)
         {
+            g_enter_dfu_requested = 0;
             HAL_Delay(20);
             JumpToSystemBootloader();
         }
 
         if (g_screen_change_requested)
         {
+            ScreenRequest req;
+
+            __disable_irq();
+            req = g_requested_screen;
+            g_requested_screen = SCREEN_REQ_NONE;
             g_screen_change_requested = 0;
+            __enable_irq();
 
             SSD1963_Fill(RGB565(0, 0, 0));
 
-            switch (g_requested_screen)
+            switch (req)
             {
                 case SCREEN_REQ_LOGO:
                     screen_state = LOGO;
@@ -389,20 +428,20 @@ int main(void)
                 case SCREEN_REQ_ENDURANCE:
                     screen_state = ENDURANCE;
                     endurance_dash_init(
-                            d.battery_charge,
-                            d.cell_temperature,
-                            d.lap,
-                            d.speed); 
+                        d.battery_charge,
+                        d.cell_temperature,
+                        d.lap,
+                        d.speed);
                     updated = 1;
                     break;
 
                 case SCREEN_REQ_PEDAL:
                     screen_state = PEDAL;
                     pedal_graph_dash_init(
-                            d.battery_charge,
-                            d.cell_temperature,
-                            d.lap,
-                            d.speed); 
+                        d.battery_charge,
+                        d.cell_temperature,
+                        d.lap,
+                        d.speed);
                     updated = 1;
                     break;
 
@@ -410,8 +449,6 @@ int main(void)
                 default:
                     break;
             }
-
-            g_requested_screen = SCREEN_REQ_NONE;
         }
 
         //==================================================================
@@ -594,6 +631,123 @@ static void JumpToSystemBootloader(void)
 
     while (1) {
     }
+}
+
+static uint16_t ADC1_ReadChannel(uint32_t channel)
+{
+    ADC_ChannelConfTypeDef sConfig = {0};
+
+    sConfig.Channel = channel;
+    sConfig.Rank = 1;
+    sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
+#if defined(ADC_SINGLE_ENDED)
+    sConfig.SingleDiff = ADC_SINGLE_ENDED;
+    sConfig.OffsetNumber = ADC_OFFSET_NONE;
+    sConfig.Offset = 0;
+#endif
+
+    if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    if (HAL_ADC_Start(&hadc1) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    if (HAL_ADC_PollForConversion(&hadc1, 10) != HAL_OK)
+    {
+        HAL_ADC_Stop(&hadc1);
+        Error_Handler();
+    }
+
+    uint16_t value = (uint16_t)HAL_ADC_GetValue(&hadc1);
+
+    HAL_ADC_Stop(&hadc1);
+
+    return value;
+}
+
+static StateRdLevel GetStateRdLevel(uint16_t adc_value)
+{
+    if (adc_value < STATE_RD_TH_LOW)
+    {
+        return STATE_RD_LEVEL_0;
+    }
+    else if (adc_value < STATE_RD_TH_HIGH)
+    {
+        return STATE_RD_LEVEL_1;
+    }
+    else
+    {
+        return STATE_RD_LEVEL_2;
+    }
+}
+
+static void ApplyScreenFromStateRd(StateRdLevel level)
+{
+    if (level == last_state_rd_level)
+    {
+        return;
+    }
+
+    SSD1963_Fill(RGB565(0, 0, 0));
+
+    switch (level)
+    {
+        case STATE_RD_LEVEL_0:
+            screen_state = LOGO;
+            draw_big_UGR_logo();
+            screen_updated = 0;
+            break;
+
+        case STATE_RD_LEVEL_1:
+            screen_state = ENDURANCE;
+            endurance_dash_init(
+                d.battery_charge,
+                d.cell_temperature,
+                d.lap,
+                d.speed);
+            updated = 1;
+            break;
+
+        case STATE_RD_LEVEL_2:
+        default:
+            screen_state = PEDAL;
+            pedal_graph_dash_init(
+                d.battery_charge,
+                d.cell_temperature,
+                d.lap,
+                d.speed);
+            updated = 1;
+            break;
+    }
+
+    last_state_rd_level = level;
+}
+
+//SEND SDC STATE
+static void CAN2_SendSdcState(uint16_t sdc_minus, uint16_t sdc_plus, StateRdLevel level)
+{
+    CAN_TxHeaderTypeDef txHeader;
+    uint32_t txMailbox;
+    uint8_t txData[8] = {0};
+
+    txHeader.StdId = CAN_ID_SDC_STATE;
+    txHeader.ExtId = 0;
+    txHeader.IDE = CAN_ID_STD;
+    txHeader.RTR = CAN_RTR_DATA;
+    txHeader.DLC = CAN_SDC_STATE_DLC;
+    txHeader.TransmitGlobalTime = DISABLE;
+
+    txData[0] = (uint8_t)(sdc_minus & 0xFF);
+    txData[1] = (uint8_t)((sdc_minus >> 8) & 0x0F);
+    txData[2] = (uint8_t)(sdc_plus & 0xFF);
+    txData[3] = (uint8_t)((sdc_plus >> 8) & 0x0F);
+    txData[4] = (uint8_t)level;
+
+    HAL_CAN_AddTxMessage(&hcan2, &txHeader, txData, &txMailbox);
 }
 
 void CAN2_Start(void)
