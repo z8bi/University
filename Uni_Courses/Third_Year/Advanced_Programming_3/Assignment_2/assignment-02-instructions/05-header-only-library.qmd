@@ -1,0 +1,189 @@
+---
+title: "Tutorial: Header-only Library"
+# subtitle: "C++ Object-oriented Programming"
+author:
+    Khiem Nguyen 
+    <br> Lecturer in Multiscale Materials
+    <br> <khiem.nguyen@glasgow.ac.uk>
+author-meta: "Lecturer in Multiscale Materials"
+jupyter: false
+execute: 
+  eval: true
+format: 
+    html:
+        output-file: "05-header-only-library.html"
+        embed-resources: true
+        grid:
+            body-width: 1600px
+            margin-width: 20px
+            sidebar-width: 200px
+        # page-layout: full
+        # margin-left: 0.5em
+        # margin-right: 0.5em
+        code-fold: true
+        css: style.css
+        number-sections: true
+        number-depth: 3
+        toc: true               # table of content
+        toc-location: left      # table of content on the left
+        toc-title: "Table of Content"   # table of content title
+
+    pdf:
+        output-file: "05-header-only-library.pdf"
+        embed-resources: true
+        geometry:
+            - top=24px
+            - bottom=24px
+            - left=36px
+            - right=36px
+        css: style.css
+        number-sections: true
+        number-depth: 3
+        colorlinks: true
+        toc: true               # table of content
+        toc-location: left      # table of content on the left
+        toc-title: "Table of Content"   # table of content title
+---
+
+
+# Header-only Library
+
+Creating a header-only library is a common practice in C++ to provide reusable code without the need for separate compilation. This approach allows developers to include the library in their projects simply by including the header file, without worrying about linking against a compiled library. It simplies the installation process for the user. They just need to include the header file in their project, and they can start using the library's functionality immediately, without worrying about the pre-compiled compatilibility issues.
+
+In this tutorial, we will create a header-only library for complex numbers and one-dimensional polynomials. We will define a `ComplexNumber` and `Poly1D` class with various operations and utility functions, and we will demonstrate how to use this library in two separate main files.
+
+## Architecture of the Library
+
+In the header-only library, there are no `.cpp` source files that get compiled into binaries. Everything, bot the declarations and the implementation, lives in header files (with extension `.hpp` or `.h`). A typtical structure for a project might look like this
+
+```bash
+project/
+├── include/           <-- Users add this to their include path
+│   └── math/       <-- Namespace folder
+│       ├── complex_number.hpp
+│       └── poly1d.hpp
+└── examples/          <-- How to use the library
+    └── main_complex.cpp
+    └── main_poly1d.cpp
+```
+
+Indeed, we follow exactly this structure in our tutorial.
+
+[**An example of a header-only library on GitHub**]{style="color:royalblue"}
+
+`xtensor` is an example of a header-only library. You can check out its [GitHub repository](https://github.com/xtensor-stack/xtensor). As you can see from the `include` folder, all the code is in multiple subfolders, and there are no `.cpp` files. Users can simply include the header files in their projects to use the library's functionality -- Look at [this folder](https://github.com/xtensor-stack/xtensor/tree/master/include/xtensor) for example. 
+
+:::{.callout-note}
+# For your project assignment
+
+For your project assignment, you can create how many subfolders and header files as you like. The important thing is that all the code (declarations and implementations) should be in header files, and there should be no `.cpp` source files. The main files that demonstrate how to use the library can be in a separate folder (e.g., `examples`, or a different folder) or in the folder `project` itself. The main files should include the header files from the library and demonstrate how to use the classes and functions defined in the library. You can create as many main files as you like to demonstrate different functionalities of the library.
+:::
+
+## Header-only logic
+
+### Include Guards
+
+When a project gets large, a header file might be included multiple times in different source files, which can lead to multiple definition errors (e.g., `main.cpp` includes `poly1d.hpp` and `complex_number.hpp`, but `poly1d.hpp` could also include `complex_number.hpp` for a polynomial with complex coefficients). To prevent this, we use include guards in our header files. An include guard is a preprocessor directive that ensures the contents of the header file are only included once during compilation. Without a "guard", the compiler sees the same class definition twice and throws an error. For example, you see
+```{cpp}
+#ifndef COMPLEX_NUMBER_HPP
+#define COMPLEX_NUMBER_HPP
+```
+at the top of the file `complex_number.hpp` and
+```{cpp}
+#endif // COMPLEX_NUMBER_HPP
+```
+Just thinking about this for a few minutes, you will see that the meaning is straightforward. Since inclusion of files just implies copy/paste the entire code file into the other files, we end up repeating defintions. This process is done before the compilation process actually takes action. However, with this proprocessor directive, we are telling the compiler not to compile anything between the `#ifndef COMPLEX_NUMBER_HPP` and `#endif` when `COMPLEX_NUMBER_HPP` has been defined before. As a result, we avoid repetition of the definitions between these safe guards.
+
+### Include Guards: modern way
+
+Using 
+```{cpp}
+#pragma once
+```
+is a modern and efficient way to ensure that a header file is included only once during the compilation process, preventing "redefinition" errors. In this tutorial, I have mixed both ways of implementing safe guards: 
+- The traditional way with `#ifndef` - `#endif` is implemented in the file `complex_number.hpp`-
+- The modern way with `#pragma once` is implemented in the file `poly1d.hpp`
+
+Feel free to play around with the tutorial code.
+
+## The `inline` keyword
+
+This is the "_secret sauce_" of header-only libraries. Normally, if we define a function (not a class method) in a header and include it in two different `.cpp` files, the linker will complain about "_multiple definitions_".
+
+By marking functions as `inline`, we tell the compiler: "[**It is OKAY if you see this definition in multiple places; just pick one or integrate it directly.**]{style=color:tomato}"
+
+[**Comparison of definitions**]{style="color:red"}
+
+|Feature | Inside class body | Outside class body (in header)|
+|:-------|:------------------|:------------------------------|
+| Example| `void play() {...}`| `inline void play() {...}`   |
+| Inlining | Implicitly `inline` | Must use `inline` keyword
+
+To see if this make sense, imagine you have a standalone helper function called `calculate_magnitude()` inside the header file `complex_number.hpp` but _outside_ of the `ComplexNumber` class. Then, we define 
+```{.cpp}
+inline double compute_magnitude(const ComplexNumber& number) {
+    return std::sqrt(std::pow(number.real(), 2) + std::pow(number.imag(), 2));
+}
+```
+outside the class body.
+
+## Usage & Integration: Compiling the library
+
+Since our library is header-only, we don't actually "compile" the library itself. Instead, we tell the compiler where to find our headers when we compile the main application. In this tutorial, we have the following organization.
+
+- `project` is the folder containing two subfolders `include` and `examples`
+- The subfolder `include` contains the sub-subfolder `math` which in turn has two header files `complex_number.hpp` and `poly1d.hpp`
+- The subfolder `examples` contains two main files `main_complex.cpp` and `main_poly1d.cpp` for two different applications.
+
+The tree folder is given by
+```bash
+project/
+├── include/           <-- Users add this to their include path
+│   └── math/       <-- Namespace folder
+│       ├── complex_number.hpp
+│       └── poly1d.hpp
+└── examples/          <-- How to use the library
+    └── main_complex.cpp
+    └── main_poly1d.cpp
+```
+
+The command `g++` has the option `-I` to specify the [**include**]{style="color:crimson"}. In our case, we need to specify the folder `include` that contains all the header files we need for our project. Let us consider two scenarios:
+1. Assume that our current working directory is `examples`. Then, to compile two main files, we use the following commands ([see the top and the end of the main files `.cpp`]{style="color:red"})
+    ```{bash}
+    g++ -I ../include/ main_complex.cpp -o complex.out
+    g++ -I ../include/ main_poly1d.cpp -o poly.out
+    ```
+    Note the double dots in front of `include`: `../include/`. The notation double-dot is to ensure that we get back to folder `project` and then go to `include`.
+2. Assume that our current working directory is `project`. Then, we compile two main files by using the commands
+    ```{bash}
+    g++ -I ./include/ main_complex.cpp -o complex.out
+    g++ -I ./include/ main_poly1d.cpp -o poly.out
+    ```
+
+# Implementation of header-only library in this tutorial
+
+The implementation of the header-only library described in this tutorial is stored in the folder `project`. You should have a quick look at the code to understand the concepts explained in this tutorial.
+
+The code for four files are provided here:
+
+## Header files: `complex_number.hpp` and `poly1d.hpp`
+
+
+```{.cpp #lst-complex-number lst-cap="Header file `complex_number.hpp`"}
+{{< include ./project/include/math/complex_number.hpp >}}
+```
+
+```{.cpp #lst-poly1d lst-cap="Header file `poly1d.hpp`"}
+{{< include ./project/include/math/poly1d.hpp >}}
+```
+
+## Main files: `main_complex.cpp` and `main_poly1d.cpp`
+
+```{.cpp #lst-complex-number-main lst-cap="main file `main_complex.cpp`"}
+{{< include ./project/examples/main_complex.cpp >}}
+```
+
+```{.cpp #lst-poly1d-main lst-cap="main file `main_poly1d.cpp`"}
+{{< include ./project/examples/main_poly1d.cpp >}}
+```
+

@@ -1,0 +1,415 @@
+---
+title: "Python implementation of Logistic Regression from Scratch"
+# subtitle: "C++ Object-oriented Programming"
+author:
+    Khiem Nguyen 
+    <br> Lecturer in Multiscale Materials
+    <br> <khiem.nguyen@glasgow.ac.uk>
+author-meta: "Lecturer in Multiscale Materials"
+jupyter: false
+execute: 
+  eval: true
+format: 
+    html:
+        output-file: "04-log-reg-demonstrations.html"
+        embed-resources: true
+        grid:
+            body-width: 1600px
+            margin-width: 20px
+            sidebar-width: 200px
+        # page-layout: full
+        # margin-left: 0.5em
+        # margin-right: 0.5em
+        code-fold: true
+        css: style.css
+        number-sections: true
+        number-depth: 3
+        toc: true               # table of content
+        toc-location: left      # table of content on the left
+        toc-title: "Table of Content"   # table of content title
+
+    pdf:
+        output-file: "04-log-reg-demonstrations.pdf"
+        embed-resources: true
+        geometry:
+            - top=24px
+            - bottom=24px
+            - left=36px
+            - right=36px
+        css: style.css
+        number-sections: true
+        number-depth: 3
+        colorlinks: true
+---
+
+
+# Foreword
+
+This is the fourth and last part of the assignment. The code presented here has been written with GenAI assistance. I have used GenAI to generate the code. However, I have added some comments and explanations to make the code more readable and to explain the different parts of the code. The code is not perfect, but it serves the purpose of demonstrating how a logistic regression model is implemented from scratch in Python. You can use this code as a reference for your C++ implementation. The code is not optimized for performance, but it is written in a way that is easy to understand and follow.
+
+
+
+:::{.callout-note}
+# For interested students
+
+You can visit my GitHub repository to learn more about Machine Learning and Deep Learning: [GitHub: uog-ml](https://github.com/khiemnguyen0407/uog-ml). I have implemented many machine learning algorithms from scratch in Python.
+:::
+
+Full code is given in `./src/logistic_regression_demo.py` and also at the end of this file. You can run this code to see how the logistic regression model is implemented on a simple and synthetic dataset.
+
+
+[**Remark 01**]{style="color:crimson"}
+
+Note that the code does not implement the logistic regression model with regularization. However, the assignment requests you to implement the logistic regression model with regularization.
+
+
+[**Remark 02**]{style="color:crimson"}
+
+[**You can easily add the regularization term to the loss function and the gradient descent update rule.**]{style="color:crimson"} The mathematical formulation of the logistic regression model with regularization is given in the file `03-maths.html` and `03-maths.pdf`. You can refer to those files to understand how to implement the logistic regression model with regularization in C++. 
+
+[**Hint**]{style="color:crimson"} You should try to modify the Python code to include the regularization term in the loss function and the gradient descent update rule. This will give you a better understanding of how the regularization term affects the training process and the final model.
+
+# Implementation of Logistic Regression from Scratch
+
+This section will explain different parts of the code and the mathematical formulation behind the logistic regression model. You can read this section to understand how the mathematics behind the logistic regression model is implemented in the code. See the files `03-maths.html` and `03-maths.pdf` for the mathematical formulation of the logistic regression model and the gradient descent method.
+
+## Generating a synthetic dataset
+
+First thing first, we import libraries that we need for the implementation.
+
+```{python}
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from pathlib import Path
+from sklearn.utils import shuffle
+```
+
+Then, we generate a synthetic dataset with 5 classes and 3 points per class. The dataset is generated in such a way that the classes are not linearly separable. This is done by increasing the variance of the data points for each class, which creates overlap between the classes.
+
+```{python}
+n_per_class = 3
+centers = [(2, 2), (2, 7), (5, 4.5), (8, 2), (8, 7)]
+n_classes = len(centers)
+X = np.zeros((n_per_class * n_classes, 2))
+y = np.zeros(n_per_class * n_classes, dtype=int)
+variance = 0.5  # Increased variance to create overlap
+np.random.seed(42)  # for reproducibility
+for class_id, (cx, cy) in enumerate(centers):
+    for _ in range(n_per_class):
+        # Increased scale (1.2) ensures points cross into other class territories
+        x1 = np.random.normal(cx, variance)  
+        x2 = np.random.normal(cy, variance)
+        X[class_id * n_per_class + _, :] = [x1, x2]
+        y[class_id * n_per_class + _] = class_id
+
+# Shuffle the dataset so that the model doesn't see classes in perfect blocks during training
+X, y = shuffle(X, y, random_state=42)
+```
+
+Let us visualize the dataset to see how the classes are distributed in the feature space. We can use a scatter plot to visualize the data points and color them according to their class labels.
+```{python}
+plt.figure(figsize=(6, 6))
+scatter = plt.scatter(X[:, 0], X[:, 1], c=y, cmap='viridis', edgecolors='k', s=100)
+plt.title("Synthetic Dataset with 5 Classes (Non-Separable)")
+plt.xlabel("Feature 1")
+plt.ylabel("Feature 2")
+plt.legend(*scatter.legend_elements(), title="Classes")
+plt.show()
+```
+
+Change the `variance` variable to see how the dataset changes. Also, feel free to change the number of points per class `n_per_class` to see how the dataset changes. You should see that as the variance increases, the classes become more and more overlapping, which makes it harder for the logistic regression model to classify the data points correctly.
+
+## Implementing the logistic regression model
+
+The logistic regression model is implemented using the softmax function for multi-class classification. The forward propagation function computes the predicted probabilities for each class given the input features, weights, and biases.
+
+```{python}
+def softmax(z):
+    exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
+    return exp_z / np.sum(exp_z, axis=1, keepdims=True)
+```
+
+Then, we compute the predicted probabilities for each class given the input features, weights, and biases.
+```{python}
+def forward_prob(X, W, b):
+    z = np.dot(X, W) + b
+    return softmax(z)
+```
+
+## Training the model using gradient descent
+
+The training loop iteratively updates the weights and biases using gradient descent. The loss function used is the cross-entropy loss, and the gradients are computed based on the predicted probabilities and the true labels.
+
+We note that the output of the `forward_prob` function is a matrix of shape `(num_samples, num_classes)`, where each row contains the predicted probabilities for each class for a given sample. For this reason, in order to compute 
+$$
+\begin{aligned}
+\mathcal{L}(\mathbf{W}, \mathbf{b}) &= -\frac{1}{m} \sum_{i=1}^{m} \sum_{j=1}^{K} y_j^{(i)} \log(\widehat{y}_j^{(i)}) \\[3pt]
+&= -\frac{1}{m} \sum_{i=1}^{m} \sum_{j=1}^{K} y_j^{(i)} \log\left(\frac{e^{\mathbf{w}_j \cdot \mathbf{x}^{(i)} + b_j}}{\sum_{k=1}^{K} e^{\mathbf{w}_k \cdot \mathbf{x}^{(i)} + b_k}}\right)
+\end{aligned}
+$$
+
+It is just useful to have the true labels in a one-hot encoded format, which is a binary matrix of shape `(num_samples, num_classes)`, where each row corresponds to a sample and each column corresponds to a class. The value is `1` if the sample belongs to that class and `0` otherwise.
+
+
+Let us explain this with an example. Suppose we have $5$ classes and a sample $\mathbf{x}^{(i)}$ belongs to class $y = 2$, that is $y^{(i)} = 2$. The one-hot encoded label for this sample would be 
+$$
+\mathbf{y}_\text{one-hot}^{(i)} = \begin{bmatrix}
+0 \\
+1 \\    
+0 \\
+0 \\
+0
+\end{bmatrix}
+$$
+which indicates that the sample belongs to class 2 and does not belong to any other class. This format allows us to easily compute the loss and the gradients for each class during training. 
+
+:::{.callout-note}
+Of course in C++ you can use a different data structure to store the one-hot encoded labels, or just simply write multiple loops iterating through the classes and data points. The one-hot encoding is just a convenient way to compute the loss and the gradients because it allows for vectorized operations, but it is not mandatory.
+:::
+
+```{python}
+num_samples, num_features = X.shape
+num_classes = len(np.unique(y))
+# Initialization of weights and biases
+W = np.random.randn(num_features, num_classes) * 0.01
+b = np.zeros((1, num_classes))
+# One-hot encoding of the labels
+y_one_hot = (y.reshape(-1, 1) == np.arange(num_classes).reshape(1, -1)).astype(np.double)
+print(y_one_hot.shape)  # (250, 5 classes)
+
+# Print the first 3 one-hot encoded labels to verify
+# Note that one row corresponds to one sample, and the columns 
+# correspond to the classes.
+print("First 3 one-hot encoded labels:")
+print(y_one_hot[3])
+# The value is 1 if the sample belongs to that class and 0 otherwise.
+```
+
+Now, we can write the training loop to update the weights and biases using gradient descent. The gradients are computed based on the predicted probabilities and the true labels, and the weights and biases are updated accordingly. All of us have seen this training loop before when we write C++ code for training a linear regression model. The key difference here is that we are using the softmax function to compute the predicted probabilities for each class, and we are using the cross-entropy loss function to compute the loss and the gradients.
+
+:::{.callout-note}
+# Terminology: Forward pass and Backward pass
+For those students who will proceed to study machine learning in the future, you will see that this training loop is very similar to the training loop used in more complex models such as neural networks. The main difference is that in neural networks, we have multiple layers of weights and biases, and we need to compute the gradients for each layer using backpropagation. However, the overall structure of the training loop remains the same, which is to compute the predicted probabilities, compute the loss, compute the gradients, and update the weights and biases.
+
+The terminology "forward pass" and "backward pass" is commonly used in the context of neural networks, but it can also be applied to logistic regression. The forward pass refers to the computation of the model's output (predicted probabilities) given the input features and the current weights and biases. The backward pass refers to the computation of the gradients of the loss function with respect to the weights and biases, which is used to update the weights and biases during training. In logistic regression, we can think of the forward pass as computing the predicted probabilities using the softmax function, and the backward pass as computing the gradients based on the predicted probabilities and the true labels.
+:::
+
+```{python}
+lr = 0.05           # learning rate
+epochs = 500       # number of iterations for training
+convergence_threshold = 1e-3  # threshold for convergence
+for epoch in range(epochs):
+    # Forward pass: compute predicted probabilities
+    probs = forward_prob(X, W, b)   
+    # Compute the error between predicted probabilities and true labels
+    error = probs - y_one_hot   # this is possible because both 
+                                # `probs` and `y_one_hot` have the same 
+                                # shape (num_samples, num_classes)
+
+    #----------------------------------------------------------------------
+    # Backward propagation: compute gradients and update weights and biases
+    #----------------------------------------------------------------------
+    # Just write down the maths to see how to compute the gradients.
+    # You will see that it is just a matter of matrix multiplication 
+    # and summation and it reflects the mathematical formulation of 
+    # the logistic regression model and the cross-entropy loss function
+    # given in the file `03-maths.html` and `03-maths.pdf`.
+
+    # dW.shape = (num_features, num_classes)
+    dW = (1 / num_samples) * np.dot(X.T, error)
+    # db.shape = (1, num_classes)
+    db = (1 / num_samples) * np.sum(error, axis=0, keepdims=True)
+
+    # Update weights and biases using gradient descent
+    W -= lr * dW
+    b -= lr * db
+
+    # We monitor the training process by printing the loss every 100 epochs
+    if epoch % 100 == 0:
+        # Compute the cross-entropy loss    
+        # We add the small value `1e-9` to the predicted probabilities 
+        # to avoid taking the log of zero, which can happen if the model 
+        # is very confident about a wrong prediction. This is a common 
+        # practice to ensure numerical stability when computing the loss.
+
+        loss_last_epoch = loss if epoch > 0 else None
+        loss = -np.mean(np.sum(y_one_hot * np.log(probs + 1e-9), axis=1))
+        print(f"Epoch {epoch}: Loss {loss:.4f}")
+
+        # Convergence criterion: if the loss is very small, we can stop training.
+        # This is just a simple convergence criterion, and you can use other 
+        # criteria such as the change in loss or the change in weights and biases.
+        if loss_last_epoch is not None \
+            and abs(loss_last_epoch - loss) < convergence_threshold:
+            print(f"Converged at epoch {epoch}")
+            break
+
+W_final, b_final = W, b
+```
+
+This is really the end of the training process. We have trained the logistic regression model and obtained the final weights and biases. We can now use these weights and biases to make predictions on new data points or to visualize the decision boundaries of the model.
+
+## Make prediction on the training data
+
+Before we test our model on unseen data, let us first make a prediction on the training data to see how well the model has learned to classify the training data. We can use the `forward_prob` function to compute the predicted probabilities for each class given the input features, weights, and biases. We can then print the predicted probabilities and the predicted class for each data point in the training set.
+
+```{python}
+# Compute predicted probabilities for each class for the training data
+predicted_probs_train = forward_prob(X, W_final, b_final)
+# Print predicted probabilities and predicted class for each data point in the training set
+for i, probs in enumerate(predicted_probs_train):
+    predicted_class = np.argmax(probs)
+    print(f"Data point: {X[i]}, True label: {y[i]}, Predicted class: {predicted_class}")
+```
+
+Let us then compute the accuracy of the model on the training data to see how well the model has learned to classify the training data. The accuracy is computed as the number of correct predictions divided by the total number of predictions.
+```{python}
+# Compute predicted classes for the training data
+predicted_classes_train = np.argmax(predicted_probs_train, axis=1)
+# Compute accuracy on the training data
+accuracy_train = np.mean(predicted_classes_train == y)
+print(f"Accuracy on the training data: {accuracy_train:.4f}")
+```
+
+Change the variance `variance`, the number of epochs to a larger value (e.g., `epochs = 2000`) and learning rate `lr` and see how the accuracy on the training data changes. You should see that the accuracy increases as the number of epochs increases, which indicates that the model is learning to classify the training data better.
+
+## Make prediction on unseen data
+
+Let us make a prediction on a new data point. We can use the `forward_prob` function to compute the predicted probabilities for each class given the input features, weights, and biases. Particularly, we shall compute the predicted probabilities for $3$ data points that are not in the training set. We can then print the predicted probabilities and the predicted class for each of these data points.
+
+```{python}
+# Generate 3 new data points that are not in the training set
+new_data_points = np.array([[3, 3], [3, 6], [6, 4]])
+# Compute predicted probabilities for each class for the new data point    
+predicted_probs = forward_prob(new_data_points, W_final, b_final)
+# Print predicted probabilities and predicted class for each new data point
+for i, probs in enumerate(predicted_probs):
+    predicted_class = np.argmax(probs)
+    print(f"Data point: {new_data_points[i]}, Predicted class: {predicted_class}")
+```
+
+## Full Python code
+
+:::{.callout-note}
+Again, this code is fully generated by GenAI. I have only made some minor edits to make it more readable and to add some comments. The code is not perfect, but it serves the purpose of demonstrating how a logistic regression model is implemented from scratch in Python.
+:::
+
+```{.python}
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from pathlib import Path
+from sklearn.utils import shuffle
+
+#===================
+# 1. DATA GENERATION (using variance to create non-separable classes)
+#===================
+def generate_overlapping_data(n_per_class=5):
+    """Generates 5 classes with 5 points each. Increased variance creates overlap."""
+    data = []
+    centers = [(2, 2), (2, 7), (5, 4.5), (8, 2), (8, 7)]
+    variance = 0.5  # Increased variance to create overlap
+    np.random.seed(42)  # for reproducibility
+    for class_id, (cx, cy) in enumerate(centers):
+        for _ in range(n_per_class):
+            # Increased scale (1.2) ensures points cross into other class territories
+            x1 = np.random.normal(cx, variance)
+            x2 = np.random.normal(cy, variance)
+            data.append([x1, x2, class_id])
+            
+    df = pd.DataFrame(data, columns=['feat1', 'feat2', 'label'])
+    # Shuffle so the model doesn't see classes in perfect blocks during training
+    return shuffle(df, random_state=42).reset_index(drop=True)
+
+#==============
+# 2. MODEL MATH
+#==============
+def softmax(z):
+    # keepdims=True ensures that the output has the same shape as z, 
+    # which is important for broadcasting during the division
+    exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
+    return exp_z / np.sum(exp_z, axis=1, keepdims=True)
+
+def forward_prop(X, W, b):
+    z = np.dot(X, W) + b
+    return softmax(z)
+
+#=================
+# 3. TRAINING LOOP
+#=================
+def train_model(X, y, lr=0.05, epochs=2000):
+    num_samples, num_features = X.shape
+    num_classes = len(np.unique(y))
+    
+    # Initialization
+    W = np.random.randn(num_features, num_classes) * 0.01
+    b = np.zeros((1, num_classes))
+    y_oh = pd.get_dummies(y).values
+    
+    print(f"Training on {num_samples} points...")
+    for epoch in range(epochs):
+        # Forward pass: compute predicted probabilities
+        probs = forward_prop(X, W, b)       
+        
+        # Gradient of loss function w.r.t. weights and biases
+        error = probs - y_oh
+        dW = (1 / num_samples) * np.dot(X.T, error)
+        db = (1 / num_samples) * np.sum(error, axis=0, keepdims=True)
+        
+        # Update
+        W -= lr * dW
+        b -= lr * db
+        
+        if epoch % 500 == 0:
+            loss = -np.mean(np.sum(y_oh * np.log(probs + 1e-9), axis=1))
+            print(f"Epoch {epoch}: Loss {loss:.4f}")
+            
+    return W, b
+
+#=========================================
+# 4. VISUALIZATION (Decision Boundaries)
+#=========================================
+def plot_boundaries(X, y, W, b, filename):
+    plt.figure(figsize=(10, 8))
+    
+    # Create a grid of points covering the feature space
+    x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+    y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.05),
+                         np.arange(y_min, y_max, 0.05))
+    
+    # Predict for every point in the grid
+    grid_points = np.c_[xx.ravel(), yy.ravel()]
+    probs = forward_prop(grid_points, W, b)
+    predictions = np.argmax(probs, axis=1)
+    predictions = predictions.reshape(xx.shape)
+    
+    # Plot background colors
+    plt.contourf(xx, yy, predictions, alpha=0.3, cmap='viridis')
+    
+    # Plot the original data points
+    scatter = plt.scatter(X[:, 0], X[:, 1], c=y, cmap='viridis', edgecolors='k', s=40)
+    
+    plt.title("Multinomial Logistic Regression: Decision Boundaries (Non-Separable)")
+    plt.xlabel("Feature 1")
+    plt.ylabel("Feature 2")
+    plt.savefig(filename)
+    plt.close()
+    print(f"Boundary plot saved to {filename}")
+
+#==========
+# EXECUTION
+#==========
+Path("./data").mkdir(exist_ok=True)
+
+df = generate_overlapping_data(50)
+X_train = df[['feat1', 'feat2']].values
+y_train = df['label'].values
+
+# Run Training
+W_final, b_final = train_model(X_train, y_train)
+
+# Generate Visual
+plot_boundaries(X_train, y_train, W_final, b_final, "./data/decision_boundaries.png")
+```

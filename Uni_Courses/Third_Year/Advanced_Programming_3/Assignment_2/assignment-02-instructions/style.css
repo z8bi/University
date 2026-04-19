@@ -1,0 +1,38 @@
+/* Global code font size */
+code.sourceCode {
+    font-size: 0.90em !important;
+}
+
+/* Specific override for C++ if it's too wordy */
+.cell-code.cpp {
+    font-size: 0.9em !important;
+}
+
+/* Specific override for Python */
+.cell-code.python {
+    font-size: 0.90em !important;
+}
+
+/* 1. Header Colors: Targets all levels of headers */
+h1, h2, h3, h4, h5, h6, 
+.title, .subtitle {
+    color: #2e7d32; /* A professional forest green */
+}
+
+/* 2. Code Snippets: Matches font size to body text */
+
+code, 
+pre > code, 
+.cell-code {
+    font-size: 1em; /* 1em ensures it inherits the surrounding text size */
+}
+
+/* 3. Code Background: Light gray shading */
+pre.sourceCode, 
+.cell-code,
+code:not(.sourceCode) {
+    background-color: #f5f5f5; /* Light gray */
+    padding: 0.5em;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0; /* Optional: adds a slight definition */
+}
