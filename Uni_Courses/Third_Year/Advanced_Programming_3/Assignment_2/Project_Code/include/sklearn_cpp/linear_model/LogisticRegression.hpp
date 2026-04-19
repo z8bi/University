@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../DatasetClass.hpp"
+
 namespace sklearn_cpp {
 namespace linear_model {
 
