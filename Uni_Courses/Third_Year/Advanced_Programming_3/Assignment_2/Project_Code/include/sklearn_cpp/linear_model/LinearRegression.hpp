@@ -63,8 +63,8 @@ public:
             throw std::runtime_error("X and y size mismatch.");
         }
 
-        //these are used in the in the gradient descent calculations -> make "m" double not size_t so we can use in calculations
-        const double m = data.X.size();
+        //these are used in the in the gradient descent calculations and loops -> have to cast to double in order to use in calculations
+        const size_t m = data.X.size();
         const size_t num_features = data.X[0].size();
 
         //Uses assign to set the size of the weight vector to match the X values and sets to zero
@@ -98,9 +98,9 @@ public:
             Calculate new weights and b based on the gradients and learning rate
             */
             for(size_t j{0}; j < weights.size(); j++) {
-                weights[j] -= (2 / m) * learning_rate_ * dL_dOmega[j];
+                weights[j] -= (2 / (double)m) * learning_rate_ * dL_dOmega[j];
             }
-            b -= (2 / m) * learning_rate_ * dL_db; 
+            b -= (2 / (double)m) * learning_rate_ * dL_db; 
         }
 
     }
@@ -193,6 +193,45 @@ public:
     }
     double get_b_value() const { 
         return b; 
+    }
+
+    /*
+    ===================================
+    ======R2 SCORE CALCULATION=========
+    ===================================
+    */
+    double r2_score(const sklearn_cpp::Dataset& data) const {
+        //Once again necessary checks
+        if (weights.empty()) {
+            throw std::runtime_error("Model has not been fitted yet.");
+        }
+        if (data.X.empty()) {
+            throw std::runtime_error("Dataset is empty.");
+        }
+        if (data.X.size() != data.y.size()) {
+            throw std::runtime_error("X and y size mismatch.");
+        }
+
+        std::vector<double> y_pred = predict(data.X); //use the predict function to get the predicted y values for the given dataset
+        const double y_mean = calculate_mean(data.y); //uses helper function for the mean
+
+        //Prepare numerator and demoninator
+        double ss_res = 0.0;
+        double ss_tot = 0.0;
+
+        for (size_t i = 0; i < data.y.size(); ++i) {
+            const double residual = data.y[i] - y_pred[i];
+            const double deviation = data.y[i] - y_mean;
+
+            ss_res += residual * residual; //numerator, squared
+            ss_tot += deviation * deviation; //denominator, squared
+        }
+
+        if (ss_tot == 0.0) {
+            throw std::runtime_error("R2 is undefined when all y values are identical.");
+        }
+
+        return 1.0 - (ss_res / ss_tot);
     }
 
 };
