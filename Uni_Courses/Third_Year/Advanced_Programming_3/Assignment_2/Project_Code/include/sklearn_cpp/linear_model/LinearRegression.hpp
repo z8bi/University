@@ -2,6 +2,12 @@
 
 #include <stdexcept> //runtime errors
 
+/*
+
+Used online resources for the throw handling features as well as vector functions (like assign and resize)
+
+*/
+
 #include "../DatasetClass.hpp"
 
 namespace sklearn_cpp {
@@ -49,6 +55,54 @@ public:
     //These are the two main exposed functions which this library enables calling
     void fit(const sklearn_cpp::Dataset& data) {
 
+        //Same checks as with predict
+        if (data.X.empty()) {
+            throw std::runtime_error("Dataset is empty.");
+        }
+        if (data.X.size() != data.y.size()) {
+            throw std::runtime_error("X and y size mismatch.");
+        }
+
+        //these are used in the in the gradient descent calculations -> make "m" double not size_t so we can use in calculations
+        const double m = data.X.size();
+        const size_t num_features = data.X[0].size();
+
+        //Uses assign to set the size of the weight vector to match the X values and sets to zero
+        weights.assign(num_features, 0.0); 
+
+        //This is the main training loop -> runs for n_iterations
+        for(size_t iter{0}; iter < n_iterations_; iter++) {
+
+            //Create the gradient vectors and set to zero for new iteration
+            std::vector<double> dL_dOmega(num_features, 0.0); 
+            double dL_db = 0.0;
+
+            //calculate the predictions for the current weights and b -> uses the overloaded predict
+            std::vector<double> y_predictions = predict(data.X);
+
+            /*
+            Gradient of loss function calculations
+            */
+            for(size_t i{0}; i < m; i++) {
+                //Calculate the error for the current iteration
+                double error = y_predictions[i] - data.y[i];
+
+                //Calculate dL_dOmega for each weight
+                for(size_t j{0}; j < data.X[i].size(); j++) {
+                    dL_dOmega[j] += (error * data.X[i][j]);
+                }
+                dL_db += error;
+            }
+
+            /*
+            Calculate new weights and b based on the gradients and learning rate
+            */
+            for(size_t j{0}; j < weights.size(); j++) {
+                weights[j] -= (2 / m) * learning_rate_ * dL_dOmega[j];
+            }
+            b -= (2 / m) * learning_rate_ * dL_db; 
+        }
+
     }
 
 
@@ -78,7 +132,6 @@ public:
             //We check the current X vector's validity
             if(X[i].size() != weights.size()) {
                 throw std::runtime_error("Input feature size does not match learned weights.");
-                continue;
             };
 
             double current_y_prediction{};
@@ -114,7 +167,6 @@ public:
             //We check the current X vector's validity
             if(data.X[i].size() != weights.size()) {
                 throw std::runtime_error("Input feature size does not match learned weights.");
-                continue;
             };
 
             double current_y_prediction{};

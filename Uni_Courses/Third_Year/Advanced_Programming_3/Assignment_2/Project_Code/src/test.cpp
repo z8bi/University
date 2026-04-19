@@ -19,7 +19,13 @@ int main() {
 
     sklearn_cpp::Dataset concrete = sklearn_cpp::CSVReader::read_CSV("data/concrete.csv", true);
 
-    concrete.print();
+    sklearn_cpp::linear_model::LinearRegression lr(0.01, 10000);
+    lr.fit(concrete);
+
+    sklearn_cpp::Dataset concrete_incomplete = sklearn_cpp::CSVReader::read_CSV("data/concrete.csv", true);
+    sklearn_cpp::Dataset concrete_predictions = lr.predict(concrete_incomplete);
+
+    concrete_predictions.print();
     
     //make sure the console doesn't immediatelly close :D
     char bs;
