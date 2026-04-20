@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../DatasetClass.hpp"
-#include <math.h>
+#include <cmath>
 #include <stdexcept> //runtime errors
 
 /*
@@ -9,6 +9,8 @@
 Guide:
 
 Fit:
+The fit function is the main training function which takes in a Dataset object and trains the model based on the X and y values. 
+The gradient descent method is implemented as the main training algoritm.
 
 Prediction API is based on the sklearn API, so we have separated the predict functions into three which may be called separately 
 -> like the real library, but the predict() is the main user interface:
@@ -57,12 +59,13 @@ class LogisticRegression {
 
         /*
         Private helper which counts the number of unique y_values and decides whether to use binary or multiclass:
-
+        Pass by refference to limit copying, internally copy the Y_values only
         ==used online resources to research how to count unique values in a vector===
         */
-        MODE decide_mode(sklearn_cpp::Dataset data) {
-            std::sort(data.y.begin(), data.y.end());
-            int uniqueCount = std::unique(data.y.begin(), data.y.end()) - data.y.begin();
+        MODE decide_mode(const sklearn_cpp::Dataset& data) {
+            std::vector<double> y_copy = data.y;
+            std::sort(y_copy.begin(), y_copy.end());
+            int uniqueCount = std::unique(y_copy.begin(), y_copy.end()) - y_copy.begin();
             if (uniqueCount == 2) {
                 return MODE::BINARY;
             } else if (uniqueCount > 2) {
@@ -124,6 +127,34 @@ class LogisticRegression {
                     std::vector<double> y_predictions = predict_proba(data.X);
 
                     //2. Loss function calculation
+                    double loss = 0.0;
+                    
+                    //this is the sigma part for each data point
+                    for (size_t i = 0; i < m; i++) {
+                        double y_hat = y_predictions[i];
+
+                        //loss equation
+                        loss += data.y[i] * std::log(y_hat)
+                             + (1.0 - data.y[i]) * std::log(1.0 - y_hat);
+                    }
+
+                    //divide by - 1/ m to get the final loss value (no regularization yet)
+                    loss = -(1.0 / (double)(m)) * loss;
+
+                    //regularization calculation
+                    double reg = 0.0;
+
+                    //range based for loop implementing the sigma
+                    for (double w : weights) {
+                        reg += w * w; //weight squared
+                    }
+                    reg += b * b;
+
+                    /*
+                    Final regularized loss -> regularization added at the end
+                    */
+                    
+                    loss += lambda * reg;
 
                     /*
                     3. Gradient of loss function calculations
@@ -134,9 +165,9 @@ class LogisticRegression {
 
                         //Calculate dL_dOmega for each weight
                         for(size_t j{0}; j < data.X[i].size(); j++) {
-                            dL_dOmega[j] += (error * data.X[i][j]) + (lambda * weights[j]); //add regularization term
+                            dL_dOmega[j] += (error * data.X[i][j]) + (2 * lambda * weights[j]); //add regularization term
                         }
-                        dL_db += error + (lambda * b); //add regularization term
+                        dL_db += error + (2 * lambda * b); //add regularization term
                     }
 
                     /*
@@ -248,21 +279,21 @@ class LogisticRegression {
         /**
         This function returns the final class predictions based on the probabilities -> MAIN USER INTERFACE
         */
-        std::vector<double> predict(const std::vector<std::vector<double>>& X) const {
+        std::vector<int> predict(const std::vector<std::vector<double>>& X) const {
             if(current_mode == MODE::NOT_FIT) {
                 throw std::runtime_error("Model has not been fitted yet.");
             }
 
             //First we get the probabilities
             std::vector<double> probabilities = predict_proba(X);
-            std::vector<double> class_predictions{};
+            std::vector<int> class_predictions{};
 
             //Binary implementation
             if(current_mode == MODE::BINARY) {
 
                 //range based for loop to go through all probabilities and apply threshold of 0.5 to get the class predictions
                 for (auto prob : probabilities) {
-                    double class_pred = (prob >= 0.5) ? 1.0 : 0.0; //threshold at 0.5
+                    double class_pred = (prob >= 0.5) ? 1 : 0; //threshold at 0.5
                     class_predictions.push_back(class_pred);
                 }
 
@@ -312,6 +343,40 @@ class LogisticRegression {
             }
 
             return data;
+        }
+
+        /*
+        ==========================================
+        =======ACCURACY SCORE IMPLEMENTATION======
+        ==========================================
+        */
+        double accuracy_score(const sklearn_cpp::Dataset& data) const {
+            //once again the basic checks
+            if (current_mode == MODE::NOT_FIT) {
+                throw std::runtime_error("Model has not been fitted yet.");
+            }
+            if (data.X.empty()) {
+                throw std::runtime_error("Dataset is empty.");
+            }
+            if (data.X.size() != data.y.size()) {
+                throw std::runtime_error("X and y size mismatch.");
+            }
+
+            //use the model to predic the Y values based on the X values
+            std::vector<int> y_pred = predict(data.X);
+
+            //range based for loop which compares if the predicted class matches the original in the dataset
+            size_t correct = 0;
+            for (size_t i = 0; i < data.y.size(); ++i) {
+                int y_true = static_cast<int>(data.y[i]);
+                if (y_pred[i] == y_true) {
+                    ++correct;
+                }
+            }
+
+            //Return a percentage accuracy score -> correct predictions / total predictions 
+            //Have to cast to double because correct is size_t
+            return (double)correct / (double)data.y.size();
         }
 
 };

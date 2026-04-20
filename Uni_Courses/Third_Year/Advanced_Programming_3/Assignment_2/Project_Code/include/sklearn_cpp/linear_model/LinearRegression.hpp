@@ -85,12 +85,23 @@ public:
             std::vector<double> dL_dOmega(num_features, 0.0); 
             double dL_db = 0.0;
 
-            //calculate the predictions for the current weights and b -> uses the overloaded predict
+            //1. Calculate the predictions for the current weights and b -> uses the overloaded predict
             std::vector<double> y_predictions = predict(data.X);
 
+            //2. Calculate the loss function MSE (mean squared error)
+            double loss = 0.0;
+
+            //this is the sigma part for each data point
+            for(size_t i{0}; i < m; i++) {
+                double error = y_predictions[i] - data.y[i];
+                loss += error * error;
+            }
+            loss /= (m); //divide by m at the end
+
             /*
-            Gradient of loss function calculations
+            3. Calculate the gradient of loss function calculations
             */
+
             for(size_t i{0}; i < m; i++) {
                 //Calculate the error for the current iteration
                 double error = y_predictions[i] - data.y[i];
@@ -103,7 +114,7 @@ public:
             }
 
             /*
-            Calculate new weights and b based on the gradients and learning rate
+            4. Calculate new weights and b based on the gradients and learning rate
             */
             for(size_t j{0}; j < weights.size(); j++) {
                 weights[j] -= (2 / (double)m) * learning_rate_ * dL_dOmega[j];
