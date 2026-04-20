@@ -6,7 +6,16 @@
 
 /*
 
-Guide:
+=================================
+========LOGISTIC REGRESSION=======
+=================================
+
+Two "backend" calculation algorithms are implemented into this class, as per the assignment:
+Binary classification 
+Multiclass classification
+
+The fit() function decides which one to use based on the number of unique y values and sets an internal enum
+
 
 Fit:
 The fit function is the main training function which takes in a Dataset object and trains the model based on the X and y values. 
