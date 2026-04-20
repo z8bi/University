@@ -5,6 +5,9 @@
 int main() {
 
     /*
+    //CONCRETE DATASET TESTING
+    */
+
     sklearn_cpp::Dataset concrete = sklearn_cpp::CSVReader::read_CSV("data/concrete.csv", true);
 
     sklearn_cpp::linear_model::LinearRegression lr(1e-7, 50000);    
@@ -16,16 +19,18 @@ int main() {
 
     concrete_predictions.print();
     std::cout << "R2 Score: " << r2 << std::endl;
-    */
-
+    
+    /*
     //BOSTON HOME PRICE DATASET TESTING
     //DOWNLOADED FROM https://www.geeksforgeeks.org/machine-learning/dataset-for-linear-regression/
+    */
+
     sklearn_cpp::Dataset boston = sklearn_cpp::CSVReader::read_CSV("data/Boston.csv", true);
 
-    sklearn_cpp::linear_model::LinearRegression lr(4e-7, 1000000);
-    lr.fit(boston); //fit the model to the data
-    double r2 = lr.r2_score(boston); //calculate the R2 score on the same dataset
-    sklearn_cpp::Dataset predictions = lr.predict(boston); //use the predict function on the same dataset and print the predictions
+    sklearn_cpp::linear_model::LinearRegression model(4e-7, 1000000);
+    model.fit(boston); //fit the model to the data
+    double r2 = model.r2_score(boston); //calculate the R2 score on the same dataset
+    sklearn_cpp::Dataset predictions = model.predict(boston); //use the predict function on the same dataset and print the predictions
     predictions.print(); //print dataset
 
     std::cout << "R2 Score: " << r2 << std::endl; //print R2 score

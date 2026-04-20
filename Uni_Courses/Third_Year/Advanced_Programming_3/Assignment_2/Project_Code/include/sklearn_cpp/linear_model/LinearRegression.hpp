@@ -1,14 +1,22 @@
 #pragma once
 
-#include <stdexcept> //runtime errors
-
 /*
 
 Used online resources for the throw handling features as well as vector functions (like assign and resize)
 
+GUIDE:
+
+1. void fit() member function -> takes in a DataClass object and fits the model using gradient descent. Updates internal weights vector and b value.
+2. Predict functions -> two overloads:
+    a. std::vector<double> predict(const std::vector<std::vector<double>>& X) -> takes in a vector of X values and returns a vector of predicted Y values based on the current weights and b.
+    b. Dataset predict(Dataset data) -> overloaded predict function which takes in a Dataset object and overwrites the internal Y values with the predicted Y values based on the current weights and b. Returns the modified Dataset object.
+3. R2 score function -> double r2_score(const Dataset& data) -> takes in a Dataset object and calculates the R2 score based on the current model's predictions and the actual Y values in the dataset.
+
 */
 
 #include "../DatasetClass.hpp"
+
+#include <stdexcept> //runtime errors
 
 namespace sklearn_cpp {
 namespace linear_model {
@@ -136,11 +144,13 @@ public:
 
             double current_y_prediction{};
 
+            //calculate the prediction based on ax + b 
             for(size_t j{0}; j < X[i].size(); j++) {
                 current_y_prediction += weights[j]*X[i][j];
             }
             current_y_prediction += b;
 
+            //store in the predictions vector
             y_predictions.push_back(current_y_prediction);
 
         }
@@ -149,7 +159,8 @@ public:
     }
 
     /*
-    OVERLOADED predict which works with a Dataset object and overrides its y_values
+    OVERLOADED predict which works with a Dataset object and outputs a new dataset
+    Pass by value because we want to return a new dataset and keep the original unchanged
     */
 
     sklearn_cpp::Dataset predict(sklearn_cpp::Dataset data) const {
@@ -171,11 +182,13 @@ public:
 
             double current_y_prediction{};
 
+            //calculate the prediction based on ax + b 
             for(size_t j{0}; j < data.X[i].size(); j++) {
                 current_y_prediction += weights[j]*data.X[i][j];
             }
             current_y_prediction += b;
 
+             //store in the data.y predictions vector
             data.y.push_back(current_y_prediction);
 
         }
