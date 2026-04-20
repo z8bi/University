@@ -22,7 +22,8 @@ namespace sklearn_cpp {
 namespace linear_model {
 
 //Little helper to calculate mean
-template<typename T> //We can actualy use the templates here to ensure our helper works for int and double, etc.
+//We can actualy use the templates here to ensure our helper works for int and double, etc.
+template<typename T> 
 
 inline double calculate_mean(const std::vector<T> &vect) {
     double mean{0};
@@ -42,6 +43,9 @@ private:
     //These are the default learning parameters
     double learning_rate_ = 0.001;
     size_t n_iterations_ = 1000;
+
+    //Track the last loss value from the current fit -> can compare between fits
+    double current_loss = 0.0; 
 
 public:
     //First default constructor because we will specify a different one too
@@ -63,7 +67,7 @@ public:
     //These are the two main exposed functions which this library enables calling
     void fit(const sklearn_cpp::Dataset& data) {
 
-        //Same checks as with predict
+        //Same basic exception handling checks as with predict
         if (data.X.empty()) {
             throw std::runtime_error("Dataset is empty.");
         }
@@ -75,8 +79,12 @@ public:
         const size_t m = data.X.size();
         const size_t num_features = data.X[0].size();
 
-        //Uses assign to set the size of the weight vector to match the X values and sets to zero
+        //Uses assign to set the size of the weight vector to match the X values and sets to zero, b value too -> starts a fresh fit
         weights.assign(num_features, 0.0); 
+        b = 0.0;
+
+        //track loss outside the loop so we can compare between fits at the end of the training loop
+        double loss = 0.0;
 
         //This is the main training loop -> runs for n_iterations
         for(size_t iter{0}; iter < n_iterations_; iter++) {
@@ -88,15 +96,16 @@ public:
             //1. Calculate the predictions for the current weights and b -> uses the overloaded predict
             std::vector<double> y_predictions = predict(data.X);
 
-            //2. Calculate the loss function MSE (mean squared error)
-            double loss = 0.0;
+            //2. Reset and calculate the loss function MSE (mean squared error) 
+            //(yes its not used in the training loop but good to keep, as we can alter the loop to go off of the loss not number of iterations)
+            loss = 0.0;
 
             //this is the sigma part for each data point
             for(size_t i{0}; i < m; i++) {
                 double error = y_predictions[i] - data.y[i];
                 loss += error * error;
             }
-            loss /= (m); //divide by m at the end
+            loss /= double(m); //divide by m at the end
 
             /*
             3. Calculate the gradient of loss function calculations
@@ -121,6 +130,17 @@ public:
             }
             b -= (2 / (double)m) * learning_rate_ * dL_db; 
         }
+
+        //final loss update after training loop
+        double latest_loss = 0.0;
+        std::vector<double> final_predictions = predict(data.X);         
+        for(size_t i{0}; i < m; i++) {
+            double error = final_predictions[i] - data.y[i];
+            latest_loss += error * error;
+        }
+        latest_loss /= double(m);
+        //update the latest loss value
+        this->current_loss = latest_loss; 
 
     }
 
@@ -209,18 +229,6 @@ public:
 
     /*
     ===================================
-    ===========GET HELPERS ============
-    ===================================
-    */
-    const std::vector<double>& get_weights() const { 
-        return weights; 
-    }
-    double get_b_value() const { 
-        return b; 
-    }
-
-    /*
-    ===================================
     ======R2 SCORE CALCULATION=========
     ===================================
     */
@@ -258,6 +266,20 @@ public:
         return 1.0 - (ss_res / ss_tot);
     }
 
+    /*
+    ===================================
+    ===========GET HELPERS ============
+    ===================================
+    */
+    const std::vector<double>& get_weights() const { 
+        return weights; 
+    }
+    double get_b_value() const { 
+        return b; 
+    }
+    double get_current_loss() const {
+        return current_loss;
+    }
 };
 
 } // namespace linear_model
