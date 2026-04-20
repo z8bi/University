@@ -30,17 +30,6 @@ Prediction API is based on the sklearn API, so we have separated the predict fun
 
 */
 
-//Little helper to calculate mean
-template<typename T> //We can actualy use the templates here to ensure our helper works for int and double, etc.
-
-inline double calculate_mean(const std::vector<T> &vect) {
-    double mean{0};
-    for(size_t i{0}; i < vect.size(); i++) {
-        mean += vect[i];
-    } 
-    return mean / vect.size();
-}
-
 namespace sklearn_cpp {
 namespace linear_model {
 
