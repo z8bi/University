@@ -1,10 +1,13 @@
 #pragma once
 
 /*
-
+==================================
+========LINEAR REGRESSION=========
+==================================
+This is the implementation of the Linear Regression model using gradient descent.
 Used online resources for the throw handling features as well as vector functions (like assign and resize)
 
-GUIDE:
+Implemented features:
 
 1. void fit() member function -> takes in a DataClass object and fits the model using gradient descent. Updates internal weights vector and b value.
 2. Predict functions -> two overloads:

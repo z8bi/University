@@ -2,6 +2,7 @@
 
 #include "../DatasetClass.hpp"
 #include <cmath>
+#include <algorithm> //used for the MODE deciding function (online documentation)
 #include <stdexcept> //runtime errors
 
 /*
@@ -14,17 +15,26 @@ Two "backend" calculation algorithms are implemented into this class, as per the
 Binary classification 
 Multiclass classification
 
+=================================
+========VECTOR STRUCTURES========
+=================================
+
+weights -> [class][feature] -> in binary we only use the first row, in multiclass we use all rows. Hence, for binary the outer size is 1, for multiclass the outer size is K
+biases -> [class] -> in binary we only store one bias value, in multiclass its K values
+outputs[sample][class] -> predictions: each sample has a vector of probabilities for each class
+
+====================================
+========IMPLEMENTED FEATURES=========
+====================================
+
 The fit() function decides which one to use based on the number of unique y values and sets an internal enum
-
-
-Fit:
 The fit function is the main training function which takes in a Dataset object and trains the model based on the X and y values. 
 The gradient descent method is implemented as the main training algoritm.
 
 Prediction API is based on the sklearn API, so we have separated the predict functions into three which may be called separately 
 -> like the real library, but the predict() is the main user interface:
 1. decision_function() -> returns the raw y prediction values before the sigmoid
-2. predict_proba() -> returns the predicted probabilities for the positive class (in binary classification
+2. predict_proba() -> returns the predicted probabilities for the positive class, vector of posibilities for each sample ( [sample][class])
 3. predict() -> returns the final class predictions based on the probabilities -> MAIN USER INTERFACE
 4. Dataset predict() -> The predict function is overloaded to work with a Dataset object which we generate from the CSV files, which is going to be the main way to use our library
 
@@ -37,13 +47,16 @@ class LogisticRegression {
 
     private:
         //These are the learnable parameters -> weights has to be a vector to enable using multi-feature datasets
-        std::vector<double> weights;
-        double b = 0.0;
+        std::vector<std::vector<double>> weights; // stores the weights per class, per feature -> [class][feature] (binary is going to use [0][i])
+        std::vector<double> biases;               // [class]
 
         //These are the default learning parameters
         double learning_rate_ = 0.0001;
         size_t n_iterations_ = 10000;
         double lambda = 0.01; //regularization parameter -> used later in fit
+
+        //Track the last loss value from the current fit -> can compare between fits
+        double current_loss = 0.0; 
 
         //enum for deciding whether to implement the binary or multiclass version -> decided based on the fit function
         enum class MODE {
@@ -103,7 +116,7 @@ class LogisticRegression {
                 throw std::runtime_error("X and y size mismatch.");
             }
 
-            //Decide the mode
+            //Decide the mode -> binary or multiclass, changes the internal backend of the functions
             this->current_mode = decide_mode(data);
 
             if(this->current_mode == MODE::BINARY) {
@@ -111,8 +124,10 @@ class LogisticRegression {
                 const size_t m = data.X.size();
                 const size_t num_features = data.X[0].size();
 
-                //Uses assign to set the size of the weight vector to match the X values and sets to zero
-                weights.assign(num_features, 0.0); 
+                //In binary, simply use one row of weights and one bias value
+                //Uses assign to set the size of the weight vector to match the X values and sets to zero, b value too -> starts a fresh fit
+                weights.assign(1, std::vector<double>(num_features, 0.0));
+                biases.assign(1, 0.0);
 
                 //This is the main training loop -> runs for n_iterations
                 for(size_t iter{0}; iter < n_iterations_; iter++) {
@@ -122,14 +137,14 @@ class LogisticRegression {
                     double dL_db = 0.0;
 
                     //1. calculate the y probabilities for the current weights and b -> uses the predict_proba function to get the probabilities based on the sigmoid of the decision function
-                    std::vector<double> y_predictions = predict_proba(data.X);
+                    std::vector<std::vector<double>> y_predictions = predict_proba(data.X);
 
                     //2. Loss function calculation
                     double loss = 0.0;
                     
                     //this is the sigma part for each data point
                     for (size_t i = 0; i < m; i++) {
-                        double y_hat = y_predictions[i];
+                        double y_hat = y_predictions[i][0];
 
                         //loss equation
                         loss += data.y[i] * std::log(y_hat)
@@ -143,10 +158,10 @@ class LogisticRegression {
                     double reg = 0.0;
 
                     //range based for loop implementing the sigma
-                    for (double w : weights) {
+                    for (double w : weights[0]) {
                         reg += w * w; //weight squared
                     }
-                    reg += b * b;
+                    reg += biases[0] * biases[0];
 
                     /*
                     Final regularized loss -> regularization added at the end
@@ -159,28 +174,61 @@ class LogisticRegression {
                     */
                     for(size_t i{0}; i < m; i++) {
                         //Calculate the error for the current iteration
-                        double error = y_predictions[i] - data.y[i];
+                        double error = y_predictions[i][0] - data.y[i];
 
                         //Calculate dL_dOmega for each weight
                         for(size_t j{0}; j < data.X[i].size(); j++) {
-                            dL_dOmega[j] += (error * data.X[i][j]) + (2 * lambda * weights[j]); //add regularization term
+                            dL_dOmega[j] += (error * data.X[i][j]) + (2 * lambda * weights[0][j]); //add regularization term
                         }
-                        dL_db += error + (2 * lambda * b); //add regularization term
+                        dL_db += error + (2 * lambda * biases[0]); //add regularization term
                     }
 
                     /*
                     Calculate new weights and b based on the gradients and learning rate
                     */
-                    for(size_t j{0}; j < weights.size(); j++) {
-                        weights[j] -= (1 / (double)m) * learning_rate_ * dL_dOmega[j];
+                    for(size_t j{0}; j < weights[0].size(); j++) {
+                        weights[0][j] -= (1 / (double)m) * learning_rate_ * dL_dOmega[j];
                     }
-                    b -= (1 / (double)m) * learning_rate_ * dL_db; 
+                    biases[0] -= (1 / (double)m) * learning_rate_ * dL_db; 
                 }
+
+                /*
+                //calculate the loss one last time after training loop finished and store it in the member variable
+                */
+                double loss = 0.0;
+                std::vector<std::vector<double>> y_predictions = predict_proba(data.X);
+                    
+                for (size_t i = 0; i < m; i++) {
+                    double y_hat = y_predictions[i][0];
+
+                    //loss equation
+                    loss += data.y[i] * std::log(y_hat)
+                         + (1.0 - data.y[i]) * std::log(1.0 - y_hat);                    }
+
+                //divide by - 1/ m to get the final loss value (no regularization yet)
+                loss = -(1.0 / (double)(m)) * loss;
+
+                //regularization calculation
+                double reg = 0.0;
+
+                //range based for loop implementing the sigma
+                for (double w : weights[0]) {
+                    reg += w * w; //weight squared
+                    }
+                reg += biases[0] * biases[0];
+
+                /*
+                Final regularized loss -> regularization added at the end
+                 */
+                    
+                loss += lambda * reg;
+                this->current_loss = loss; //update the current loss value after training
+
             }
 
             //Multiclass implementation
             else {
-                throw std::runtime_error("Multiclass classification not implemented yet.");
+
             }
         }
 
@@ -194,29 +242,30 @@ class LogisticRegression {
         /*
         THESE FUNCTIONS ARE THE CORE ONES USED BY INTERNALS BUT ALSO CALLABLE DIRECTLY BY THE USER, BUT THE MAIN USER INTERFACE IS predict() WHICH CALLS THESE INTERNALS
         These functions all work with vector inputs and outputs, the main user interface is predict which is the only one overloaded to work with the Dataset class
-        */
 
-        /*
-        This function returns the raw y prediction values before the sigmoid
+        
+        This function returns the raw scores before the sigmoid
+        nested vector because we need one row per multiclass
+
+        the output is structures as [sample][class] -> aka each sample has a vector of probabilities correspoding to each class
         */
-        //
-        std::vector<double> decision_function(const std::vector<std::vector<double>>& X) const {
+        
+        std::vector<std::vector<double>> decision_function(const std::vector<std::vector<double>>& X) const {
 
             if(current_mode == MODE::NOT_FIT) {
                 throw std::runtime_error("Model has not been fitted yet.");
             }
 
-            //temporary y_value vector
-            std::vector<double> y_predictions{};
+            //Nested vector storing the predictins for each sampple, for each class, as per [sample][class]
+            std::vector<std::vector<double>> y_prediction_rows{};
 
             //Binary implementation
             if(current_mode == MODE::BINARY) {
 
-
                 for(size_t i{0}; i < X.size(); i++) {
 
                     //We check the current X vector's validity
-                    if(X[i].size() != weights.size()) {
+                    if(X[i].size() != weights[0].size()) {
                         throw std::runtime_error("Input feature size does not match learned weights.");
                     };
 
@@ -224,50 +273,51 @@ class LogisticRegression {
 
                     //calculate the prediction based on ax + b 
                     for(size_t j{0}; j < X[i].size(); j++) {
-                        current_y_prediction += weights[j]*X[i][j];
+                        current_y_prediction += weights[0][j]*X[i][j]; //always the first row for binary
                     }
-                    current_y_prediction += b;
+                    current_y_prediction += biases[0]; //biases only has one entry for binary
 
-                    //store in the predictions vector
-                    y_predictions.push_back(current_y_prediction);
+                    //store in the predictions first row of the vector
+                    y_prediction_rows.push_back({current_y_prediction});
 
                 }
+
+                return y_prediction_rows;
             }
 
             //Multiclass implementation
             else {
-                throw std::runtime_error("Multiclass classification not implemented yet.");
+
             }
             
-            return y_predictions;
 
         }
 
         /*
         This function uses the sigmoid on the predicted y value
         */
-        std::vector<double> predict_proba(const std::vector<std::vector<double>>& X) const {
+        std::vector<std::vector<double>> predict_proba(const std::vector<std::vector<double>>& X) const {
             if(current_mode == MODE::NOT_FIT) {
                 throw std::runtime_error("Model has not been fitted yet.");
             }
 
             //First we get the raw y predition -> same with linear regression
-            std::vector<double> decision_values = decision_function(X);
-            std::vector<double> probabilities{};
+            std::vector<std::vector<double>> decision_values = decision_function(X);
+            std::vector<std::vector<double>> probabilities{};
 
             if(current_mode == MODE::BINARY) {
 
                 //range based for loop to go through all decision values and apply sigmoid to get the probabilities
                 for (auto val : decision_values) {
-                    double probability = 1.0 / (1.0 + std::exp(-val)); //sigmoid function
-                    probabilities.push_back(probability); //push back the sigmoid
+                    double probability = 1.0 / (1.0 + std::exp(-val[0])); //sigmoid function
+                    probabilities.push_back({probability}); 
                 }
 
             }
 
             //Multiclass implementation
             else {
-                throw std::runtime_error("Multiclass classification not implemented yet.");
+
             }
 
             return probabilities;
@@ -282,27 +332,27 @@ class LogisticRegression {
                 throw std::runtime_error("Model has not been fitted yet.");
             }
 
-            //First we get the probabilities
-            std::vector<double> probabilities = predict_proba(X);
-            std::vector<int> class_predictions{};
-
             //Binary implementation
             if(current_mode == MODE::BINARY) {
 
+                //First we get the probabilities
+                std::vector<std::vector<double>> probabilities = predict_proba(X);
+                std::vector<int> class_predictions{};
+
                 //range based for loop to go through all probabilities and apply threshold of 0.5 to get the class predictions
                 for (auto prob : probabilities) {
-                    double class_pred = (prob >= 0.5) ? 1 : 0; //threshold at 0.5
+                    int class_pred = (prob[0] >= 0.5) ? 1 : 0; //threshold at 0.5
                     class_predictions.push_back(class_pred);
                 }
 
+                return class_predictions;
             }
 
             //Multiclass implementation
             else {
-                throw std::runtime_error("Multiclass classification not implemented yet.");
+
             }
 
-            return class_predictions;
         }
         /*
         ==========================================
@@ -318,18 +368,19 @@ class LogisticRegression {
                 throw std::runtime_error("Model has not been fitted yet.");
             }
 
-            //First we get the probabilities
-            std::vector<double> probabilities = predict_proba(data.X);
-            
-            //Then we clear the existing y values to prepare for predictions
-            data.y.clear();
-
             //Binary implementation
             if(current_mode == MODE::BINARY) {
 
+                //First we get the probabilities
+                std::vector<std::vector<double>> probabilities = predict_proba(data.X);
+                
+                //Then we clear the existing y values to prepare for predictions
+                data.y.clear();
+
                 //range based for loop to go through all probabilities and apply threshold of 0.5 to get the class predictions
-                for (auto prob : probabilities) {
-                    double class_pred = (prob >= 0.5) ? 1.0 : 0.0; //threshold at 0.5
+                //again binary only so use the first row only
+                for (const auto& prob : probabilities) {
+                    double class_pred = (prob[0] >= 0.5) ? 1.0 : 0.0; //threshold at 0.5
                     data.y.push_back(class_pred);
                 }
 
@@ -337,7 +388,7 @@ class LogisticRegression {
 
             //Multiclass implementation
             else {
-                throw std::runtime_error("Multiclass classification not implemented yet.");
+
             }
 
             return data;
@@ -375,6 +426,21 @@ class LogisticRegression {
             //Return a percentage accuracy score -> correct predictions / total predictions 
             //Have to cast to double because correct is size_t
             return (double)correct / (double)data.y.size();
+        }
+
+        /*
+        ===================================
+        ===========GET HELPERS ============
+        ===================================
+        */
+        const std::vector<std::vector<double>>& get_weights() const { 
+            return weights; 
+        }
+        const std::vector<double>& get_b_values() const { 
+            return biases; 
+        }
+        double get_current_loss() const {
+            return current_loss;
         }
 
 };
