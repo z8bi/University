@@ -17,88 +17,69 @@ int main() {
     ============================
     LINEAR REGRESSION TESTING
     ============================
+    */
 
-    TEST 1: CONCRETE DATASET TESTING
-    
-    sklearn_cpp::Dataset concrete = sklearn_cpp::CSVReader::read_CSV("data/concrete.csv", true);
+    //TEST 1: CONCRETE DATASET TESTING
+    //sklearn_cpp::Dataset concrete = sklearn_cpp::CSVReader::read_CSV("data/concrete.csv", true);
 
-    sklearn_cpp::linear_model::LinearRegression lr(1e-7, 50000);   
-    
-    auto start_concrete = std::chrono::steady_clock::now(); //track start time
+    //sklearn_cpp::linear_model::LinearRegression lr(1e-7, 50000);    
+    //lr.fit(concrete);
 
-    lr.fit(concrete); //fit the model
+    //sklearn_cpp::Dataset concrete_incomplete = sklearn_cpp::CSVReader::read_CSV("data/concrete_incomplete.csv", true);
+    //sklearn_cpp::Dataset concrete_predictions = lr.predict(concrete_incomplete);
+    //double r2 = lr.r2_score(concrete_incomplete);
 
-    //track end time and console output it
-    auto end_concrete = std::chrono::steady_clock::now(); 
-    auto elapsed_ms_concrete = std::chrono::duration_cast<std::chrono::milliseconds>(end_concrete - start_concrete);
-    std::cout << "Elapsed time for concrete model training with chosen parameters: \n\t" 
-    << elapsed_ms_concrete.count()/1000.0 << " in seconds\n\t"
-    << elapsed_ms_concrete.count()/60000.0 << " in minutes\n";
+    //concrete_predictions.print();
+    //std::cout << "R2 Score: " << r2 << std::endl;
 
-    sklearn_cpp::Dataset concrete_incomplete = sklearn_cpp::CSVReader::read_CSV("data/concrete_incomplete.csv", true);
-    sklearn_cpp::Dataset concrete_predictions = lr.predict(concrete_incomplete);
-    double r2 = lr.r2_score(concrete_incomplete);
+    //TEST 2: BOSTON HOME PRICE DATASET TESTING
+    //sklearn_cpp::Dataset boston = sklearn_cpp::CSVReader::read_CSV("data/Boston.csv", true);
 
-    concrete_predictions.print();
-    std::cout << "R2 Score: " << r2 << std::endl;
-    
-
-    /*
-    TEST 2: BOSTON HOME PRICE DATASET TESTING
-    //DOWNLOADED FROM https://www.geeksforgeeks.org/machine-learning/dataset-for-linear-regression/
-
-    
-    sklearn_cpp::Dataset boston = sklearn_cpp::CSVReader::read_CSV("data/Boston.csv", true);
-
-    sklearn_cpp::linear_model::LinearRegression model(4e-7, 1000000);
-
-    std::cout << "Currently fitting model..." << std::endl;
-
-    auto start_boston = std::chrono::steady_clock::now(); //track start time
-
-    model.fit(boston); //fit the model to the data
-
-    //track end time and console output it
-    auto end_boston = std::chrono::steady_clock::now(); 
-    auto elapsed_ms_boston = std::chrono::duration_cast<std::chrono::milliseconds>(end_boston - start_boston);
-    std::cout << "Elapsed time for Boston model training with chosen parameters: \n\t" 
-    << elapsed_ms_boston.count()/1000.0 << " in seconds\n\t"
-    << elapsed_ms_boston.count()/60000.0 << " in minutes\n";
-
-    double r2 = model.r2_score(boston); //calculate the R2 score on the same dataset
-    sklearn_cpp::Dataset predictions = model.predict(boston); //use the predict function on the same dataset and print the predictions
-    predictions.print(); //print dataset
-
-    std::cout << "R2 Score: " << r2 << std::endl; //print R2 score
+    //sklearn_cpp::linear_model::LinearRegression model(4e-7, 1000000);
+    //model.fit(boston);
+    //double r2 = model.r2_score(boston);
+    //sklearn_cpp::Dataset predictions = model.predict(boston);
+    //predictions.print();
+    //std::cout << "R2 Score: " << r2 << std::endl;
 
     /*
     ============================
     LOGISTIC REGRESSION TESTING - BINARY CLASSIFICATION
     ============================
-
-    TEST 1: ECG DATASET TESTING
     */
 
-    sklearn_cpp::Dataset ecg = sklearn_cpp::CSVReader::read_CSV("data/ecg.csv", true);
-    sklearn_cpp::linear_model::LogisticRegression logreg(4e-7, //iteration speed
-                                                        10000, //number of iterations
-                                                        0.01 //lambda
-                                                    );
-    std::cout << "Currently fitting model..." << std::endl;
+    //TEST 1: ECG DATASET TESTING
+    //sklearn_cpp::Dataset ecg = sklearn_cpp::CSVReader::read_CSV("data/ecg.csv", true);
+    //sklearn_cpp::linear_model::LogisticRegression logreg(4e-7, 2000, 0.01);
+    //logreg.fit(ecg);
+    //double accuracy = logreg.accuracy_score(ecg);
+    //std::cout << "Accuracy: " << accuracy << std::endl;
 
-    auto start_ecg = std::chrono::steady_clock::now(); //track start time
+    /*
+    ============================
+    LOGISTIC REGRESSION TESTING - MULTICLASS CLASSIFICATION
+    ============================
+    */
 
-    logreg.fit(ecg); //fit the model to the data
+    //TEST 2: MNIST DATASET TESTING
+    //Train on the training file, then evaluate accuracy on the separate test file
+    sklearn_cpp::Dataset mnist_train = sklearn_cpp::CSVReader::read_CSV("data/mnist_train.csv", true);
+    sklearn_cpp::Dataset mnist_test  = sklearn_cpp::CSVReader::read_CSV("data/mnist_test.csv", true);
 
-    //track end time and console output it
-    auto end_ecg = std::chrono::steady_clock::now(); 
-    auto elapsed_ms_ecg = std::chrono::duration_cast<std::chrono::milliseconds>(end_ecg - start_ecg);
-    std::cout << "Elapsed time for model training with chosen parameters: \n\t" 
-    << elapsed_ms_ecg.count()/1000.0 << " in seconds\n\t"
-    << elapsed_ms_ecg.count()/60000.0 << " in minutes\n";
+    sklearn_cpp::linear_model::LogisticRegression mnist_logreg(1e-5,   //iteration speed
+                                                               100,    //number of iterations
+                                                               0.0001  //lambda
+                                                            );
 
-    double accuracy = logreg.accuracy_score(ecg); //calculate the accuracy score on the same dataset
-    std::cout << "Accuracy: " << accuracy << std::endl; //print accuracy
+    //Fit only on the training dataset
+    mnist_logreg.fit(mnist_train);
+
+    //Check the model on unseen training data and unseen test data separately
+    double mnist_train_accuracy = mnist_logreg.accuracy_score(mnist_train);
+    double mnist_test_accuracy  = mnist_logreg.accuracy_score(mnist_test);
+
+    std::cout << "MNIST Train Accuracy: " << mnist_train_accuracy << std::endl;
+    std::cout << "MNIST Test Accuracy: "  << mnist_test_accuracy  << std::endl;
 
     //make sure the console doesn't immediatelly close :D
     char bs;

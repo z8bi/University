@@ -1,0 +1,4 @@
+.DS_Store
+*.out
+Uni_Courses/Third_Year/Advanced_Programming_3/Assignment_2/Project_Code/src/data/mnist_train.csv
+Uni_Courses/Third_Year/Advanced_Programming_3/Assignment_2/Project_Code/src/data/mnist_test.csv
