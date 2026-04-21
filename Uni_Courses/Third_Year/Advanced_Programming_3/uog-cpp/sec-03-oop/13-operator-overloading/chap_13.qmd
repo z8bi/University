@@ -1,0 +1,602 @@
+---
+title: "Chapter 13: Overloading operators"
+author: Khiem Nguyen -- <khiem.nguyen@glasgow.ac.uk>
+    # <br>Lecturer in Multiscale Materials
+    # <br><khiem.nguyen@glasgow.ac.uk>
+author-meta: "Lecturer in Multiscale Materials"
+
+format: 
+    # other themes: 
+    #   beige, blood, dark, dracula, league, moon, 
+    #   night, serif, simple, sky, solarized
+    # highlight-style: monokai      # good for dark images
+    html:
+        output-file: "chap_13.html"
+        grid:
+            body-width: 1600px
+            margin-width: 300px
+            sidebar-width: 350px
+        embed-resources: true
+        theme: simple
+        highlight-style: github
+        css: doc.css
+        number-sections: true
+        number-depth: 3
+        mouse-wheel: true
+        title-slide-style: pandoc
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: true     # <-- remove white background in code blocks
+        code-block-border-left: false
+        toc: true
+        toc-depth: 3
+        toc-title: Contents
+    pdf:
+        output-file: "chap_13.pdf"
+        embed-resources: true
+        theme: simple
+        highlight-style: github      # good for dark images
+        css: doc.css
+        number-sections: true
+        number-depth: 3
+        geometry:
+            - top=24px
+            - bottom=24px
+            - left=36px
+            - right=36px
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: true # <-- remove white background in code blocks
+        code-block-border-left: false
+        toc: true
+        toc-depth: 3
+        toc-title: Contents
+    revealjs:
+        output-file: "chap_13_slide.html"
+        embed-resources: true
+        theme: simple
+        css: slide.css
+        number-sections: true
+        number-depth: 3
+        mouse-wheel: true
+        highlight-style: github
+        slide-number: true
+        title-slide-style: pandoc
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: true   # <-- remove white background in code blocks
+        code-block-border-left: false # optional: remove left border
+        toc: true
+        toc-depth: 1
+        toc-title: Contents
+
+---
+
+# Intro to operator overloading
+
+- Thinking about the operation `1 + 2`, it is essentially equivalent to `add(1, 2)`.
+- For two user-defined `ComplexNumber` objects `a` and `b` , we would like to write `a + b` instead of `a.add(b)` or `add(a, b)`.
+
+&#9998;&nbsp; Mathematically speaking, an operator is just a function that receives one or more inputs and return one or more outputs.
+
+&#9998;&nbsp; In C++, operators are implemented as functions.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **Note** The phrase "In C++" is not redundant. We cannot overload operators in C, Assembly and Java.
+
+## A revisit to defining operators in Python
+
+&#10149;&nbsp; Look at this example
+
+```{python}
+#| error: true
+class ComplexNumber:
+    def __init__(self, real=0, imag=0):
+        self.real = real
+        self.imag = imag
+
+a = ComplexNumber(42, 24)
+b = ComplexNumber(24, 42)
+print(a)        # of course we want it to print a meaningful expression
+print(b)
+print(a + b)    # of course we want Python understands a + b
+```
+
+## A revisit to defining operators in Python
+
+&#10149;&nbsp; We have learned these wishes are granted by defining the special functions (sepcial methods)
+
+```{python}
+class ComplexNumber:
+    def __init__(self, real=0, imag=0):
+        self.real = real
+        self.imag = imag
+    def __str__(self):
+        # Need to test if real and imag parts are nonzero. Not done here!!!
+        return f"{self.real} + {self.imag}*i"
+
+    def __add__(self, another):
+        # Need to test if another is a ComplexNumber. Not done here to save space.
+        real = self.real + another.real
+        imag = self.imag + another.imag
+        return ComplexNumber(real, imag)
+
+a, b = ComplexNumber(42, 24), ComplexNumber(24, 42)
+print(f"a = {a}")    # now it works
+print(f"b = {b}") 
+print(f"a + b = {a + b}")    
+```
+
+## Operators as functions
+
+::: {.fragment}
+&#10149;&nbsp; Consider the following snippet
+
+```{.cpp}
+int x { 42 };
+int y { 24 };
+std::cout << x + y << '\n';
+```
+- The expression `x + y` is translated as the function call `operator+(x, y)`.
+:::
+
+::: {.fragment}
+&#10149;&nbsp; Consider the following snippet
+
+```{.cpp}
+double x { 42 };
+double y { 24 };
+std::cout << x + y << '\n';
+```
+- The expression `x + y` is translated as the function call `operator+(x, y)`.
+- Function overloading is used to determine that the compiler should call the double version of this function instead of the integer version.
+:::
+
+## Operators as functions
+
+&#10149;&nbsp; Consider the following hypothetical snippet
+```{.cpp}
+{{< include ./cpp/operator_example_complex_number.cpp >}}
+```
+- The compiler does not have a built-in version of the plus operator that it can use `ComplexNumber` operands. Thus, it will give an error.
+- We would need to write an overloaded function to tell the compiler how the `+` operator should work with operands of type `ComplexNumber`.
+
+## Operators as functions
+
+&#10149;&nbsp; We can fix the code above:
+
+```{.cpp}
+{{< include ./cpp/operator_example_complex_number_fixed.cpp >}}
+```
+
+&#10140;&nbsp; We learn how to overload operators in this chapter.
+
+## Best practices in overloading operators
+
+&#10140;&nbsp; [**Skip this slide**]{style="color:brown"}. [Students read later!
+]{style="color:royalblue"}
+
+::: {.my-box}
+**Best practices**
+
+
+- An overloaded operator should operate on at least one program-defined type (either as a parameter of the function, or the implicit object).
+- When overloading operators, it’s best to keep the function of the operators as close to the original intent of the operators as possible.
+- If the meaning of an overloaded operator is not clear and intuitive, use a named function instead.
+- Operators that do not modify their operands (e.g. arithmetic operators) should generally return results by value.
+- Operators that modify their leftmost operand (e.g. pre-increment, any of the assignment operators) should generally return the leftmost operand by reference.
+:::
+
+# Overloading the arithemtic operators using friend functions
+
+- Plus operator (`+`), minus operator (`-`), multiplication operator (`*`) and division operator (`/`) are binary operators and can be overloaded in the exact same way.
+
+- There are three different ways to overload operators:
+
+  1. the member function way
+  2. the friend function way
+  3. the normal function way
+
+    We will cover the friend function way in this lesson.
+
+## Overloading operators using friend functions
+
+&#10149;&nbsp; Look at this class
+
+:::{#lst-class-cents lst-cap="A simple class to learn overloading operators. Filename=`class_cents.cpp`"}
+```{.cpp}
+{{< include ./cpp/class_cents.cpp >}}
+```
+:::
+
+## Overloading operators using friend functions
+
+&#10149;&nbsp; We overload the operators plus and minus in the following code snippet.
+
+:::{#lst-overloading-operators lst-cap="Overloading operators plus and minus. Filename=`overload_operators_plus_minus.cpp`"}
+```{.cpp}
+{{< include ./cpp/overload_operators_plus_minus.cpp >}}
+```
+:::
+
+## Overloading operators using friend functions
+
+Overloading the plus operator (`+`) is as simple as
+
+- declaring a function named `operator+`
+- giving it two parameters of the type of the operands we want to add
+- picking an appropriate return type
+- writing the function
+
+:::{.fragment}
+**Question** Let us test our understanding with simple questions. What should I do?
+
+- I want to write `std::cout << 42 + cents` and `std::cout << cents + 42`
+- I want to write `std::cout << 42 * cents` and `std::cout << cents * 42`
+:::
+
+::: {.fragment}
+&#10140;&nbsp; Lecturer plays around with the code `overload_operators_play_around.cpp` a bit here. 
+
+:::{.my-box}
+See `overload_operators_play_around_solution.cpp` for solution in the end.
+:::
+:::
+
+## Friend functions can be defined inside the class
+
+&#9998;&nbsp; Even though friend functions are not members of a class, they can still be defined inside the class if desired.
+
+:::{#lst-friend-functions3 lst-cap="Friend function inside a class is actually a non-member function. Filename=`friend_function_inside_class.cpp`"}
+```{.cpp}
+{{< include ./cpp/friend_function_inside_class.cpp >}}
+```
+:::
+
+## Overloading operators for operands of different types
+
+&#9998;&nbsp; Often it is the case we want to overload operators to work with operands that are different types. For example
+```{.cpp}
+Vector3D w {1, 2, 3};
+Vector3D v {42 + w}; // we want element-wise addition between "3" and vector "w"
+```
+
+&#9998;&nbsp; We have learned this in our last **play around**, but let us quickly revisit this with another meaningful application.
+
+## Overloading operators for operands of different types
+
+:::{#lst-vector3d-different-operands lst-cap="We can overload the operators using different data types for the operands, just like overloading functions. Filename=`vector3d_operands_of_different_types.cpp`"}
+```{.cpp}
+{{< include ./cpp/vector3d_operands_of_different_types.cpp >}}
+```
+:::
+
+## Implementing operators using other operators
+
+&#9998;&nbsp; It is often possible to define overloaded operators by calling other overloaded operators
+
+**Example**: Intuitively, we want that `42 + v` gives the same result as `v + 42`.
+
+```{.cpp}
+// we can add this code to the Vector3D we wrote
+friend Vector3D operator+(Vector3D& vector, const double other) 
+{
+    return Vector3D{ other + vector};   
+    // of course we need a copy constructor here. 
+    // But luckily we have implicit copy constructor :D
+}
+```
+
+# Overloading operators using normal functions
+
+- In the previous lesson, we overloaded `operator+` as a friend function because we need access to internal members of the classes.
+  
+    ```{.cpp}
+    friend Pennies operator+(const Pennies& p1, Pennies& p2) {
+        // here we access "pennies" from p1 and from p2.
+        return Pennies { p1.pennies + p2.pennies }; 
+    }
+    ```
+
+- If we don't need that access, we can write our overloaded operators as normal functions.
+  
+    ```{.cpp}
+    Pennies operator+(const Pennies& p1, const Pennies& p2) {
+        // get internal data via access function (getter function)
+        return Pennies { p1.get_pennies() + p2.get_pennies() };
+    }
+    ```
+
+:::{.my-box}
+That's the whole idea 🤨
+:::
+
+## Overloaindg operators using normal functions: Example
+
+&#9998;&nbsp; Note that the `Pennies` class above contains an access function (`get_pennies()`) that allows us to get at `pennies` without having to have direct access to private members.
+
+:::{#lst-overload-operators-normal-functions lst-cap="We can overload operators using normal functions if these functions do not need to access internal members of the class directly. Filename=`overload_operators_with_normal_functions.cpp`"}
+```{.cpp}
+{{< include ./cpp/overload_operators_with_normal_functions.cpp >}}
+```
+:::
+
+## Overloading operators using normal functions
+
+:::{.my-box}
+- Because normal and friend functions work almost identically (except different levels of access to private members), we generally won't differentiate them.
+- The difference between friend function and normal function for overloading operators:
+    - The friend function declaration inside the class serves as a prototype.
+    - With the normal function version, we have to provide our own function prototype.
+:::
+
+::: {.fragment}
+
+What does these means? &#10140;&nbsp; We shall see in the example with using header file.
+:::
+
+## Overloading operators using normal functions: Declare protype in header file
+
+&#10149;&nbsp; Header file for `Pennies` class: `pennies.h` in the folder `pennies`.
+
+:::{#lst-pennies-header-file lst-cap="We need to explicitly provide the prototype for operator+ so uses of operator+ in other files know this overload exists. Filename=`pennies/pennies.h`"}
+```{.cpp}
+{{< include ./cpp/pennies/pennies.h >}}
+```
+:::
+
+## Overloading operators using normal functions: Implementation file
+
+&#10149;&nbsp; We can implement the functions in `cpp` file.
+
+:::{#lst-pennies-implementation-file lst-cap="In the implementation file, we include the header file. Now, it knows the prototype defined in header file. Filename=`pennies/pennies.cpp`"}
+```{.cpp}
+{{< include ./cpp/pennies/pennies.cpp >}}
+```
+:::
+
+## Overloading operators using normal functions: `main` file
+
+:::{#lst-main-file lst-cap="`main` file using the objects of Pennies type. Filename=`pennies/main.cpp`"}
+```{.cpp}
+{{< include ./cpp/pennies/main.cpp >}}
+```
+:::
+
+## Overloading operators using normal functions: `main` file
+
+If the `main.cpp` file is not in the same folder, we only need to direct to the appropriate folder to include header file. **Note** the include statement:
+
+:::{#lst-main-file lst-cap="`main` file using the objects of Pennies type. Filename=`main_pennies.cpp`"}
+```{.cpp}
+{{< include ./cpp/main_pennies.cpp >}}
+```
+:::
+
+# Overloading the I/O operators
+
+Given a user-defined class `Point` or `Vector`, of course we wish to write
+
+```{.cpp}
+std::cout << point; // point is Point ojbect
+std::cout << vect;  // vect is Vector object
+```
+
+We will learn to overload the input/output operators, namely `<<` and `>>`.
+
+## Overloading the I/O operators: Teaser
+&#9998;&nbsp; In Python, we can write
+
+```{python}
+class Point:
+    def __init__(self, x:float=0, y:float=0, z:float=0):
+        self.x, self.y, self.z = x, y, z    # packing tuple and unpacking tuple
+    def print(self):
+        print(f"Point({self.x}, {self.y}, {self.z})")
+    # print(point) will execute this function get the string to print
+    def __str__(self):  
+        return f"Point({self.x}, {self.y}, {self.z})"
+p1, p2 = Point(), Point(42, 24, 42)
+p1.print()              # We can print like this
+p2.print()
+print(f"p1 = {p1}")     # But nicer we can do this
+print(f"p2 = {p2}")
+```
+
+## Overloading the I/O operators: Teaser
+
+&#10149;&nbsp; Look at this "cliche" code:
+
+:::{#lst-point-with-print lst-cap="We can print a `point` object of type `Point` by using a member function such as `print()`. But we can do better than this. Filename=`point_with_print.cpp`"}
+```{.cpp}
+{{< include ./cpp/point_with_print.cpp >}}
+```
+:::
+
+## Overloading the I/O operators: Teaser
+
+&#9998;&nbsp; In C++, of course we wish to write
+  
+```{.cpp}
+std::cout << point;     // point is a Point object
+```
+
+instead of writing
+```{.cpp}
+point.print()
+```
+
+## Overloading operator `<<`: Key points
+
+&#9998;&nbsp; Overloading `operator<<` is similar to overloading operator+ (they are both binary operators), except that the parameter types are different.
+
+:::{.spacer}
+:::
+
+:::{.fragment}
+&#9998;&nbsp; Consider the expression
+
+```{.cpp}
+std::cout << point;
+```
+
+- the operator is `<<`
+- the left operand is the `std::cout` object -- `std::cout` is an object of type `std::ostream`.
+- the right operand is the `Point` class object.
+:::
+
+:::{.spacer}
+:::
+
+:::{.fragment}
+&#9998;&nbsp; Our overloaded function will look like this:
+
+```{.cpp}
+friend std::ostream& operator<< (std::ostream& out, const Point& point);
+```
+:::
+
+## Overloading `operator<<`: Example
+
+
+:::{#lst-point-overload-output-operator lst-cap="Overloading `operator<<` to use the statement `std::cout << point;`. Filename=`point_overload_output_operator.cpp`"}
+```{.cpp}
+{{< include ./cpp/point_overload_output_operator.cpp >}}
+```
+:::
+
+- This is pretty straightforward. The notable difference is that `std::cout` has become parameter `out` (which will be reference to `std::cout` when the function is called).
+
+## Overloading `operator<<`: Key points
+
+::: {.incremental}
+- The notable difference is that `std::cout` has become parameter `out` (which will be reference to `std::cout` when the function is called).
+- The trickiest part here is the return type. If we try to return std::ostream by value, we will get a compiler error.
+- This happens because std::ostream specifically disallows being copied.
+- We return the left hand parameter as a reference:
+  
+    ```{.cpp}
+    std::ostream& operator<< (std::ostream& out, const Point& point)
+    ```
+    - this not only prevents a copy of std::ostream from being made,
+    - this also allows us to "chain" output commands together -- recall lecture on `return *this` 
+  
+        ```{.cpp}
+        std::cout << point << '\n';
+        ```
+:::
+
+:::{.fragment}
+**Notes** Lecturer starts a drawing to explain chaining. Lecturer illustrates chaining in live coding
+
+```{.cpp}
+Point plist[2];
+plist[0] = {1, 2, 3};   // this is possible because we have 
+plist[1] = {2, 3, 4};   // constructor that takes three arguments
+std::cout << plist[0] << '\t' << plist[1] << '\n';
+return 0;
+```
+:::
+
+## Overloading operator `>>`: Key points
+
+&#9998;&nbsp; Overloading the input operator is analogous to overloading the output operator. 
+
+&#9998;&nbsp; `std::cin` is an object of type `std::istream`.
+
+## Overloading operator `>>`: Example
+
+:::{#lst-point-overload-input-operator lst-cap="Overloading `operator>>` to use the statement `std::cin >> point;`. Filename=`point_overload_input_operator.cpp`"}
+```{.cpp}
+{{< include ./cpp/point_overload_input_operator.cpp >}}
+```
+:::
+
+# Overloading operators using member functions
+
+When overloading an operator using a member function:
+
+- The overloaded operator must be added as a member function of the left operand.
+- The left operand becomes the implicit `*this` object.
+- All other operands become function parameters.
+
+&#9998;&nbsp; Converting a friend overloaded operator to a member overloaded operator is so easy that there is no need to remember rules of conversion.
+
+&#9998;&nbsp; We just need to follow the common rules of writing member functions, which are easy.
+
+## Overloading operators using friend function: Revisit
+
+&#10149;&nbsp; This is what we learned:
+
+::: {#lst-overload-operator-using-friend-revisit lst-cap="Revisit overloading operators using friend function. Filename=`overload_operator_plus_revisit.cpp`"}
+```{.cpp}
+{{< include ./cpp/overload_operator_plus_revisit.cpp >}}
+```
+:::
+
+## Overloading operators using mmember functions: Example
+
+&#10149;&nbsp; The same `operator+` overloaded using the member function method:
+
+::: {#lst-overload-operator-using-member-func lst-cap="Overload `operator+` for class `Pennies` using member function. Filename=`overload_operator_plus_member_function.cpp`"}
+```{.cpp}
+{{< include ./cpp/overload_operator_plus_member_function_01.cpp >}}
+```
+:::
+
+## Overloading operators using mmember functions: Example
+
+**Question** What if I want to write
+```{.cpp}
+std::cout << (pennies_01 + 12) << '.\n';
+```
+and get the same output as 
+```{.cpp}
+std::cout << "I have" << pennies_sum.get_pennies() << " pennies.\n";
+```
+
+:::{.spacer}
+:::
+
+
+:::{.fragment}
+**Answer**
+
+- Overload the `operator+`
+
+    ```{.cpp}
+    Pennies operator+(int value) const;
+    ```
+
+- Overload the output operator:
+
+    ```{.cpp}
+    friend std::ostream& operator<<(std::ostream& out, const Pennies& p);
+    ```
+:::
+
+## Overload an operator as a friend or a member: Which should we use?
+
+&#10149;&nbsp; [**Skip these slides**]{style="color:brown"} -- [Students learn at home.]{style="color:navy"}
+
+- Not everything can be overloaded as a friend function
+
+    The assignment (`=`), subscript (`[]`), function call (`()`), and member selection (`->`) operators must be overloaded as member functions, because the language requires them to be.
+
+- Not everything can be overloaded as a member function
+
+    We are not able to overload `operator<<` as a member function. Because the overloaded operator must be added as a member of the left operand.
+
+## When to use a normal, friend, or member function overload
+
+&#10149;&nbsp; [**Skip these slides**]{style="color:brown"} -- [Students learn at home.]{style="color:navy"}
+
+[**Rules of thumb**]{style="color:red"}
+
+- If you are overloading assignment (`=`), subscript (`[]`), function call (`()`), or member selection (`->`), do so as a member function.
+- If you are overloading a unary operator, do so as a member function.
+- If you are overloading a binary operator that does not modify its left operand (e.g. `operator+`), do so as a normal function (preferred) or friend function.
+- If you are overloading a binary operator that modifies its left operand, but you cannot add members to the class definition of the left operand (e.g. `operator<<`, which has a left operand of type `ostream`), do so as a normal function (preferred) or friend function.
+- If you are overloading a binary operator that modifies its left operand (e.g. `operator+=`), and you can modify the definition of the left operand, do so as a member function.

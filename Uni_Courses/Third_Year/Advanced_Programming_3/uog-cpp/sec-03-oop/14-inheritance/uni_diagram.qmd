@@ -1,0 +1,92 @@
+---
+title: "University Roles"
+execute:
+  echo: false
+format: 
+    html:
+        page-layout: full
+        margin-left: 0.5em
+        margin-right: 0.5em
+
+    # pdf:
+    #     geometry:
+    #         - top=24px
+    #         - bottom=24px
+    #         - left=36px
+    #         - right=36px
+---
+
+```{mermaid}
+%%| echo: false
+classDiagram
+    %% Person is an abstract base class
+    class Person {
+        <<Abstract>>
+        -name: String
+        -birthday: Date
+        -ID: Integer
+        +knowRole() String
+    }
+
+    %% StaffMember inherits from Person
+    class StaffMember {
+        <<Abstract>>
+        +workOnRole() 
+    }
+    Person <|-- StaffMember : inherits from
+
+    %% Specific Staff Roles
+    class Lecturer {
+        +deliverLectures() 
+        +assessCoursework() 
+    }
+    class TOMember {
+        +manageTimetables() 
+        +processGrades() 
+    }
+    class Demonstrator {
+        +supportLabSessions() 
+        +provideFeedback() 
+    }
+    class SecurityGuard {
+        +maintainCampusSafety() 
+        +respondToIncidents() 
+    }
+
+    StaffMember <|-- Lecturer
+    StaffMember <|-- TOMember
+    StaffMember <|-- Demonstrator
+    StaffMember <|-- SecurityGuard
+
+    %% Student inherits from Person
+    class Student {
+        <<Abstract>>
+        +workOnRole() 
+    }
+    Person <|-- Student : inherits from
+
+    %% Specific Student Roles
+    class UGStudent {
+        +study()
+        +writeBScThesis()
+    }
+    class PGTStudent {
+        +study()
+        +writeMScThesis()
+    }
+    class PGRStudent {
+        +conductResearch() 
+        +writePhDTHesis()
+    }
+
+    Student <|-- UGStudent
+    Student <|-- PGTStudent
+    Student <|-- PGRStudent
+
+    %% Styling (Optional but helpful)
+    style Person fill:#f9f,stroke:#333,stroke-width:2px
+    style StaffMember fill:#bbf,stroke:#333
+    style Student fill:#bfb,stroke:#333
+    style Lecturer fill:#ddd,stroke:#333
+    style UGStudent fill:#ddd,stroke:#333
+```

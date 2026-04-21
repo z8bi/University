@@ -1,15 +1,65 @@
 ---
-title: "Functions"
-subtitle: "Functions, Working with Multiple Files and Header Files"
-author: |
-    Khiem Nguyen 
-    <br>Lecturer in Multiscale Materials
-    <br><khiem.nguyen@glasgow.ac.uk>
+title: "Chapter 02: Functions"
+author: Khiem Nguyen -- <khiem.nguyen@glasgow.ac.uk>
+    # <br>Lecturer in Multiscale Materials
+    # <br><khiem.nguyen@glasgow.ac.uk>
 author-meta: "Lecturer in Multiscale Materials"
+
 format: 
+    # other themes: 
+    #   beige, blood, dark, dracula, league, moon, 
+    #   night, serif, simple, sky, solarized
+    # highlight-style: monokai      # good for dark images
+    html:
+        output-file: "chap_02.html"
+        grid:
+            body-width: 1600px
+            margin-width: 300px
+            sidebar-width: 350px
+        embed-resources: true
+        theme: simple
+        highlight-style: github
+        css: doc.css
+        number-sections: true
+        number-depth: 3
+        mouse-wheel: true
+        title-slide-style: pandoc
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: true     # <-- remove white background in code blocks
+        code-block-border-left: false
+        toc: true
+        toc-depth: 3
+        toc-title: Contents
+    pdf:
+        output-file: "chap_02.pdf"
+        embed-resources: true
+        theme: simple
+        highlight-style: github      # good for dark images
+        css: doc.css
+        number-sections: true
+        number-depth: 3
+        geometry:
+            - top=24px
+            - bottom=24px
+            - left=36px
+            - right=36px
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: true # <-- remove white background in code blocks
+        code-block-border-left: false
+        toc: true
+        toc-depth: 3
+        toc-title: Contents
     revealjs:
-        # self-contained: true
-        theme: simple   # other themes: beige, blood, dark, dracula, league, moon, night, serif, simple, sky, solarized
+        output-file: "chap_02_slide.html"
+        embed-resources: true
+        theme: simple
+        css: slide.css
+        number-sections: true
+        number-depth: 3
         mouse-wheel: true
         highlight-style: github
         slide-number: true
@@ -17,14 +67,12 @@ format:
         echo: true
         code-overflow: wrap
         code-line-numbers: true
-        code-block-bg: false          # <-- remove white background in code blocks
-        # code-block-border-left: false # optional: remove left border
-        # highlight-style: monokai      # good for dark images
+        code-block-bg: true   # <-- remove white background in code blocks
+        code-block-border-left: false # optional: remove left border
         toc: true
         toc-depth: 1
-        toc-title: Presentation Outline
-        chalkboard: true
-        css: simple.css
+        toc-title: Contents
+
 ---
 
 # Basic Syntax

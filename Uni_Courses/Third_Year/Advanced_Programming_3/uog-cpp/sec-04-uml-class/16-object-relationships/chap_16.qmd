@@ -1,0 +1,340 @@
+---
+title: "Chapter 16: Object Relationships"
+author: Khiem Nguyen -- <khiem.nguyen@glasgow.ac.uk>
+    # <br>Lecturer in Multiscale Materials
+    # <br><khiem.nguyen@glasgow.ac.uk>
+author-meta: "Lecturer in Multiscale Materials"
+
+format: 
+    # other themes: 
+    #   beige, blood, dark, dracula, league, moon, 
+    #   night, serif, simple, sky, solarized
+    # highlight-style: monokai      # good for dark images
+    html:
+        output-file: "chap_16.html"
+        grid:
+            body-width: 1600px
+            margin-width: 300px
+            sidebar-width: 350px
+        embed-resources: true
+        theme: simple
+        highlight-style: github
+        css: doc.css
+        number-sections: true
+        number-depth: 3
+        mouse-wheel: true
+        title-slide-style: pandoc
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: true     # <-- remove white background in code blocks
+        code-block-border-left: false
+        toc: true
+        toc-depth: 3
+        toc-title: Contents
+    pdf:
+        output-file: "chap_16.pdf"
+        embed-resources: true
+        theme: simple
+        highlight-style: github      # good for dark images
+        css: doc.css
+        number-sections: true
+        number-depth: 3
+        geometry:
+            - top=24px
+            - bottom=24px
+            - left=36px
+            - right=36px
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: true # <-- remove white background in code blocks
+        code-block-border-left: false
+        toc: true
+        toc-depth: 3
+        toc-title: Contents
+    revealjs:
+        output-file: "chap_16_slide.html"
+        embed-resources: true
+        theme: simple
+        css: slide.css
+        number-sections: true
+        number-depth: 3
+        mouse-wheel: true
+        highlight-style: github
+        slide-number: true
+        title-slide-style: pandoc
+        echo: true
+        code-overflow: wrap
+        code-line-numbers: true
+        code-block-bg: true   # <-- remove white background in code blocks
+        code-block-border-left: false # optional: remove left border
+        toc: true
+        toc-depth: 1
+        toc-title: Contents
+
+---
+
+# Object relationships
+
+**Relationships between objects**
+
+&#9998;&nbsp; Life is full of recurring patterns, relationships, and hierarchies between objects. By exploring and understanding these, we can gain insight into how real-life objects behave, enhancing our understanding of those objects.
+
+&#9998;&nbsp; There are many different kinds of relationships two objects may have in real-life, and we use specific “relation type” words to describe these relationships.
+
+## Object relationships 
+
+&#10149;&nbsp; Think about the following statements:
+
+- A square "is-a" shape. An circle "is-an" ellipse
+- A car "has-a" steering wheel. A person "has-a" heart
+- A computer programmer "uses-a" keyboard.
+- A flower "depends-on" a bee or pollination.
+- A student is a "member-of" a class.
+- A brain exists as "part-of" us.
+
+&#9758;&nbsp; We will explore different relation types
+
+- part-of
+- has-a
+- uses-a
+- member-of
+
+and how they are useful in the context of C++ classes.
+
+# Object composition
+
+&#9998;&nbsp; We have learn that structs and classes can have data members of various types (such as fundamental types or other classes).
+
+&#9998;&nbsp; When we build classes with data members, we are essentially constructing complex object from simpler parts, whici is [**object composition**]{style="color:red"}.
+
+
+## Object compostion and types of object composition
+
+&#9998;&nbsp; Complex objects are often built from smaller, simpler objects.
+
+::: {style="margin-left: 50px;"}
+- A computer is built from: a CPU, a motherboard, some memory, etc.
+- We are built from smaller parts: a head, a body, some legs, arms and so on.
+:::
+
+&#9998;&nbsp; [Object composition models a "has-a" relationship]{ style="color:crimson"} between two objects.
+
+::: {style="margin-left: 50px;"}
+- A computer "has-a" CPU
+- A person "has-a" heart
+:::
+
+## Object compostion and types of object composition
+
+&#9998;&nbsp; There are two basic subtypes of objection composition
+
+:::{style="margin-left: 50px;"}
+- [**composition**]{style="color:crimson"}
+- [**aggregation**]{style="color:crimson"}
+::: 
+
+:::{.callout-warning appearance="simple"}
+## A warning on Terminology
+
+- [**Object Composition**]{style="color:royalblue"} is a general design principle in Object-Oriented Programming (OOP) where complex objects are formed by combining simpler ones.
+- [**Aggregation**]{style="color:red"} and [**Composition**]{style="color=red"} are actually two types of [**Object Composition**].
+
+_Don't confuse "object composition" with just "composition"_
+:::
+
+We shall study both.
+
+## Composition
+
+&#9998;&nbsp; To qualify as a composition, an object and a part have the following relationship
+
+::: {style="margin-left: 50px;"}
+- The part (member) is part of the object (class)
+- [The part (member) can only belong to one object (class) at a time]{style="color:crimson"}
+- [The part (member) has its existence managed by the object (class)]{style="color:crimson"}
+- [The part (member) does not know about the existence of the object (class)]{style="color:crimson"}
+::: 
+
+
+
+## Composition: Further explanation
+
+- Composition relationships are part-whole relationships where the part must constitute part of the whole object.  
+    **Example**: A heart is a part of a person’s body.
+
+- The part in a composition can only be part of one object at a time.  
+    **Example**: A heart that is part of one person's body cannot be part of someone else'body at the same time.
+- In a composition relationship, the object is responsible for the existence of the parts.&#101490&nbsp; The part is created when the object is created, and destroyed when the object is destroyed.  
+    **Example**: When a body is created, the heart is created too. When a person’s body is destroyed, their heart is destroyed too.
+- The part does not know about the existence of the whole.
+
+    **Example**: The heart operates unaware that it is part of a larger structure.
+
+    We call this a [**unidirectional relationship**]{style="color:red"}. The body knows about the heart, not the other way.
+
+`Fraction` class is a great example of a composition
+
+
+## Composition: Example
+
+```{.cpp}
+class Fraction
+{
+private:
+	int numerator;
+	int denominator;
+
+public:
+	Fraction(int numerator=0, int denominator=1)
+		: numerator{ numerator }, denominator{ denominator }
+	{
+	}
+};
+```
+
+- The `numerator` and `denominator` are part of the `Fraction`.
+- They cannot belong to more than one `Fraction` at a time.
+- The `numerator` and `denominator` do not know they are part of a Fraction, they just hold integers.
+- When a `Fraction` object is created, the `numerator` and `denominator` are created. When the `Fraction` object is destroyed, the `numerator` and `denominator` are destroyed as well.
+
+::: {.callout-tip}
+Sound obvious!?!? Be patient, we will see that this is not always the case.
+:::
+
+## Implementing compositions
+
+&#9998;&nbsp; [Compositions are typically created as structs or classes with normal data members.]{style="color:royalblue"} These data members exist directly as part of the struct/class, their lifetimes are bound to that of the class instance itself.
+
+&#9998;&nbsp; [Compositions that need to do dynamic allocation or deallocation may be implemented using pointer data members.]{style="color:royalblue"} _In this case, the composition class should be responsible for doing all necessary memory management itself (not the user of the class)_.
+
+&#10149;&nbsp; Look at `creature_game.cpp`, `creature.h`, `point2d.h`
+
+# Aggregation
+
+In last lesson, we discussed one subtype of object composition, namely "composition". In this lesson, we learn the other subtype of object composition, called [**aggegration**]{style="color:red"}.
+
+## Aggregation
+
+To qualify as an aggregation, a whole object and its parts have the following relationship:
+
+- The part (member) is part of the object (class)
+- [The part (member) can (if desired) belong to more than one object (class) at a time]{style="color:crimson"}
+- [The part (member) does not have its existence managed by the object (class)]{style="color:crimson"}
+- [The part (member) does not know about the existence of the object (class)]{style="color:crimson"}
+
+## Aggregation: Further explanation
+
+- An aggregation is still a part-whole relationship, where the parts are contained within the whole, and it is a unidirectional relationship.
+- Unlike a composition, parts can belong to more than one object at the time. 
+- The whole object is not responsible for the existence and lifespan of the parts.
+- When an aggregation is created, the aggregation is not responsible for creating parts. When an aggregation is destroyed, the aggregation is not responsible for destroying parts.
+
+## Addgreation -- Example: Person and Address
+
+&#10149;&nbsp; **Example**: Consider the [relationship between a person and their home address]{style="color:brown"}
+
+:::{.incremental}
+- Every person has an address.
+- That address can belong to more than one person at a time.
+- That address isn't managed by the person: The address existed before the person got there, and still exist after the person moves out.
+- A person knows what address they live at, but the addresses do not know what people live there.
+:::
+
+
+:::{.fragment}
+&#10149;&nbsp; **Example**: Consider the [relationship between a library and the books in it]{style="color:brown"}
+:::
+
+::: {.incremental}
+- Every library has many books.
+- A book belongs to one library. It does not need to belong to many libraries.
+- A book isnn't managed by the library. The book could exist before the library was built and can exist after the library is shut down.
+- A library knows what book it holds, but the book does not know what library it is stored.
+::: 
+
+## Implementing aggregations
+
+&#9998;&nbsp; Because aggregations are similar to compositions in that they are both part-whole relationships, they are implemented almost identically, and the difference between them is mostly semantic. [In an aggregation, we also add parts as member variables.]{style="color:crimson"}
+
+&#9998;&nbsp; [These member variables are typically either references or pointers that used to point at objects that have been created outside the scope of a class.]{style="color:crimson"}
+
+&#9998;&nbsp; Because these parts exist outside of the scope of the class, [when the class is destroyed, the pointer or reference member variable will be destroyed (but not deleted). The parts themselves will still exist.]{style="color:crimson"}
+
+&#10149;&nbsp; Look at `teacher_department.cpp`.
+
+## Summarizing composition and aggregation
+
+### Compositions
+
+- Typically used normal member variables
+- Can use pointer members if the class handles object allocation/deallocation itself.
+- Responsible for creation/destruction of parts
+
+## Aggregations
+- Typically use pointer or reference members that point to or reference objects that live outside the scope of the aggregate class
+- Not responsible for creating/destroying parts
+
+:::{.callout-important}
+
+- Note that concepts of composition and aggregation can be mixed freely within the same class. 
+- It is entirely possible to write a class that is responsible for the creation/destruction of some parts but not others.
+
+:::
+
+# Association
+
+In the previous lessons, we have learned two types of object composition: **composition** and **aggregation**. 
+
+In this lesson, we learn a weaker type of relationship between two otherwise unrelated objects, called an [**association**]{style="color:red"}
+
+## Association
+
+To qualify as an [**association**]{style="color:red"}, an object and another object have the following relationship:
+
+- The associated object (member) is otherwise unrelated to the object (class)
+- The associated object (member) can belong to more than one object (class) at a time
+- The associated object (member) does not have its existence managed by the object (class)
+- The associated object (member) may or may not know about the existence of the object (class)
+
+&#10149;&nbsp; Unlike a composition or aggregation, where the part is a part of the whole object, in an association, the associated object is otherwise unrelated to the object.
+
+&#10149;&nbsp; Unlike an aggregation, where the relationship is always unidirectional, in an association, the relationship may be unidirectional or bidirectional (where the two objects are aware of each other).
+
+## Association: Example
+
+&#10149;&nbsp; The relationship between doctors and patients is a great example of an association.
+
+- The doctor clearly has a relationship with his patients, but conceptually it’s not a part/whole (object composition) relationship.
+- A doctor can see many patients in a day, and a patient can see many doctors.
+- Neither of the object's lifespans are tied to the other.
+
+## Implementing associations
+
+- Because associations are a broad type of relationship, they can be implemented in many different ways.
+- Most often, associations are implemented using pointers, where the object points at the associated object.
+
+&#10149;&nbsp; Have a quick look at `doctor_patient.cpp`
+
+# Dependencies
+
+We have explored 3 types of relationships: composition, aggregation, and association. We’ve saved the simplest one for last: dependencies.
+
+## Dependencies
+
+&#10149;&nbsp; In casual conversation, we use the term dependency to indicate that an object is reliant upon another object for a given task.
+
+&#10149;&nbsp; A [**dependency**]{style="color:red"} occurs when one object invokes another object’s functionality in order to accomplish some specific task.
+
+A good example of a dependency that we have already seen many times is `std::ostream`. Our classes that use `std::ostream` use it in order to accomplish the task of printing something to the console, but not otherwise.
+
+## Dependencies versus Association in C++
+
+&#10149;&nbsp; There’s typically some confusion about what differentiates a dependency from an association.
+
+- Associations are a relationship where one class keeps a direct or indirect "link" to the associated class as a member.
+    - a Doctor class has an array of pointers to its Patients as a member. You can always ask the Doctor who its patients are.
+- Dependencies typically are not members.
+    - the object being depended on is typically instantiated as needed (like opening a file to write data to)
+    - assed into a function as a parameter (like std::ostream in the overloaded `operator<<`)
